@@ -360,7 +360,10 @@ function navigateBack() {
   shell.style.transform = 'translateX(100%)';
   shell.style.opacity = '0';
   sessionStorage.setItem('navDir', 'back');
-  setTimeout(() => { window.history.back(); }, 300);
+  setTimeout(() => { 
+    if(document.referrer) { window.location.href = document.referrer; }
+    else { window.history.back(); }
+  }, 300);
 }
 
 function navTo(url) {
