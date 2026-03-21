@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 8: Quest Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #080b12; /* Dark cyberpunk theme */
+      display: flex; flex-direction: column; overflow: hidden;
+      color: #fff;
+    }
+
+    /* ─── BACKGROUND GRID ─── */
+    .bg-grid {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image: 
+        linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px);
+      background-size: 30px 30px;
+      /* Subtle radial gradient */
+      background-color: #080b12;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(8,11,18,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 40%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 8/20 fill */
+
+    .top-nav {
+      display: flex; align-items: center;
+      padding: 10px 18px;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+    .page-title {
+      flex: 1; text-align: center; font-family: 'Rajdhani', sans-serif;
+      font-size: 20px; font-weight: 700; letter-spacing: 0.05em; margin-right: 32px;
+      color: #fff; text-transform: uppercase;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto;
+      padding-top: 100px; padding-bottom: 140px;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* Glass Cards Base */
+    .glow-card {
+      background: rgba(16, 22, 34, 0.7);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      margin: 0 20px 20px; padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .card-label {
+      font-size: 12px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 16px; color: rgba(255,255,255,0.5);
+    }
+
+    /* SUMMARY CARD */
+    .summary-card {
+      border-color: #39ff14;
+      box-shadow: 0 0 15px rgba(57,255,20,0.15), inset 0 0 10px rgba(57,255,20,0.05);
+    }
+    .summary-card .card-label { color: #39ff14; }
+    
+    .venue-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .venue-icon { font-size: 24px; }
+    .venue-name { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
+    
+    .summary-avatars { display: flex; align-items: center; margin-bottom: 16px; }
+    .avatar-wrapper {
+      width: 36px; height: 36px; border-radius: 50%; border: 2px solid #101622;
+      margin-left: -10px; position: relative; overflow: hidden; background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-wrapper:first-child { margin-left: 0; z-index: 3; border-color: #39ff14; }
+    .avatar-wrapper:nth-child(2) { z-index: 2; }
+    .avatar-wrapper:nth-child(3) { z-index: 1; }
+    .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .date-time-block {
+      background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.05); font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 10px;
+    }
+
+    /* ORDER TOTAL CARD */
+    .order-card {
+      border-color: #00b4d8;
+      box-shadow: 0 0 15px rgba(0,180,216,0.15), inset 0 0 10px rgba(0,180,216,0.05);
+    }
+    .order-card .card-label { color: #00b4d8; }
+    
+    .order-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7);
+      margin-bottom: 12px;
+    }
+    .order-row.green-text { color: #39ff14; font-weight: 600; }
+    
+    .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 16px 0; }
+    
+    .order-total {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .total-label { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.05em; }
+    .total-val { font-size: 26px; font-weight: 800; color: #fff; }
+
+    /* PAYMENT METHOD CARD */
+    .payment-card { border-color: rgba(255,255,255,0.15); }
+    
+    .pay-option {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1);
+      margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
+      background: rgba(0,0,0,0.3);
+    }
+    .pay-option:last-child { margin-bottom: 0; }
+    
+    .pay-info { display: flex; align-items: center; gap: 12px; }
+    .pay-icon { font-size: 20px; }
+    .pay-name { font-size: 14px; font-weight: 600; color: #fff; }
+    .pay-logos { display: flex; gap: 4px; margin-left: 8px; }
+    .gpay-badge { background: #fff; color: #000; font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; }
+    
+    .pay-radio {
+      width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    
+    .pay-option.selected {
+      border-color: #00f5d4; background: rgba(0,245,212,0.1);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2);
+    }
+    .pay-option.selected .pay-radio { border-color: #00f5d4; }
+    .pay-option.selected .pay-radio::after {
+      content: ''; width: 10px; height: 10px; border-radius: 50%; background: #00f5d4;
+      box-shadow: 0 0 8px #00f5d4;
+    }
+
+    /* SPLIT PAY TOGGLE */
+    .split-pay-container {
+      margin: 20px 20px; padding: 16px 20px;
+      background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 16px; display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .split-text-box { flex: 1; margin-right: 16px; }
+    .split-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .split-desc { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.4; }
+    
+    .toggle-switch {
+      width: 48px; height: 26px; background: rgba(255,255,255,0.2);
+      border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .toggle-switch.active { background: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.4); }
+    .toggle-knob {
+      width: 22px; height: 22px; background: #fff; border-radius: 50%;
+      position: absolute; top: 2px; left: 2px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle-switch.active .toggle-knob { transform: translateX(22px); }
+
+    /* ─── FIXED CTA FOOTER ─── */
+    .fixed-footer-layer {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
+      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.9) 60%, transparent 100%);
+    }
+    .primary-btn {
+      width: 100%; padding: 18px 24px; border-radius: 16px;
+      border: none; cursor: pointer;
+      background: #39ff14; color: #000;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.02em;
+      box-shadow: 0 0 20px rgba(57,255,20,0.4);
+      transition: transform 0.15s ease;
+      text-align: center; margin-bottom: 16px;
+    }
+    .primary-btn:active { transform: scale(0.96); }
+    
+    .secondary-link {
+      font-size: 14px; font-weight: 600; color: #00f5d4; cursor: pointer;
+      text-decoration: underline; text-decoration-color: rgba(0,245,212,0.4);
+      text-underline-offset: 4px; transition: color 0.2s;
+    }
+    .secondary-link:active { color: #fff; text-decoration-color: #fff; }
+
+    /* Animations */
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.32s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.32s ease forwards; }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.32s ease forwards; }
+  
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      position: absolute; top: 55px; right: 20px; z-index: 900;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .drawer-close:hover { background: rgba(255,59,48,0.2); border-color: #ff3b30; color: #ff3b30; }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drawer-link:hover {
+      background: rgba(0,245,212,0.15); border-color: rgba(0,245,212,0.4);
+      transform: translateX(-5px); box-shadow: 0 4px 15px rgba(0,245,212,0.1);
+    }
+    .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-grid"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Discovery</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Booking</span><span class="flow-arrow">→</span>
+        <span class="flow-item">Community</span>
+      </div>
+      <div class="step-label-global">Screen 8 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="page-title">Checkout</div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="content-area">
+    
+    <!-- SUMMARY CARD -->
+    <div class="glow-card summary-card">
+      <div class="card-label">Summary</div>
+      <div class="venue-header">
+        <div class="venue-icon">⚽</div>
+        <div class="venue-name">Koramangala Arena</div>
+      </div>
+      
+      <div class="summary-avatars">
+        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=11" alt="Host"></div>
+        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=33" alt="Player"></div>
+        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=47" alt="Player"></div>
+      </div>
+      
+      <div class="date-time-block">
+        Tue, Mar 24 | 6:30 PM - 7:30 PM | Court 3
+      </div>
+    </div>
+
+    <!-- ORDER TOTAL CARD -->
+    <div class="glow-card order-card">
+      <div class="card-label">Order Details</div>
+      
+      <div class="order-row">
+        <span>Slot Fee (1 hr)</span>
+        <span>₹95.00</span>
+      </div>
+      <div class="order-row">
+        <span>Service Fee</span>
+        <span>₹2.00</span>
+      </div>
+      <div class="order-row green-text">
+        <span>Newbie Shield (20% OFF)</span>
+        <span>-$0.00</span>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="order-total">
+        <span class="total-label">YOUR TOTAL</span>
+        <span class="total-val">₹390.00</span>
+      </div>
+    </div>
+
+    <!-- PAYMENT METHOD CARD -->
+    <div class="glow-card payment-card">
+      <div class="card-label">Payment Method</div>
+      
+      <div class="pay-option selected" onclick="selectPay(this)">
+        <div class="pay-info">
+          <span class="pay-icon">📱</span>
+          <span class="pay-name">UPI</span>
+          <div class="pay-logos">
+            <span class="gpay-badge">GPay</span>
+          </div>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+      
+      <div class="pay-option" onclick="selectPay(this)">
+        <div class="pay-info">
+          <span class="pay-icon">💳</span>
+          <span class="pay-name">Credit/Debit Card</span>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+      
+      <div class="pay-option" onclick="selectPay(this)">
+        <div class="pay-info">
+          <span class="pay-icon">⚡</span>
+          <span class="pay-name">FitQuest Credits</span>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+    </div>
+
+    <!-- SPLIT PAY TOGGLE -->
+    <div class="split-pay-container">
+      <div class="split-text-box">
+        <div class="split-title">SPLIT-PAY with Group</div>
+        <div class="split-desc">You may split with complete team once guest mot ricks.</div>
+      </div>
+      <div class="toggle-switch" id="splitToggle" onclick="toggleSplit()">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FIXED BOTTOM CTA LAYER -->
+  <div class="fixed-footer-layer">
+    <button class="primary-btn" onclick="navTo('fitquest_screen9.html')">Confirm Payment & Complete Booking</button>
+    <div class="secondary-link" onclick="navTo('fitquest_screen6.html')">Choose Different Time</div>
+  </div>
+
+
+  <!-- GLOBAL NAV DRAWER -->
+  <div class="menu-trigger" onclick="toggleNavDrawer()">
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+  </div>
+  
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  if(typeof navTo === 'function') { navTo(url); }
+  else { window.location.href = url; }
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen7.html'; }, 330);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  
+  // Decide animation based on target (back to 6 is a 'back' flow, to 9 is a 'forward' flow)
+  if (url === 'fitquest_screen6.html') {
+    shell.classList.add('slide-out-right');
+    sessionStorage.setItem('navDir', 'back');
+  } else {
+    shell.classList.add('slide-out-left');
+  }
+  
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+
+// Simple UI Logic
+function selectPay(el) {
+  document.querySelectorAll('.pay-option').forEach(opt => opt.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleSplit() {
+  document.getElementById('splitToggle').classList.toggle('active');
+}
+</script>
+</body>
+</html>

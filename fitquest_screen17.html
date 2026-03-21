@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 17: The Arena Feed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; overflow: hidden; color: #fff;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── BACKGROUND ─── */
+    .bg-main {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(circle at 50% 10%, rgba(0,245,212,0.1) 0%, #060913 70%);
+    }
+    .grid-overlay {
+      position: absolute; inset: 0; opacity: 0.05; pointer-events: none;
+      background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 85%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 17/20 */
+
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 4px; pointer-events: auto;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
+    /* Category Scroll */
+    .category-scroll {
+      display: flex; overflow-x: auto; gap: 10px; padding: 12px 20px;
+      padding-top: 110px; position: sticky; top: 0; z-index: 100;
+      background: rgba(6,10,20,0.8); backdrop-filter: blur(10px);
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .category-scroll::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      white-space: nowrap; padding: 8px 16px; border-radius: 20px;
+      background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.05);
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cat-chip.active {
+      background: rgba(0,245,212,0.15); border-color: #00f5d4; color: #00f5d4;
+      box-shadow: 0 0 15px rgba(0,245,212,0.3); opacity: 1;
+    }
+    .cat-chip:not(.active) { opacity: 0.6; }
+    .cat-chip:hover:not(.active) { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); opacity: 0.8; }
+
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8); pointer-events: auto;
+    }
+    .nav-drawer.open { right: 0; }
+    
+    /* ─── MAIN CONTENT (Feed) ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding-bottom: 40px; scroll-behavior: smooth;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    .feed-container { padding: 0 20px; display: flex; flex-direction: column; gap: 24px; transition: all 0.5s ease; }
+    
+    /* Post Card Base */
+    .post-card {
+      background: rgba(16, 22, 34, 0.4); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px; overflow: hidden; display: flex; flex-direction: column;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-origin: center;
+    }
+    .post-card.fade-out { opacity: 0; transform: scale(0.95) translateY(10px); }
+    .post-card.fade-in { opacity: 1; transform: scale(1) translateY(0); }
+    
+    /* Image Section */
+    .post-img-box {
+      width: 100%; height: 220px; position: relative; overflow: hidden;
+    }
+    .post-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+    .post-card:hover .post-img-box img { transform: scale(1.05); }
+    
+    /* Highlights Overlay */
+    .highlights-overlay {
+      position: absolute; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .highlight-pill {
+      padding: 6px 12px; border-radius: 12px; background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px); border: 1px solid rgba(57,255,20,0.4);
+      font-size: 10px; font-weight: 800; color: #39ff14; text-transform: uppercase;
+      letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* Post Header */
+    .post-user-info { display: flex; align-items: center; gap: 10px; padding: 14px 16px 8px; }
+    .p-ava { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #00f5d4; overflow: hidden; }
+    .p-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .p-handle { font-size: 13px; font-weight: 800; color: #fff; }
+    .p-brand { font-size: 9px; font-weight: 700; color: #39ff14; text-transform: uppercase; margin-left: auto; }
+
+    /* Post Body */
+    .post-body { padding: 0 16px 16px; }
+    .post-title { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.2; }
+    .post-caption { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 12px; }
+    
+    /* Actions */
+    .post-actions {
+      display: flex; align-items: center; gap: 18px; padding: 0 16px 16px;
+      border-top: 1px solid rgba(255,255,255,0.05); padding-top: 14px;
+    }
+    .act-btn {
+      display: flex; align-items: center; gap: 6px; background: none; border: none;
+      color: rgba(255,255,255,0.5); font-size: 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .act-btn:hover { color: #00f5d4; }
+    .act-btn span.label { font-size: 11px; font-weight: 700; }
+    
+    .join-post-btn {
+      margin-left: auto; padding: 8px 14px; border-radius: 12px; border: 1px solid #39ff14;
+      background: rgba(57,255,20,0.1); color: #39ff14; font-size: 10px; font-weight: 900;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .join-post-btn:hover { background: #39ff14; color: #000; box-shadow: 0 0 15px rgba(57,255,20,0.4); }
+
+    /* FAB */
+    .post-fab {
+      position: absolute; bottom: 40px; right: 20px; z-index: 300;
+      width: 56px; height: 56px; border-radius: 18px;
+      background: #39ff14; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 25px rgba(57,255,20,0.4); transition: transform 0.2s;
+    }
+    .post-fab:hover { transform: scale(1.1) rotate(90deg); }
+    .post-fab span { font-size: 32px; font-weight: 300; color: #000; }
+
+    /* Modal / Blog Placeholder */
+    .read-blog { color: #00f5d4; font-weight: 800; font-size: 12px; cursor: pointer; text-decoration: none; }
+
+    /* Drawer re-use */
+    .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava-side { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; overflow: hidden; }
+    .drawer-ava-side img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; text-transform: uppercase; }
+    .drawer-close { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; }
+    .drawer-link { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; background: rgba(0,245,212,0.05); text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* Animation */
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-main"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Community</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Social</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Arena Feed</span>
+      </div>
+      <div class="step-label-global">Screen 17 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="menu-trigger" onclick="toggleNavDrawer()">
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER OVERLAYS -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava-side"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY CHIPS -->
+  <div class="category-scroll">
+    <div class="cat-chip active" data-cat="all">All Quests</div>
+    <div class="cat-chip" data-cat="football">Football</div>
+    <div class="cat-chip" data-cat="gym">Gym/Weights</div>
+    <div class="cat-chip" data-cat="yoga">Yoga/Zen</div>
+    <div class="cat-chip" data-cat="official">Official Blogs</div>
+  </div>
+
+  <!-- SCROLLABLE FEED -->
+  <div class="content-area">
+    <div class="feed-container" id="feedContainer">
+      
+      <!-- POST 1: USER ACTION -->
+      <div class="post-card" data-category="football">
+        <div class="post-img-box">
+          <img src="assets/football_night_match.png" alt="Night Matach"/>
+          <div class="highlights-overlay">
+            <div class="highlight-pill">✨ +50 XP</div>
+            <div class="highlight-pill" style="border-color:#00f5d4; color:#00f5d4;">🛡️ Tactical Master</div>
+          </div>
+        </div>
+        <div class="post-user-info">
+          <div class="p-ava"><img src="https://i.pravatar.cc/100?img=33" alt="Soma"/></div>
+          <div class="p-handle">@Soma_Jali</div>
+          <div class="p-brand">HSR ELITE STRIKERS</div>
+        </div>
+        <div class="post-body">
+          <div class="post-caption">Koramangala Node secured with the HSR Elite Strikers! Synergy was 98% today. #KoramangalaNode #FootballQuest</div>
+        </div>
+        <div class="post-actions">
+          <button class="act-btn"><span>👍</span><span class="label">24</span></button>
+          <button class="act-btn"><span>💬</span><span class="label">8</span></button>
+          <button class="join-post-btn">Join Next Quest</button>
+        </div>
+      </div>
+
+      <!-- POST 2: COACH BLOG -->
+      <div class="post-card" data-category="yoga">
+        <div class="post-img-box">
+          <img src="assets/yoga_cubbon_park.png" alt="Yoga"/>
+        </div>
+        <div class="post-user-info">
+          <div class="p-ava"><img src="https://i.pravatar.cc/100?img=12" alt="Rahul"/></div>
+          <div class="p-handle">Coach Rahul <span style="background:#39ff14; color:#000; font-size:8px; padding:2px 4px; border-radius:4px; margin-left:4px;">PRO</span></div>
+        </div>
+        <div class="post-body">
+          <div class="post-title">5 Breathing Techniques for High-Intensity Recovery</div>
+          <div class="post-caption">Effective recovery starts with breath-work. Learn how to drop your heart rate in under 2 minutes...</div>
+          <a class="read-blog">Read Full Blog →</a>
+        </div>
+      </div>
+
+      <!-- POST 3: GYM PROGRESS -->
+      <div class="post-card" data-category="gym">
+        <div class="post-img-box">
+          <img src="assets/gym_squat_pb.png" alt="Gym"/>
+        </div>
+        <div class="post-user-info">
+          <div class="p-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"/></div>
+          <div class="p-handle">BMSIT Iron Core</div>
+          <div class="p-brand" style="color:#ff9500;">NEW PERSONAL BEST</div>
+        </div>
+        <div class="post-body">
+          <div class="post-title">New Squat PR reached: 140KG!</div>
+          <div class="post-caption">Consistency pays off. Pushing the limits at the HSR North Node.</div>
+        </div>
+        <div class="post-actions">
+          <button class="act-btn"><span>❤️</span><span class="label">112</span></button>
+          <button class="act-btn"><span>💬</span><span class="label">14</span></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <button class="post-fab"><span>+</span></button>
+
+</div>
+
+<script>
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+  shell.style.transform = 'translateX(100%)';
+  shell.style.opacity = '0';
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.history.back(); }, 300);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+  shell.style.transform = 'translateX(-100%)';
+  shell.style.opacity = '0';
+  setTimeout(() => { window.location.href = url; }, 300);
+}
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) { navTo(url); }
+
+// Filtering Logic
+const chips = document.querySelectorAll('.cat-chip');
+const container = document.getElementById('feedContainer');
+const originalCards = Array.from(container.querySelectorAll('.post-card'));
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    // UI Update
+    chips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    
+    const category = chip.getAttribute('data-cat');
+    
+    // Smooth Transition Out
+    originalCards.forEach(card => card.classList.add('fade-out'));
+    
+    setTimeout(() => {
+      // Reorder Logic
+      let matched = [];
+      let others = [];
+      
+      originalCards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          matched.push(card);
+        } else {
+          others.push(card);
+        }
+      });
+      
+      // Re-append to container
+      container.innerHTML = '';
+      [...matched, ...others].forEach(card => {
+        container.appendChild(card);
+        card.classList.remove('fade-out');
+        card.classList.add('fade-in');
+      });
+      
+      // Clear fade-in after animation
+      setTimeout(() => {
+        originalCards.forEach(card => card.classList.remove('fade-in'));
+      }, 400);
+      
+      // Scroll to top of feed
+      document.querySelector('.content-area').scrollTop = 0;
+    }, 300);
+  });
+});
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>

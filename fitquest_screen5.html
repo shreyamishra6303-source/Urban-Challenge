@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 5: Venue Selection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal: #00f5d4; --purple: #bf5af2; --green: #39ff14;
+      --blue: #00b4d8; --orange: #ff6b35; --dark: #04060b;
+    }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: var(--dark);
+      display: flex; flex-direction: column; overflow: hidden;
+      /* Clean Dark Grid Background */
+      background-image: 
+        linear-gradient(rgba(0,245,212,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,212,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-position: center top;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    /* Step Indicator */
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(4,6,11,0.9);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: var(--teal); text-shadow: 0 0 8px var(--teal); }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    
+    .step-label { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 25%; background: var(--teal); border-radius: 10px; box-shadow: 0 0 10px var(--teal); }
+
+    /* Top Nav (Replaces Meta Header) */
+    .top-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 18px;
+      background: linear-gradient(180deg, rgba(4,6,11,0.9) 0%, rgba(4,6,11,0) 100%);
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: var(--teal);
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
+    .hero-ring { width: 34px; height: 34px; position: relative; }
+    .hero-ring svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(0,245,212,0.6)); }
+    .hero-ring::after {
+      content: '⚡'; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--teal); text-shadow: 0 0 10px var(--teal);
+    }
+    
+    .filter-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; color: #fff;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* ─── SCROLLBODY ─── */
+    .scroll-body {
+      position: absolute; inset: 0; z-index: 10;
+      overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+    }
+    .scroll-content {
+      position: relative; width: 100%; min-height: 100%; padding-bottom: 110px;
+      /* Offset to match header approx height */
+      padding-top: 100px; 
+    }
+
+    /* Hero Image */
+    .hero-section {
+      position: relative; width: 100%; height: 260px; margin-bottom: 24px;
+      border-bottom: 1px solid rgba(0,245,212,0.2);
+    }
+    .hero-img {
+      width: 100%; height: 100%; object-fit: cover;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+    }
+    .title-overlay {
+      position: absolute; bottom: -20px; left: 0; right: 0;
+      text-align: center; padding: 0 20px;
+    }
+    .venue-title {
+      font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800;
+      color: #fff; line-height: 1.1; letter-spacing: -0.01em;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.8), 0 0 20px rgba(0,245,212,0.4);
+      margin-bottom: 8px;
+    }
+    .venue-meta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.8);
+    }
+    .rating { color: #facc15; font-weight: 700; text-shadow: 0 0 6px rgba(250,204,21,0.5); }
+    .pin { color: var(--blue); }
+
+    /* Glassmorphic Details */
+    .glass-card {
+      margin: 0 20px 20px;
+      background: rgba(16,20,32,0.6); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 18px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .glass-card p {
+      font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.7);
+      line-height: 1.6; letter-spacing: 0.01em;
+    }
+    .highlight-text { color: var(--teal); font-weight: 600; text-shadow: 0 0 8px rgba(0,245,212,0.3); }
+
+    /* Amenities Row */
+    .amenities-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px;
+    }
+    .am-item {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .am-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .am-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    /* Icon Colors */
+    .ic-car { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
+    .ic-water { color: var(--teal); text-shadow: 0 0 10px var(--teal); }
+    .ic-plus { color: var(--green); text-shadow: 0 0 10px var(--green); }
+    .ic-cup { color: var(--orange); text-shadow: 0 0 10px var(--orange); }
+
+    /* Pricing Row */
+    .pricing-row {
+      margin: 10px 20px 20px; display: flex; align-items: center; justify-content: space-between;
+      padding: 16px; background: rgba(0,245,212,0.05); border-radius: 14px;
+      border: 1px solid rgba(0,245,212,0.2);
+    }
+    .price-block { display: flex; align-items: baseline; gap: 4px; }
+    .price-val { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #fff; }
+    .price-unit { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
+    .shield-badge {
+      background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.4);
+      color: var(--green); font-size: 10px; font-weight: 700; padding: 6px 10px;
+      border-radius: 6px; letter-spacing: 0.05em; box-shadow: 0 0 12px rgba(57,255,20,0.2);
+    }
+
+    /* ─── FIXED CTA FOOTER ─── */
+    .fixed-footer-layer {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 24px; pointer-events: none;
+      background: linear-gradient(0deg, rgba(4,6,11,1) 0%, rgba(4,6,11,0.9) 60%, transparent 100%);
+    }
+    .fixed-footer-layer > * { pointer-events: auto; }
+    .cta-btn {
+      width: 100%; padding: 18px 24px; border-radius: 14px; border: none; cursor: pointer;
+      background: var(--green); color: #000;
+      font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -0.01em;
+      box-shadow: 0 0 20px rgba(57,255,20,0.35), inset 0 2px 4px rgba(255,255,255,0.5);
+      transition: transform 0.15s ease;
+    }
+    .cta-btn:active { transform: scale(0.96); }
+
+    /* Animations */
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.32s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.32s ease forwards; }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.32s ease forwards; }
+  
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      position: absolute; top: 55px; right: 20px; z-index: 900;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .drawer-close:hover { background: rgba(255,59,48,0.2); border-color: #ff3b30; color: #ff3b30; }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drawer-link:hover {
+      background: rgba(0,245,212,0.15); border-color: rgba(0,245,212,0.4);
+      transform: translateX(-5px); box-shadow: 0 4px 15px rgba(0,245,212,0.1);
+    }
+    .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <!-- Progressive Step Indicator -->
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Discovery</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Booking</span><span class="flow-arrow">→</span>
+        <span class="flow-item">Community</span>
+      </div>
+      <div class="step-label">Screen 5 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <!-- Top Nav -->
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="hero-ring">
+        <svg viewBox="0 0 100 100" fill="none" class="ring-svg">
+          <circle cx="50" cy="50" r="40" stroke="rgba(0,245,212,0.3)" stroke-width="4"/>
+          <path d="M 50 10 A 40 40 0 0 1 90 50" stroke="#00f5d4" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="filter-btn">⚲</div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="scroll-body">
+    <div class="scroll-content">
+      
+      <!-- High-Quality Hero Image Section -->
+      <div class="hero-section">
+        <img src="pro_football_turf.png" class="hero-img" alt="Pro Football Turf" />
+        <div class="title-overlay">
+          <h1 class="venue-title">Koramangala Football Arena <span style="display:block; font-size:0.6em; color:var(--teal); margin-top:2px;">(Level 1)</span></h1>
+          <div class="venue-meta">
+            <span class="rating">⭐ 4.5 Stars</span> <span style="opacity:0.3">|</span> 
+            <span><span class="pin">📍</span> Koramangala, Bangalore</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Venue -->
+      <div class="glass-card about-card" style="margin-top: 30px;">
+        <p>Unleash your skills on our FIFA-certified pro turf. Perfect for 5v5 or 7v7 matches. <span class="highlight-text">Level 1 Quest rewards available here.</span></p>
+      </div>
+
+      <!-- Amenities Row -->
+      <div class="glass-card amenities-row">
+        <div class="am-item">
+          <div class="am-icon ic-car">🚗</div>
+          <div class="am-label">Parking</div>
+        </div>
+        <div class="am-item">
+          <div class="am-icon ic-water">🚿</div>
+          <div class="am-label">Shower</div>
+        </div>
+        <div class="am-item">
+          <div class="am-icon ic-plus">✚</div>
+          <div class="am-label">First Aid</div>
+        </div>
+        <div class="am-item">
+          <div class="am-icon ic-cup">☕</div>
+          <div class="am-label">Cafe</div>
+        </div>
+      </div>
+
+      <!-- Pricing Row -->
+      <div class="pricing-row">
+        <div class="price-block">
+          <span class="price-val">₹1200</span><span class="price-unit">/ hr</span>
+        </div>
+        <div class="shield-badge">20% OFF (Newbie Shield)</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FIXED BOTTOM CTA LAYER -->
+  <div class="fixed-footer-layer">
+    <button class="cta-btn" onclick="navTo('fitquest_screen6.html')">Select Time Slot</button>
+  </div>
+
+
+  <!-- GLOBAL NAV DRAWER -->
+  <div class="menu-trigger" onclick="toggleNavDrawer()">
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+  </div>
+  
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  if(typeof navTo === 'function') { navTo(url); }
+  else { window.location.href = url; }
+}
+
+function navTo(url) {
+  document.querySelector('.phone-shell').classList.add('slide-out-left');
+  setTimeout(() => window.location.href = url, 320);
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen4.html'; }, 330);
+}
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>

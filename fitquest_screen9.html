@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 9: Your Digital Quest Pass</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #080b12; /* Dark cyberpunk space */
+      display: flex; flex-direction: column; overflow: hidden;
+      color: #fff;
+    }
+
+    /* ─── BACKGROUND GRID ─── */
+    .bg-grid {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image: 
+        linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px);
+      background-size: 30px 30px;
+      /* Glowing backlights */
+      background-color: #080b12;
+    }
+    .backlight {
+      position: absolute; top: 10%; left: 50%; width: 200px; height: 300px;
+      background: radial-gradient(ellipse, rgba(0,245,212,0.1) 0%, transparent 60%);
+      transform: translateX(-50%); pointer-events: none;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(8,11,18,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 45%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 9/20 fill */
+
+    .top-nav {
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 16px 20px 4px;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+    .page-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 800;
+      color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.8); letter-spacing: 0.02em;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto;
+      padding-top: 135px; padding-bottom: 140px;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* TICKECT CARD (Neon Green Glassmorphism) */
+    .ticket-card {
+      background: linear-gradient(145deg, rgba(8,16,24,0.8) 0%, rgba(13,26,40,0.7) 100%);
+      border: 1.5px solid rgba(57,255,20,0.4);
+      border-radius: 20px;
+      margin: 0 20px 20px; padding: 0;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(57,255,20,0.05);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      position: relative;
+    }
+    
+    .ticket-header {
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px 20px; border-bottom: 1px dashed rgba(57,255,20,0.3);
+      background: rgba(57,255,20,0.05); border-radius: 20px 20px 0 0;
+    }
+    .q-logo-small {
+      font-size: 24px; font-weight: 900; font-style: italic; color: #fff;
+      text-shadow: 0 0 10px #39ff14; font-family: 'Inter', sans-serif;
+      margin-right: 12px;
+    }
+    .ticket-title {
+      font-size: 16px; font-weight: 800; letter-spacing: 0.1em;
+      color: #39ff14; text-transform: uppercase;
+    }
+
+    /* Animated Neon-Teal QR Container */
+    .ticket-qr-zone {
+      padding: 30px 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qr-container {
+      width: 160px; height: 160px; background: rgba(0,245,212,0.05);
+      border: 2px solid rgba(0,245,212,0.3); border-radius: 12px;
+      position: relative; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 25px rgba(0,245,212,0.2), inset 0 0 15px rgba(0,245,212,0.1);
+      animation: scanGlow 3s infinite alternate;
+    }
+    @keyframes scanGlow {
+      0% { box-shadow: 0 0 15px rgba(0,245,212,0.2), inset 0 0 10px rgba(0,245,212,0.1); border-color: rgba(0,245,212,0.3); }
+      100% { box-shadow: 0 0 35px rgba(0,245,212,0.5), inset 0 0 25px rgba(0,245,212,0.2); border-color: rgba(0,245,212,0.8); }
+    }
+    .qr-svg {
+      width: 130px; height: 130px;
+      filter: drop-shadow(0 0 8px rgba(0,245,212,0.8));
+    }
+    .qr-svg rect { fill: #00f5d4; }
+    
+    /* Ticket Cutouts */
+    .ticket-cutout {
+      position: absolute; width: 20px; height: 20px;
+      background: #080b12; border-radius: 50%;
+      top: 52px; z-index: 10;
+    }
+    .ticket-cutout.left { left: -11px; border-right: 1.5px solid rgba(57,255,20,0.4); }
+    .ticket-cutout.right { right: -11px; border-left: 1.5px solid rgba(57,255,20,0.4); }
+
+    .ticket-details {
+      padding: 0 20px 24px;
+    }
+    .venue-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .venue-info { display: flex; align-items: center; gap: 8px; }
+    .venue-icon { font-size: 20px; }
+    .venue-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
+    
+    .ready-team-badge {
+      background: rgba(57,255,20,0.15); border: 1px solid #39ff14;
+      color: #39ff14; font-size: 10px; font-weight: 800;
+      padding: 4px 8px; border-radius: 6px; box-shadow: 0 0 10px rgba(57,255,20,0.2);
+    }
+    
+    .summary-avatars { display: flex; align-items: center; margin-bottom: 16px; }
+    .avatar-wrapper {
+      width: 32px; height: 32px; border-radius: 50%; border: 2px solid #0d1a28;
+      margin-left: -10px; position: relative; overflow: hidden; background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-wrapper:first-child { margin-left: 0; z-index: 3; border-color: #39ff14; }
+    .avatar-wrapper:nth-child(2) { z-index: 2; }
+    .avatar-wrapper:nth-child(3) { z-index: 1; }
+    .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .date-time-block {
+      background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08); font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.8); text-align: center;
+    }
+
+    /* STATUS & OBJECTIVE CARD */
+    .status-card {
+      background: rgba(16, 22, 34, 0.5);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 16px; backdrop-filter: blur(20px); margin: 0 20px 20px; padding: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+    .obj-row {
+      display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px;
+      font-size: 13px; color: rgba(255,255,255,0.6);
+    }
+    .obj-row strong { color: #fff; font-size: 14px; font-weight: 700; }
+    
+    .status-row {
+      display: flex; align-items: center; gap: 12px; margin-top: 16px; margin-bottom: 16px;
+      font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6);
+    }
+    .status-pill {
+      background: rgba(57,255,20,0.15); border: 2px solid #39ff14;
+      color: #39ff14; font-size: 12px; font-weight: 800; letter-spacing: 0.1em;
+      padding: 6px 16px; border-radius: 20px; box-shadow: 0 0 15px rgba(57,255,20,0.4);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    
+    .xp-banner {
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.02) 100%);
+      border-left: 3px solid #FFD700; padding: 10px 14px; border-radius: 6px;
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .xp-banner span.gift-icon { font-size: 16px; }
+
+    /* ─── FIXED CTA FOOTER ─── */
+    .fixed-footer-layer {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
+      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.9) 70%, transparent 100%);
+    }
+    .primary-btn {
+      width: 100%; padding: 18px 24px; border-radius: 16px;
+      border: none; cursor: pointer;
+      background: #39ff14; color: #000;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.02em;
+      box-shadow: 0 0 20px rgba(57,255,20,0.4);
+      transition: transform 0.15s ease;
+      text-align: center; margin-bottom: 16px;
+    }
+    .primary-btn:active { transform: scale(0.96); }
+    
+    .footer-links {
+      display: flex; align-items: center; justify-content: space-between; width: 100%;
+      padding: 0 10px;
+    }
+    .tertiary-link {
+      font-size: 13px; font-weight: 600; color: #00f5d4; cursor: pointer;
+      text-decoration: underline; text-decoration-color: rgba(0,245,212,0.4);
+      text-underline-offset: 4px; transition: color 0.2s;
+    }
+    .tertiary-link:hover { color: #fff; text-decoration-color: #fff; }
+    
+    .cancel-link {
+      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.4); cursor: pointer;
+      transition: color 0.2s;
+    }
+    .cancel-link:hover { color: rgba(255,100,100,0.8); }
+
+    /* Animations */
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.32s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.32s ease forwards; }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.32s ease forwards; }
+  
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      position: absolute; top: 55px; right: 20px; z-index: 900;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .drawer-close:hover { background: rgba(255,59,48,0.2); border-color: #ff3b30; color: #ff3b30; }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drawer-link:hover {
+      background: rgba(0,245,212,0.15); border-color: rgba(0,245,212,0.4);
+      transform: translateX(-5px); box-shadow: 0 4px 15px rgba(0,245,212,0.1);
+    }
+    .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-grid"></div>
+  <div class="backlight"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Discovery</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Booking</span><span class="flow-arrow">→</span>
+        <span class="flow-item">Community</span>
+      </div>
+      <div class="step-label-global">Screen 9 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="page-title">Your Digital Quest Pass</div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="content-area">
+    
+    <!-- DIGITAL TICKET -->
+    <div class="ticket-card">
+      <div class="ticket-cutout left"></div>
+      <div class="ticket-cutout right"></div>
+      
+      <div class="ticket-header">
+        <div class="q-logo-small">Q</div>
+        <div class="ticket-title">Digital Quest Pass</div>
+      </div>
+      
+      <div class="ticket-qr-zone">
+        <div class="qr-container">
+          <svg class="qr-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- 3 Corner Eyes -->
+            <rect x="5" y="5" width="26" height="26" fill="none" stroke="#00f5d4" stroke-width="4"/>
+            <rect x="12" y="12" width="12" height="12" />
+            <rect x="69" y="5" width="26" height="26" fill="none" stroke="#00f5d4" stroke-width="4"/>
+            <rect x="76" y="12" width="12" height="12" />
+            <rect x="5" y="69" width="26" height="26" fill="none" stroke="#00f5d4" stroke-width="4"/>
+            <rect x="12" y="76" width="12" height="12" />
+            
+            <!-- Abstract futuristic block pattern -->
+            <rect x="38" y="5" width="18" height="6" />
+            <rect x="60" y="5" width="4" height="6" />
+            <rect x="38" y="16" width="6" height="15" />
+            <rect x="49" y="16" width="14" height="6" />
+            <rect x="5" y="38" width="6" height="18" />
+            <rect x="16" y="38" width="15" height="6" />
+            <rect x="38" y="38" width="24" height="24" opacity="0.8"/>
+            <rect x="69" y="38" width="26" height="6" />
+            <rect x="69" y="49" width="14" height="6" />
+            <rect x="38" y="69" width="18" height="6" />
+            <rect x="38" y="80" width="6" height="15" />
+            <rect x="49" y="80" width="14" height="6" />
+            <rect x="69" y="69" width="8" height="18" />
+            <rect x="82" y="69" width="13" height="10" />
+            <rect x="69" y="91" width="26" height="4" />
+          </svg>
+        </div>
+      </div>
+      
+      <div class="ticket-details">
+        <div class="venue-row">
+          <div class="venue-info">
+            <span class="venue-icon">⚽</span>
+            <span class="venue-name">Koramangala Arena</span>
+          </div>
+          <div class="ready-team-badge">READY TEAM</div>
+        </div>
+        
+        <div class="summary-avatars">
+          <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=11" alt="Host"></div>
+          <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=33" alt="Player"></div>
+          <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=47" alt="Player"></div>
+        </div>
+        
+        <div class="date-time-block">
+          Tue, Mar 24 | 6:30 PM - 7:30 PM | Court 3
+        </div>
+      </div>
+    </div>
+
+    <!-- STATUS CARD -->
+    <div class="status-card">
+      <div class="obj-row"><span>QUEST OBJECTIVE:</span> <strong>Ball Control & Passing Scrimmage</strong></div>
+      <div class="obj-row"><span>HOST:</span> <strong>You</strong></div>
+      
+      <div class="status-row">
+        <span>STATUS:</span>
+        <div class="status-pill">CONFIRMED</div>
+      </div>
+      
+      <div class="xp-banner">
+        <span class="gift-icon">🎁</span> 
+        <span>Newbie Gift: +50 XP on First Session Locked</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FIXED BOTTOM CTA LAYER -->
+  <div class="fixed-footer-layer">
+    <button class="primary-btn" onclick="navTo('fitquest_screen10.html')">Check-In to Arena</button>
+    <div class="footer-links">
+      <div class="tertiary-link">Invite More Friends</div>
+      <div class="cancel-link" onclick="navigateBack()">Cancel Booking</div>
+    </div>
+  </div>
+
+
+  <!-- GLOBAL NAV DRAWER -->
+  <div class="menu-trigger" onclick="toggleNavDrawer()">
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+  </div>
+  
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  if(typeof navTo === 'function') { navTo(url); }
+  else { window.location.href = url; }
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen8.html'; }, 330);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>

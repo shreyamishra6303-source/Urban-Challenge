@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 15: Squad Confirmed</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; overflow: hidden; color: #fff;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── BACKGROUND & CELEBRATION ─── */
+    .bg-main {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(circle at 50% 30%, rgba(57,255,20,0.15) 0%, #060913 70%);
+    }
+    
+    /* Confetti Styles */
+    #confetti-container {
+      position: absolute; inset: 0; z-index: 50; pointer-events: none;
+    }
+    .confetti {
+      position: absolute; width: 6px; height: 6px; border-radius: 2px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 75%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 15/20 */
+
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 4px; pointer-events: auto;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8); pointer-events: auto;
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding-top: 110px; padding-bottom: 120px;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* Celebratory Header */
+    .celeb-header { padding: 30px 24px; text-align: center; }
+    .success-badge {
+      width: 70px; height: 70px; background: rgba(57,255,20,0.1);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; border: 2.5px solid #39ff14;
+      box-shadow: 0 0 30px rgba(57,255,20,0.4);
+      animation: badgePulse 2s infinite alternate;
+    }
+    @keyframes badgePulse { from { transform: scale(1); box-shadow: 0 0 20px rgba(57,255,20,0.4); } to { transform: scale(1.1); box-shadow: 0 0 40px rgba(57,255,20,0.7); } }
+    .success-check { color: #39ff14; font-size: 36px; font-weight: 900; }
+    
+    .squad-congrats {
+      font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 900;
+      color: #fff; line-height: 1.2; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .squad-congrats span { color: #39ff14; text-shadow: 0 0 10px rgba(57,255,20,0.5); }
+    .role-tag {
+      display: inline-block; padding: 6px 14px; border-radius: 20px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8); text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Action Cards */
+    .hub-container { padding: 0 20px 20px; display: flex; flex-direction: column; gap: 16px; }
+    
+    .hub-card {
+      background: rgba(16, 22, 34, 0.4); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 14px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5); transition: transform 0.2s;
+    }
+    .hub-card:hover { border-color: rgba(0,245,212,0.4); transform: translateY(-3px); }
+    
+    .hc-top { display: flex; align-items: center; gap: 14px; }
+    .hc-ava-stack { display: flex; align-items: center; }
+    .hc-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); overflow: hidden; background: #222; }
+    .hc-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .hc-ava-multi { margin-left: -12px; }
+    
+    .hc-info { flex: 1; }
+    .hc-title { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .hc-desc { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.3; }
+    
+    .hub-btn {
+      width: 100%; padding: 12px; border-radius: 12px; border: none; font-size: 13px;
+      font-weight: 800; font-family: 'Inter', sans-serif; cursor: pointer; text-transform: uppercase;
+      letter-spacing: 0.05em; transition: all 0.2s;
+      background: rgba(0,245,212,0.1); border: 1.5px solid #00f5d4; color: #00f5d4;
+    }
+    .hub-btn:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 15px rgba(0,245,212,0.3); }
+
+    /* Synergy Sync Box */
+    .synergy-box {
+      margin: 10px 20px 30px; padding: 14px 18px; border-radius: 12px;
+      background: linear-gradient(90deg, rgba(57,255,20,0.1) 0%, transparent 100%);
+      border: 1px dashed rgba(57,255,20,0.4); display: flex; align-items: center; gap: 12px;
+    }
+    .sb-icon { font-size: 22px; filter: drop-shadow(0 0 8px #39ff14); }
+    .sb-text { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .sb-text span { color: #39ff14; font-weight: 900; }
+
+    /* ─── FIXED BOTTOM CTA ─── */
+    .fixed-footer-block {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 30px; 
+      background: linear-gradient(0deg, rgba(6,9,19,1) 30%, rgba(6,9,19,0.8) 70%, transparent 100%);
+    }
+    .primary-btn {
+      width: 100%; padding: 20px; border-radius: 16px; border: none; cursor: pointer;
+      background: #00f5d4; color: #000;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.05em;
+      box-shadow: 0 0 25px rgba(0,245,212,0.5); transition: transform 0.15s ease;
+      text-align: center; text-transform: uppercase; text-decoration: none; display: block;
+    }
+    .primary-btn:active { transform: scale(0.96); }
+
+    /* Slide Animations */
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.3s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-main"></div>
+  <div id="confetti-container"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Compatibility</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Squad Match</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Confirmed</span>
+      </div>
+      <div class="step-label-global">Screen 15 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      
+      <!-- GLOBAL NAV DRAWER TRIGGER -->
+      <div class="menu-trigger" onclick="toggleNavDrawer()">
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER OVERLAYS -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="content-area">
+    
+    <!-- Celebratory Header -->
+    <div class="celeb-header">
+      <div class="success-badge">
+        <span class="success-check">✓</span>
+      </div>
+      <div class="squad-congrats">YOU ARE NOW A MEMBER OF THE <span>HSR ELITE STRIKERS!</span></div>
+      <div class="role-tag">Assigned Role: Squad Defender (Level 1)</div>
+    </div>
+
+    <!-- Squad Hub Action Cards -->
+    <div class="hub-container">
+      
+      <!-- Card 1: Private Chat -->
+      <div class="hub-card">
+        <div class="hc-top">
+          <div class="hc-ava"><img src="https://i.pravatar.cc/100?img=12" alt="Rahul"></div>
+          <div class="hc-info">
+            <div class="hc-title">Chat with Squad Leader</div>
+            <div class="hc-desc">Introduce yourself to Coach Rahul and coordinate your next quest.</div>
+          </div>
+        </div>
+        <button class="hub-btn">Open Private Chat</button>
+      </div>
+
+      <!-- Card 2: Group Tactics -->
+      <div class="hub-card">
+        <div class="hc-top">
+          <div class="hc-ava-stack">
+            <div class="hc-ava"><img src="https://i.pravatar.cc/100?img=60" alt="p1"></div>
+            <div class="hc-ava hc-ava-multi"><img src="https://i.pravatar.cc/100?img=33" alt="p2"></div>
+            <div class="hc-ava hc-ava-multi"><img src="https://i.pravatar.cc/100?img=47" alt="p3"></div>
+          </div>
+          <div class="hc-info" style="margin-left: 10px;">
+            <div class="hc-title">Group Tactics Room</div>
+            <div class="hc-desc">View the squad's upcoming schedule and strategy board (4/5 Heroes).</div>
+          </div>
+        </div>
+        <button class="hub-btn">Enter Group Chat</button>
+      </div>
+
+    </div>
+
+    <!-- Synergy Sync Box -->
+    <div class="synergy-box">
+      <div class="sb-icon">🔗</div>
+      <div class="sb-text">SYNERGY SYNCED: <span>+10% Synergy Bonus</span> applied to your Hero Stats.</div>
+    </div>
+
+  </div>
+
+  <!-- FIXED BOTTOM FOOTER -->
+  <div class="fixed-footer-block">
+    <button class="primary-btn" onclick="navTo('fitquest_screen3.html')">Return to Quest Map</button>
+  </div>
+
+</div>
+
+<script>
+// Confetti Engine
+function createConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#39ff14', '#00f5d4', '#fff', '#bf5af2'];
+  
+  for (let i = 0; i < 40; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    c.style.animationDelay = (Math.random() * 1) + 's';
+    c.style.opacity = Math.random();
+    container.appendChild(c);
+  }
+  
+  // Clean up
+  setTimeout(() => container.innerHTML = '', 5000);
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen14.html'; }, 330);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  navTo(url);
+}
+
+// Entry transition & Confetti
+(function() {
+  createConfetti();
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>

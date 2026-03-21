@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 12: Quest Summary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; /* Deep map background */
+      display: flex; flex-direction: column; overflow: hidden;
+      color: #fff;
+    }
+
+    /* ─── BACKGROUND MAP ─── */
+    .bg-map {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-color: #060913;
+      background-image: 
+        linear-gradient(55deg, rgba(0, 245, 212, 0.08) 1px, transparent 1px),
+        linear-gradient(-35deg, rgba(191, 90, 242, 0.05) 1px, transparent 1px);
+      background-size: 60px 104px;
+    }
+    .map-glow {
+      position: absolute; width: 400px; height: 400px; top: 0; left: 50%;
+      transform: translateX(-50%); border-radius: 50%;
+      background: radial-gradient(circle, rgba(57,255,20,0.15) 0%, transparent 60%);
+    }
+
+    /* ─── CONFETTI/SPARKLE LAYER ─── */
+    .confetti-layer {
+      position: absolute; inset: 0; z-index: 500; pointer-events: none;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute; width: 8px; height: 8px; border-radius: 2px;
+      animation: fall ease-out forwards; top: -20px;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg) scale(1.5); opacity: 1; filter: brightness(2); }
+      100% { transform: translateY(800px) rotate(720deg) scale(0.5); opacity: 0; filter: brightness(1); }
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 60%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 12/20 fill */
+
+    .top-nav {
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 16px 20px 4px;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+      margin-bottom: 10px;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
+    .page-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 800;
+      color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); letter-spacing: 0.05em; line-height: 1.1;
+    }
+    .page-subtitle {
+      font-size: 13px; font-weight: 700; color: #39ff14; letter-spacing: 0.1em; text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(57,255,20,0.5); margin-top: 4px; border-bottom: 1px solid rgba(57,255,20,0.3); padding-bottom: 4px;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto;
+      padding-top: 140px; padding-bottom: 140px;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* HERO LEVEL-UP RING */
+    .hero-ring-container {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      margin: 20px 20px 30px; position: relative;
+    }
+    .level-ring {
+      width: 160px; height: 160px; border-radius: 50%;
+      background: conic-gradient(#39ff14 0%, #39ff14 75%, rgba(57,255,20,0.1) 75%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; box-shadow: 0 0 30px rgba(57,255,20,0.4);
+      animation: fillLevel 1.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+    .level-ring::before {
+      content: ''; position: absolute; inset: 12px; border-radius: 50%;
+      background: #080b12; box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+    }
+    @keyframes fillLevel {
+      from { background: conic-gradient(#39ff14 0%, rgba(57,255,20,0.1) 0%); }
+      to { background: conic-gradient(#39ff14 0%, #39ff14 100%, rgba(57,255,20,0.1) 100%); }
+    }
+    
+    .ring-content {
+      position: relative; z-index: 2; text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .level-up-text {
+      font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 900;
+      color: #fff; letter-spacing: 0.05em; text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px #39ff14; margin-bottom: -2px;
+      animation: pulseText 1.5s infinite alternate;
+    }
+    @keyframes pulseText { from { transform: scale(0.95); filter: brightness(0.9); } to { transform: scale(1.05); filter: brightness(1.2); } }
+    
+    .xp-total {
+      font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700;
+      color: #39ff14; letter-spacing: 0.05em; margin-top: 4px;
+    }
+
+    /* XP BREAKDOWN LIST */
+    .xp-breakdown {
+      margin-top: 16px; display: flex; flex-direction: column; gap: 6px;
+      text-align: center;
+    }
+    .xp-line {
+      font-size: 12px; font-weight: 600; color: #00f5d4;
+      text-shadow: 0 0 8px rgba(0,245,212,0.6);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .xp-line::before { content: ''; width: 6px; height: 1px; background: rgba(0,245,212,0.5); }
+    .xp-line::after { content: ''; width: 6px; height: 1px; background: rgba(0,245,212,0.5); }
+
+    /* GENERIC CARD STYLES */
+    .glow-card {
+      background: rgba(16, 22, 34, 0.4); border-radius: 16px;
+      margin: 0 20px 24px; padding: 16px 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    .card-title {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px;
+    }
+
+    /* PERFORMANCE BREAKDOWN */
+    .perf-card {
+      border: 1.5px solid rgba(57,255,20,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 0 20px rgba(57,255,20,0.05);
+    }
+    .perf-card .card-title { color: #39ff14; border-bottom: 1px solid rgba(57,255,20,0.2); }
+    
+    .player-stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .player-stat-row:last-child { margin-bottom: 0; }
+    
+    .player-ident { display: flex; align-items: center; gap: 12px; }
+    .stat-ava { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(255,255,255,0.2); }
+    .stat-ava.green { border-color: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); }
+    .stat-ava.teal { border-color: #00f5d4; box-shadow: 0 0 10px rgba(0,245,212,0.3); }
+    .stat-ava img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .stat-info { display: flex; flex-direction: column; gap: 4px; }
+    .stat-name { font-size: 15px; font-weight: 700; color: #fff; }
+    .stat-metric { font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 0.05em; }
+    .stat-metric span { color: #fff; font-size: 16px; font-weight: 800; }
+    
+    .stat-badge {
+      display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 8px;
+      font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap;
+    }
+    .badge-fire { border-color: #ff3b30; color: #ff3b30; box-shadow: inset 0 0 10px rgba(255,59,48,0.2); }
+    .badge-brick { border-color: #ff9500; color: #ff9500; box-shadow: inset 0 0 10px rgba(255,149,0,0.2); }
+
+    /* ACHIEVEMENTS LOCKED / UNLOCKED */
+    .achieve-card {
+      border: 1.5px solid rgba(191,90,242,0.6);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 0 30px rgba(191,90,242,0.1);
+      background: linear-gradient(160deg, rgba(20,10,30,0.6) 0%, rgba(10,5,20,0.7) 100%);
+    }
+    .achieve-card .card-title { color: #bf5af2; border-bottom: 1px solid rgba(191,90,242,0.3); }
+    
+    .achieve-item {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
+    }
+    .achieve-item:last-child { margin-bottom: 0; }
+    
+    .achieve-icon {
+      width: 40px; height: 40px; border-radius: 12px; background: rgba(191,90,242,0.15);
+      border: 1.5px solid #bf5af2; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; box-shadow: 0 0 15px rgba(191,90,242,0.4);
+    }
+    .achieve-details { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+    .ach-name { font-size: 14px; font-weight: 700; color: #fff; }
+    .ach-desc { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.5); }
+    .ach-xp { font-size: 12px; font-weight: 800; color: #bf5af2; text-shadow: 0 0 8px rgba(191,90,242,0.5); }
+
+    /* ─── FIXED CTA FOOTER ─── */
+    .fixed-footer-layer {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
+      background: linear-gradient(0deg, rgba(6,9,19,1) 0%, rgba(6,9,19,0.9) 70%, transparent 100%);
+    }
+    .primary-btn {
+      width: 100%; padding: 18px 24px; border-radius: 16px;
+      border: none; cursor: pointer;
+      background: #39ff14; color: #000;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.02em;
+      box-shadow: 0 0 25px rgba(57,255,20,0.4); transition: transform 0.15s ease;
+      text-align: center; text-transform: uppercase;
+    }
+    .primary-btn:active { transform: scale(0.96); }
+
+    /* Slide Animations */
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.32s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.32s ease forwards; }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.32s ease forwards; }
+  
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      position: absolute; top: 55px; right: 20px; z-index: 900;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .drawer-close:hover { background: rgba(255,59,48,0.2); border-color: #ff3b30; color: #ff3b30; }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drawer-link:hover {
+      background: rgba(0,245,212,0.15); border-color: rgba(0,245,212,0.4);
+      transform: translateX(-5px); box-shadow: 0 4px 15px rgba(0,245,212,0.1);
+    }
+    .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- CONFETTI LAYER -->
+  <div class="confetti-layer" id="confettiBox"></div>
+
+  <!-- BACKGROUND -->
+  <div class="bg-map"></div>
+  <div class="map-glow"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Discovery</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Booking</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Community</span>
+      </div>
+      <div class="step-label-global">Screen 12 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="page-title">QUEST SUMMARY</div>
+      <div class="page-subtitle">Level 1 Progress</div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="content-area">
+    
+    <!-- LEVEL UP RING -->
+    <div class="hero-ring-container">
+      <div class="level-ring">
+        <div class="ring-content">
+          <div class="level-up-text">LEVEL UP!</div>
+          <div class="xp-total">+150 XP TOTAL</div>
+        </div>
+      </div>
+      
+      <div class="xp-breakdown">
+        <div class="xp-line">+50 XP Match Performance</div>
+        <div class="xp-line">+50 XP Synergy Bonus</div>
+        <div class="xp-line">+50 XP Newbie Shield Bonus</div>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE CARD -->
+    <div class="glow-card perf-card">
+      <div class="card-title">Performance Breakdown</div>
+      
+      <div class="player-stat-row">
+        <div class="player-ident">
+          <div class="stat-ava green"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+          <div class="stat-info">
+            <span class="stat-name">Me</span>
+            <span class="stat-metric">GOALS: <span>2</span></span>
+          </div>
+        </div>
+        <div class="stat-badge badge-fire">🔥 On Fire</div>
+      </div>
+
+      <div class="player-stat-row">
+        <div class="player-ident">
+          <div class="stat-ava teal"><img src="https://i.pravatar.cc/100?img=47" alt="Priya"></div>
+          <div class="stat-info">
+            <span class="stat-name">Priya</span>
+            <span class="stat-metric">SAVES: <span>3</span></span>
+          </div>
+        </div>
+        <div class="stat-badge badge-brick">🧱 Enforcer</div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS LOCKED CARD -->
+    <div class="glow-card achieve-card">
+      <div class="card-title">Achievements Unlocked</div>
+      
+      <div class="achieve-item">
+        <div class="achieve-icon">🧘</div>
+        <div class="achieve-details">
+          <span class="ach-name">Inner Clarity (Yoga)</span>
+          <span class="ach-desc">First Session Locked</span>
+        </div>
+        <div class="ach-xp">+50 XP</div>
+      </div>
+
+      <div class="achieve-item">
+        <div class="achieve-icon">⚽</div>
+        <div class="achieve-details">
+          <span class="ach-name">Local Hero (HSR)</span>
+          <span class="ach-desc">Played 1 Match</span>
+        </div>
+        <div class="ach-xp">+50 XP</div>
+      </div>
+
+      <div class="achieve-item">
+        <div class="achieve-icon">🛡️</div>
+        <div class="achieve-details">
+          <span class="ach-name">Newbie Shield</span>
+          <span class="ach-desc">Discount Used</span>
+        </div>
+        <div class="ach-xp">+50 XP</div>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  <!-- FIXED BOTTOM CTA LAYER -->
+  <div class="fixed-footer-layer">
+    <button class="primary-btn" onclick="navTo('fitquest_screen13.html')">Host Next Quest</button>
+  </div>
+
+
+  <!-- GLOBAL NAV DRAWER -->
+  <div class="menu-trigger" onclick="toggleNavDrawer()">
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+  </div>
+  
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  if(typeof navTo === 'function') { navTo(url); }
+  else { window.location.href = url; }
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen11.html'; }, 330);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+// Entry transition & Confetti Engine
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+  
+  // Confetti Logic
+  const box = document.getElementById('confettiBox');
+  const colors = ['#39ff14', '#00f5d4', '#bf5af2', '#ffffff'];
+  for(let i = 0; i < 40; i++) {
+    let p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    p.style.left = Math.random() * 100 + '%';
+    // Randomize fall duration between 1s and 2s
+    let dur = (Math.random() * 1 + 1).toFixed(2);
+    let delay = (Math.random() * 0.5).toFixed(2);
+    p.style.animationDuration = dur + 's';
+    p.style.animationDelay = delay + 's';
+    box.appendChild(p);
+  }
+  
+  // Clean up confetti layer after 2.5s
+  setTimeout(() => { box.innerHTML = ''; }, 2600);
+})();
+</script>
+</body>
+</html>

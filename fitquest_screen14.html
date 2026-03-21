@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 14: Squad Compatibility</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; overflow: hidden; color: #fff;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── BACKGROUND MAP ─── */
+    .bg-map {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-color: #060913;
+      background-image: 
+        linear-gradient(55deg, rgba(0, 245, 212, 0.08) 1px, transparent 1px),
+        linear-gradient(-35deg, rgba(191, 90, 242, 0.05) 1px, transparent 1px);
+      background-size: 60px 104px;
+    }
+    /* Sonar Pulse Overlays */
+    .sonar-base {
+      position: absolute; width: 500px; height: 500px; top: -5%; left: 50%;
+      transform: translateX(-50%); border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, transparent 60%);
+    }
+    .sonar-ring {
+      position: absolute; width: 100px; height: 100px; top: 15%; left: 50%;
+      transform: translate(-50%, -50%); border-radius: 50%;
+      border: 1.5px solid rgba(57,255,20,0.6); pointer-events: none;
+      animation: sonarPulse 3s cubic-bezier(0.1, 0.5, 0.3, 1) infinite;
+    }
+    .sonar-ring:nth-child(3) { animation-delay: 1.5s; }
+    
+    @keyframes sonarPulse {
+      0% { width: 40px; height: 40px; opacity: 1; border-width: 2px; }
+      100% { width: 350px; height: 350px; opacity: 0; border-width: 0.5px; }
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 70%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 14/20 */
+
+    /* Top Nav */
+    .top-nav {
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 16px 20px 4px; pointer-events: auto;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      position: absolute; top: 55px; right: 20px; z-index: 900;
+      width: 40px; height: 40px; border-radius: 12px; pointer-events: auto;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8); pointer-events: auto;
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding-top: 100px; padding-bottom: 100px;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    .header-block { padding: 24px 20px 10px; text-align: center; }
+    .page-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 30px; font-weight: 900;
+      color: #39ff14; text-shadow: 0 0 15px rgba(57,255,20,0.6); letter-spacing: 0.05em;
+      line-height: 1.1; margin-bottom: 16px; text-transform: uppercase;
+    }
+    
+    /* User Context Mini Card */
+    .user-context-card {
+      background: rgba(16, 22, 34, 0.6); border: 1px solid rgba(0,245,212,0.3);
+      border-radius: 12px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,245,212,0.1);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .mini-radar { width: 28px; height: 28px; opacity: 0.8; }
+    .uc-info { display: flex; flex-direction: column; text-align: left; }
+    .uc-label { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
+    .uc-val { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: #00f5d4; }
+
+    /* Match Feed */
+    .feed-container { padding: 16px 20px; display: flex; flex-direction: column; gap: 20px; }
+    
+    .match-card {
+      background: rgba(16, 22, 34, 0.4); border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    /* Dynamic colored borders based on rating */
+    .match-card.gold  { border-color: rgba(255,149,0,0.5); box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,149,0,0.05); }
+    .match-card.green { border-color: rgba(57,255,20,0.5); box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(57,255,20,0.05); }
+    .match-card.teal  { border-color: rgba(0,245,212,0.4); box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,245,212,0.05); }
+    
+    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .mc-squad-info { display: flex; flex-direction: column; }
+    .mc-squad-name { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: 0.02em; }
+    .mc-squad-type { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+    
+    /* Gauge Indicator */
+    .gauge-wrapper { position: relative; width: 50px; height: 50px; }
+    .gauge-svg { transform: rotate(-90deg); width: 50px; height: 50px; overflow: visible; }
+    .g-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
+    .g-fill { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s ease-out; }
+    .gold .g-fill { stroke: #ff9500; filter: drop-shadow(0 0 6px rgba(255,149,0,0.6)); }
+    .green .g-fill { stroke: #39ff14; filter: drop-shadow(0 0 6px rgba(57,255,20,0.6)); }
+    .teal .g-fill { stroke: #00f5d4; filter: drop-shadow(0 0 6px rgba(0,245,212,0.6)); }
+    .gauge-val {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800;
+    }
+    .gold .gauge-val { color: #ff9500; }
+    .green .gauge-val { color: #39ff14; }
+    .teal .gauge-val { color: #00f5d4; }
+
+    /* Insight Block */
+    .ai-insight {
+      background: rgba(255,255,255,0.03); border-left: 2px solid; padding: 10px 12px;
+      border-radius: 4px; font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 14px;
+    }
+    .gold .ai-insight { border-left-color: #ff9500; }
+    .green .ai-insight { border-left-color: #39ff14; }
+    .teal .ai-insight { border-left-color: #00f5d4; }
+    .ai-insight span { font-weight: 700; color: #fff; }
+    
+    /* Team Previews */
+    .team-preview { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .tp-avatars { display: flex; align-items: center; }
+    .tp-ava { 
+      width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #000;
+      margin-left: -8px; overflow: hidden; background: #222;
+    }
+    .tp-ava:first-child { margin-left: 0; }
+    .tp-ava.empty { display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 700; border-color: rgba(255,255,255,0.2); border-style: dashed; }
+    .tp-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .tp-stat { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); }
+    .tp-stat span { font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; color: #fff; }
+
+    /* Match CTA */
+    .match-cta {
+      width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 13px;
+      font-weight: 800; font-family: 'Inter', sans-serif; cursor: pointer; text-transform: uppercase;
+      letter-spacing: 0.02em; transition: transform 0.1s;
+    }
+    .match-cta:active { transform: scale(0.96); }
+    .green .match-cta { background: #39ff14; color: #000; box-shadow: 0 0 15px rgba(57,255,20,0.3); }
+    .teal .match-cta { background: #00f5d4; color: #000; box-shadow: 0 0 15px rgba(0,245,212,0.3); }
+    .gold .match-cta { background: transparent; border: 1px solid #ff9500; color: #ff9500; }
+
+    /* ─── FIXED BOTTOM FILTER + CTA ─── */
+    .fixed-footer-block {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      display: flex; flex-direction: column; 
+      background: linear-gradient(0deg, rgba(6,9,19,1) 20%, rgba(6,9,19,0.95) 75%, transparent 100%);
+    }
+    
+    .filter-scroll {
+      width: 100%; overflow-x: auto; white-space: nowrap; padding: 10px 20px 16px;
+      display: flex; gap: 10px;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    .filter-chip {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px; padding: 8px 14px; font-size: 11px; font-weight: 600;
+      color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s;
+    }
+    .filter-chip.active { background: rgba(0,122,255,0.15); border-color: #007aff; color: #007aff; }
+    
+    .footer-cta-pad { padding: 0 20px 24px; }
+    .primary-btn {
+      width: 100%; padding: 18px 20px; border-radius: 16px; border: none; cursor: pointer;
+      background: #007aff; color: #fff;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+      box-shadow: 0 0 25px rgba(0,122,255,0.4); transition: transform 0.15s ease;
+      text-align: center; text-transform: uppercase; text-decoration: none; display: block;
+    }
+    .primary-btn:active { transform: scale(0.96); }
+
+    /* Slide Animations */
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.3s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND & SONAR -->
+  <div class="bg-map"></div>
+  <div class="sonar-base"></div>
+  <div class="sonar-ring"></div>
+  <div class="sonar-ring"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Profile</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Compatibility</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Squad Search</span>
+      </div>
+      <div class="step-label-global">Screen 14 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+    </div>
+    
+    <!-- GLOBAL NAV DRAWER -->
+    <div class="menu-trigger" onclick="toggleNavDrawer()">
+      <div class="menu-trig-line"></div>
+      <div class="menu-trig-line"></div>
+      <div class="menu-trig-line"></div>
+    </div>
+  </div>
+
+  <!-- DRAWER OVERLAYS -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')"> <!-- Assuming Hall of Heroes shifts down -->
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="content-area">
+    
+    <div class="header-block">
+      <div class="page-title">AI SQUAD COMPATIBILITY</div>
+      <div class="user-context-card">
+        <svg class="mini-radar" viewBox="0 0 100 100">
+          <polygon points="50,10 93.3,35 93.3,85 50,100 6.7,85 6.7,35" fill="rgba(0,245,212,0.2)" stroke="#00f5d4" stroke-width="1.5"/>
+          <polygon points="50,25 75,45 65,75 50,85 35,75 30,50" fill="none" stroke="#39ff14" stroke-width="2"/>
+        </svg>
+        <div class="uc-info">
+          <span class="uc-label">Matching as:</span>
+          <span class="uc-val">FOOTBALL DEFENDER (LVL 1)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN FEED -->
+    <div class="feed-container">
+      
+      <!-- CARD 1 (GREEN - HIGH MATCH) -->
+      <div class="match-card green">
+        <div class="mc-header">
+          <div class="mc-squad-info">
+            <span class="mc-squad-name">HSR ELITE STRIKERS</span>
+            <span class="mc-squad-type">Football Squad</span>
+          </div>
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="16" class="g-bg" />
+              <!-- C = 2*PI*16 = 100.5. 94% of 100.5 = 94.4 offset = 100.5-94.4 = 6.1 -->
+              <circle cx="20" cy="20" r="16" class="g-fill" stroke-dasharray="100.5" stroke-dashoffset="6.1" />
+            </svg>
+            <div class="gauge-val">94<span style="font-size:7px;">%</span></div>
+          </div>
+        </div>
+        
+        <div class="ai-insight">
+          <span>Critical Need:</span> This squad is missing a high-stamina Defender. Your 10/12 Stamina rating is a perfect tactical fit.
+        </div>
+        
+        <div class="team-preview">
+          <div class="tp-avatars">
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=60" alt="p"></div>
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=33" alt="p"></div>
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=12" alt="p"></div>
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=47" alt="p"></div>
+            <div class="tp-ava empty">+1</div>
+          </div>
+          <div class="tp-stat">Current Synergy: <span>88%</span></div>
+        </div>
+        
+        <button class="match-cta" onclick="navTo('fitquest_screen15.html')">Request to Join Squad</button>
+      </div>
+
+      <!-- CARD 2 (TEAL - GYM) -->
+      <div class="match-card teal">
+        <div class="mc-header">
+          <div class="mc-squad-info">
+            <span class="mc-squad-name">BMSIT IRON CORE</span>
+            <span class="mc-squad-type">Gym / Fitness Squad</span>
+          </div>
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="16" class="g-bg" />
+              <!-- 82% of 100.5 = 82.4 -> offset 18.1 -->
+              <circle cx="20" cy="20" r="16" class="g-fill" stroke-dasharray="100.5" stroke-dashoffset="18.1" />
+            </svg>
+            <div class="gauge-val">82<span style="font-size:7px;">%</span></div>
+          </div>
+        </div>
+        
+        <div class="ai-insight">
+          <span>Schedule Sync:</span> Perfect for your morning workout window (6 AM - 7 AM). High compatibility with BMSIT student schedules.
+        </div>
+        
+        <div class="team-preview">
+          <div class="tp-avatars">
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=55" alt="p"></div>
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=25" alt="p"></div>
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=68" alt="p"></div>
+            <div class="tp-ava empty">+2</div>
+          </div>
+          <div class="tp-stat">Pacing: <span>Intense</span></div>
+        </div>
+        
+        <button class="match-cta" onclick="navTo('fitquest_screen15.html')">Join Workout Slot</button>
+      </div>
+
+      <!-- CARD 3 (GOLD - YOGA) -->
+      <div class="match-card gold">
+        <div class="mc-header">
+          <div class="mc-squad-info">
+            <span class="mc-squad-name">ZEN MASTERS</span>
+            <span class="mc-squad-type">Yoga Squad</span>
+          </div>
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="16" class="g-bg" />
+              <!-- 65% of 100.5 = 65.3 -> offset 35.2 -->
+              <circle cx="20" cy="20" r="16" class="g-fill" stroke-dasharray="100.5" stroke-dashoffset="35.2" />
+            </svg>
+            <div class="gauge-val">65<span style="font-size:7px;">%</span></div>
+          </div>
+        </div>
+        
+        <div class="ai-insight">
+          <span>Stat Improvement:</span> Good for improving your Agility stat, though your current profile is Strength-dominant.
+        </div>
+        
+        <div class="team-preview">
+          <div class="tp-avatars">
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=19" alt="p"></div>
+            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=1" alt="p"></div>
+          </div>
+          <div class="tp-stat">Level Base: <span>Beginner</span></div>
+        </div>
+        
+        <button class="match-cta" onclick="navTo('fitquest_screen15.html')">View Squad Profile</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- REMOVED FIXED BOTTOM FOOTER & FILTERS PER REQUEST -->
+
+</div>
+
+<script>
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen13.html'; }, 330);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  navTo(url);
+}
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 4: Quest Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #00f5d4; --purple: #bf5af2; --green: #39ff14;
+      --blue: #00b4d8; --orange: #ff6b35; --dark: #070911;
+    }
+
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #030408; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: var(--dark);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    /* Step Indicator */
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 10px 18px 8px;
+      background: rgba(4,6,12,0.85);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .flow-item { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: var(--teal); text-shadow: 0 0 8px var(--teal); }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: visible; }
+    .progress-fill { height: 100%; width: 20%; background: var(--teal); border-radius: 10px; box-shadow: 0 0 10px var(--teal); }
+
+    /* Meta Header */
+    .meta-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 18px;
+      background: linear-gradient(180deg, rgba(4,6,12,0.95) 0%, rgba(4,6,12,0.8) 50%, rgba(4,6,12,0) 100%);
+      backdrop-filter: blur(8px);
+    }
+    .mh-left-group { display: flex; align-items: center; gap: 10px; }
+    
+    .back-btn {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: var(--teal);
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.4);
+      box-shadow: 0 0 12px rgba(0,245,212,0.2);
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 18px rgba(0,245,212,0.5); }
+    
+    .mh-screen { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .newbie-badge {
+      background: var(--blue); color: #000;
+      font-family: 'Orbitron', sans-serif; font-size: 8px; font-weight: 900;
+      padding: 3px 7px; border-radius: 4px; letter-spacing: 0.1em;
+      box-shadow: 0 0 12px var(--blue);
+    }
+
+    .hero-ring { width: 38px; height: 38px; position: relative; margin-right: 5px; }
+    .hero-ring svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(0,245,212,0.5)); animation: spin 10s linear infinite; }
+    .hero-ring::after {
+      content: '⚡'; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--teal); text-shadow: 0 0 10px var(--teal);
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* ─── SCROLLABLE MAP AREA ─── */
+    .scroll-body {
+      position: absolute; inset: 0; z-index: 10;
+      overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
+    }
+    .scroll-content {
+      position: relative; width: 100%; min-height: 850px; padding-bottom: 120px;
+    }
+
+    /* Fog of War (Cloud layers) */
+    .fog {
+      position: absolute; left: -20%; right: -20%; z-index: 0; pointer-events: none;
+      filter: blur(40px); mix-blend-mode: screen;
+    }
+    .fog-top {
+      top: -150px; height: 360px;
+      background: radial-gradient(ellipse at 50% 60%, rgba(200,210,230,0.5) 0%, rgba(180,185,200,0.3) 40%, transparent 70%),
+                  radial-gradient(ellipse at 20% 50%, rgba(220,230,255,0.4) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 50%, rgba(190,200,220,0.4) 0%, transparent 60%);
+    }
+    .fog-bottom {
+      bottom: -150px; height: 400px;
+      background: radial-gradient(ellipse at 50% 40%, rgba(200,210,230,0.6) 0%, rgba(180,185,200,0.4) 50%, transparent 70%),
+                  radial-gradient(ellipse at 15% 50%, rgba(220,230,255,0.5) 0%, transparent 60%),
+                  radial-gradient(ellipse at 85% 50%, rgba(190,200,220,0.5) 0%, transparent 60%);
+    }
+
+    #cityCanvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
+    }
+
+    /* ─── HERO PITCH VISUAL ─── */
+    .hero-pitch-container {
+      position: relative; width: 100%; display: flex; justify-content: center;
+      margin-top: 140px; margin-bottom: 20px; z-index: 20;
+    }
+    .hero-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 250px; height: 120px; border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0,245,212,0.4) 0%, transparent 70%);
+      filter: blur(20px); z-index: -1;
+    }
+
+    /* ─── CONTENT BLOCKS ─── */
+    .quest-header {
+      padding: 0 20px; position: relative; z-index: 25; margin-bottom: 24px;
+    }
+    .quest-label {
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+      color: var(--teal); letter-spacing: 0.15em; text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0,245,212,0.4); margin-bottom: 6px;
+    }
+    .quest-title {
+      font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800;
+      color: #fff; line-height: 1.1; letter-spacing: -0.02em;
+    }
+
+    /* Glassmorphism Feature List */
+    .feature-card {
+      margin: 0 20px 24px; position: relative; z-index: 25;
+      background: rgba(10,14,28,0.65); border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 20px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px;
+    }
+    .feature-item:last-child { margin-bottom: 0; }
+    
+    .feat-icon-wrap {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    /* Specific Icon Colors */
+    .ic-turf { color: var(--green); text-shadow: 0 0 12px var(--green); border-color: rgba(57,255,20,0.3); background: rgba(57,255,20,0.05); }
+    .ic-water { color: var(--blue); text-shadow: 0 0 12px var(--blue); border-color: rgba(0,180,216,0.3); background: rgba(0,180,216,0.05); }
+    .ic-light { color: #facc15; text-shadow: 0 0 12px #facc15; border-color: rgba(250,204,21,0.3); background: rgba(250,204,21,0.05); }
+    .ic-gift { color: var(--purple); text-shadow: 0 0 12px var(--purple); border-color: rgba(191,90,242,0.3); background: rgba(191,90,242,0.05); }
+
+    .feat-text { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+    .feat-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.03em; }
+    .feat-desc { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.55); line-height: 1.4; }
+
+    /* Promo Highlight */
+    .promo-highlight .feat-title { color: var(--teal); text-shadow: 0 0 10px rgba(0,245,212,0.4); }
+
+    /* Team Status Bar */
+    .team-status {
+      margin: 0 20px; position: relative; z-index: 25;
+      background: linear-gradient(90deg, rgba(10,14,28,0.8), rgba(0,245,212,0.05));
+      border: 1px solid rgba(0,245,212,0.2); border-radius: 100px;
+      padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .ts-avatars { display: flex; align-items: center; }
+    .avatar { 
+      width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #060c1b; margin-left: -8px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
+    }
+    .avatar:first-child { margin-left: 0; }
+    .ava-1 { background: radial-gradient(circle at top right, #3b82f6, #1e3a8a); }
+    .ava-2 { background: radial-gradient(circle at top right, #ec4899, #831843); }
+    .ava-3 { background: radial-gradient(circle at top right, #10b981, #064e3b); }
+    .ava-4 { background: radial-gradient(circle at top right, #f59e0b, #064e3b); }
+    .ts-text {
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; color: #fff;
+      letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;
+    }
+    .ts-count { color: var(--teal); font-weight: 800; text-shadow: 0 0 8px var(--teal); }
+
+    /* ─── FIXED CTA FOOTER ─── */
+    .fixed-footer-layer {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 24px; pointer-events: none;
+      background: linear-gradient(0deg, rgba(4,6,12,0.95) 0%, rgba(4,6,12,0.8) 50%, transparent 100%);
+      backdrop-filter: blur(8px);
+    }
+    .fixed-footer-layer > * { pointer-events: auto; }
+    .cta-btn {
+      width: 100%; padding: 18px 24px; border-radius: 14px; border: none; cursor: pointer;
+      background: var(--green); color: #000;
+      font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -0.01em;
+      box-shadow: 0 0 20px rgba(57,255,20,0.35), inset 0 2px 4px rgba(255,255,255,0.5);
+      transition: transform 0.15s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .cta-btn:active { transform: scale(0.96); }
+
+    /* Page transition animations */
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.32s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.32s ease forwards; }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.32s ease forwards; }
+  
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      position: absolute; top: 55px; right: 20px; z-index: 900;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+    .nav-drawer.open { right: 0; }
+    
+    .drawer-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uinfo { display: flex; flex-direction: column; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; letter-spacing: 0.05em; text-transform: uppercase; }
+    
+    .drawer-close {
+      width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .drawer-close:hover { background: rgba(255,59,48,0.2); border-color: #ff3b30; color: #ff3b30; }
+    
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
+    .drawer-link {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border-radius: 12px; background: rgba(0,245,212,0.05); border: 1px solid transparent;
+      text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drawer-link:hover {
+      background: rgba(0,245,212,0.15); border-color: rgba(0,245,212,0.4);
+      transform: translateX(-5px); box-shadow: 0 4px 15px rgba(0,245,212,0.1);
+    }
+    .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Discovery</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Booking</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Community</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="meta-header">
+      <div class="mh-left-group">
+        <div class="back-btn" onclick="navigateBack()">←</div>
+        <div class="newbie-badge">NEWBIE</div>
+        <div class="mh-screen">Screen 4 of 20</div>
+      </div>
+      <div class="hero-ring">
+        <svg viewBox="0 0 100 100" fill="none" stroke="url(#qGrad)" stroke-width="8" stroke-linecap="round">
+          <defs>
+            <linearGradient id="qGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00b4d8"/><stop offset="100%" stop-color="#bf5af2"/></linearGradient>
+          </defs>
+          <path d="M 50 15 A 35 35 0 1 1 20 75" />
+          <line x1="70" y1="70" x2="85" y2="85" stroke="#bf5af2" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE MAP BODY -->
+  <div class="scroll-body">
+    <div class="fog fog-top" style="position:fixed; top:120px; left:-20%; width:140%; height:250px; z-index:0;"></div>
+    
+    <div class="scroll-content">
+      <!-- 3D Isometric Map Background -->
+      <canvas id="cityCanvas"></canvas>
+
+      <!-- Hero Pitch Visual -->
+      <div class="hero-pitch-container">
+        <div class="hero-glow"></div>
+        <svg width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9));">
+          <g transform="translate(140, 45) scale(1, 0.5) rotate(45)">
+            <!-- Base footprint -->
+            <rect x="-80" y="-100" width="160" height="200" fill="#1da944" stroke="#00f5d4" stroke-width="2.5"/>
+            <!-- Inner white bounds -->
+            <rect x="-72" y="-92" width="144" height="184" fill="none" stroke="#fff" stroke-width="2"/>
+            <!-- Center line & circle -->
+            <line x1="-72" y1="0" x2="72" y2="0" stroke="#fff" stroke-width="2"/>
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#fff" stroke-width="2"/>
+            <!-- Goal Areas -->
+            <rect x="-30" y="-100" width="60" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+            <rect x="-30" y="80" width="60" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+          </g>
+          
+          <!-- 3D Elements standing up -->
+          <g transform="translate(140, 45)">
+             <!-- Red Team Player -->
+             <ellipse cx="-15" cy="50" rx="5" ry="3" fill="rgba(0,0,0,0.5)"/>
+             <path d="M-15,50 L-10,20 L-20,20 Z" fill="#ff4444"/>
+             <circle cx="-15" cy="15" r="4.5" fill="#f0c0a0"/>
+             
+             <!-- Blue Team Player -->
+             <ellipse cx="20" cy="10" rx="5" ry="3" fill="rgba(0,0,0,0.5)"/>
+             <path d="M20,10 L25,-20 L15,-20 Z" fill="#2a2aff"/>
+             <circle cx="20" cy="-25" r="4.5" fill="#f0c0a0"/>
+
+             <!-- Ball -->
+             <ellipse cx="2" cy="38" rx="6" ry="4" fill="rgba(0,0,0,0.5)"/>
+             <circle cx="2" cy="34" r="4" fill="#00f5d4" stroke="#fff" stroke-width="0.5"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Quest Info -->
+      <div class="quest-header">
+        <div class="quest-label">Quest Objective:</div>
+        <div class="quest-title">Koramangala Football Arena <span style="color:var(--teal)">(Level 1)</span></div>
+      </div>
+
+      <!-- Feature List -->
+      <div class="feature-card">
+        
+        <div class="feature-item">
+          <div class="feat-icon-wrap ic-turf">⚽</div>
+          <div class="feat-text">
+            <div class="feat-title">Flawless Pitch</div>
+            <div class="feat-desc">High-Grip Pro Turf for maximum control.</div>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap ic-water">💧</div>
+          <div class="feat-text">
+            <div class="feat-title">Stamina Zone</div>
+            <div class="feat-desc">Complimentary Hydration Station equipped.</div>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap ic-light">🔦</div>
+          <div class="feat-text">
+            <div class="feat-title">Night Vision</div>
+            <div class="feat-desc">Pro Floodlights activated for evening matches.</div>
+          </div>
+        </div>
+
+        <div class="feature-item promo-highlight" style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.1);">
+          <div class="feat-icon-wrap ic-gift">🎁</div>
+          <div class="feat-text">
+            <div class="feat-title">Newbie Shield Active</div>
+            <div class="feat-desc">20% Discount applied automatically at checkout!</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Team Status -->
+      <div class="team-status">
+        <div class="ts-avatars">
+          <div class="avatar ava-1">🙎‍♂️</div>
+          <div class="avatar ava-2">🙍‍♀️</div>
+          <div class="avatar ava-3">🙎‍♂️</div>
+          <div class="avatar ava-4">🙍‍♀️</div>
+        </div>
+        <div class="ts-text">READY TEAMS: <span class="ts-count">4/5</span> HSR Ninjas</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom fog fixed inside scroll container to wrap content -->
+    <div class="fog fog-bottom" style="position:fixed; bottom:0; left:-20%; width:140%; height:250px; z-index:0;"></div>
+  </div>
+
+  <!-- FIXED BOTTOM CTA LAYER -->
+  <div class="fixed-footer-layer">
+    <button class="cta-btn" onclick="navTo('fitquest_screen5.html')">
+      INITIATE QUEST BOOKING
+    </button>
+  </div>
+
+
+  <!-- GLOBAL NAV DRAWER -->
+  <div class="menu-trigger" onclick="toggleNavDrawer()">
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+    <div class="menu-trig-line"></div>
+  </div>
+  
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) {
+  if(typeof navTo === 'function') { navTo(url); }
+  else { window.location.href = url; }
+}
+
+/* ── Isometric 3D City Map Generator ── */
+(function() {
+  const canvas = document.getElementById('cityCanvas');
+  const W = Math.min(390, window.innerWidth);
+  const H = 900;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  function drawMap(t) {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#05070e';
+    ctx.fillRect(0,0,W,H);
+
+    // Grid offset
+    const gx = W/2, gy = H/4 - 100;
+    const cw = 45, ch = 22.5;
+
+    // Draw isometric building blocks
+    let seed = 9999;
+    function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    
+    const blocks = [];
+    for(let r=0; r<18; r++){
+      for(let c=0; c<18; c++){
+        if (rand() < 0.4 && !(c > 6 && c < 12 && r > 4 && r < 12)) { 
+          blocks.push({c, r, h: 20 + rand() * 60});
+        }
+      }
+    }
+    blocks.sort((a,b) => (a.c+a.r) - (b.c+b.r));
+
+    blocks.forEach(b => {
+      let x0 = gx + (b.c - b.r)*cw;
+      let y0 = gy + (b.c + b.r)*ch;
+      
+      // Top face
+      ctx.beginPath(); ctx.moveTo(x0, y0 - b.h); ctx.lineTo(x0+cw, y0+ch - b.h); ctx.lineTo(x0, y0+2*ch - b.h); ctx.lineTo(x0-cw, y0+ch - b.h);
+      ctx.fillStyle = '#0a0f1d'; ctx.fill();
+      ctx.strokeStyle = `rgba(0,180,216,0.3)`; ctx.lineWidth = 0.5; ctx.stroke();
+      
+      // Left face
+      ctx.beginPath(); ctx.moveTo(x0-cw, y0+ch - b.h); ctx.lineTo(x0, y0+2*ch - b.h); ctx.lineTo(x0, y0+2*ch); ctx.lineTo(x0-cw, y0+ch);
+      ctx.fillStyle = '#0b1226'; ctx.fill();
+      ctx.strokeStyle = `rgba(191,90,242,0.3)`; ctx.stroke();
+
+      // Right face
+      ctx.beginPath(); ctx.moveTo(x0, y0+2*ch - b.h); ctx.lineTo(x0+cw, y0+ch - b.h); ctx.lineTo(x0+cw, y0+ch); ctx.lineTo(x0, y0+2*ch);
+      ctx.fillStyle = '#060a16'; ctx.fill();
+    });
+  }
+
+  // Draw static map for Screen 4 since focus is on the content
+  drawMap(1.5);
+})();
+
+function navTo(url) {
+  document.querySelector('.phone-shell').classList.add('slide-out-left');
+  setTimeout(() => window.location.href = url, 320);
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen3.html'; }, 330);
+}
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>

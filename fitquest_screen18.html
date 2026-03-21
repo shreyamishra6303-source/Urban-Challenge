@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 18: App Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; overflow: hidden; color: #fff;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── BACKGROUND ─── */
+    .bg-main {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(circle at 50% 10%, rgba(0,245,212,0.1) 0%, #060913 70%);
+    }
+    .grid-overlay {
+      position: absolute; inset: 0; opacity: 0.05; pointer-events: none;
+      background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* ─── FIXED TOP UI ─── */
+    .fixed-ui-layer {
+      position: sticky; top: 0; left: 0; right: 0;
+      z-index: 500; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px;
+    }
+    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 90%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 18/20 */
+
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px 16px;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+    .page-title { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900; color: #fff; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* ─── SCROLLABLE CONTENT ─── */
+    .content-area {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 20px; display: flex; flex-direction: column; gap: 24px;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    /* Section Styling */
+    .settings-section { display: flex; flex-direction: column; gap: 12px; }
+    .section-header {
+      font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 800;
+      color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.15em;
+      padding-left: 4px;
+    }
+
+    /* Glass Card */
+    .glass-card {
+      background: rgba(16, 22, 34, 0.4); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px; padding: 16px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .glass-card.risk { border-color: rgba(255, 61, 113, 0.3); background: rgba(255, 61, 113, 0.05); }
+
+    /* Setting Row */
+    .setting-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .setting-row:last-child { border-bottom: none; }
+    .setting-label-box { display: flex; flex-direction: column; gap: 4px; }
+    .setting-name { font-size: 14px; font-weight: 700; color: #fff; }
+    .setting-desc { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+    /* Toggles */
+    .toggle {
+      position: relative; width: 44px; height: 24px;
+      background: rgba(255,255,255,0.1); border-radius: 20px;
+      cursor: pointer; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.05);
+    }
+    .toggle::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; background: #fff; border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle.on { background: rgba(0,245,212,0.2); border-color: #00f5d4; }
+    .toggle.on::after { left: 23px; background: #00f5d4; box-shadow: 0 0 10px #00f5d4; }
+
+    /* Accordion */
+    .accordion-header {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; padding: 4px 0;
+    }
+    .accordion-content {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
+      display: flex; flex-direction: column; gap: 14px; padding-top: 0;
+    }
+    .accordion.open .accordion-content { max-height: 200px; padding-top: 16px; }
+    .accordion-arrow { font-size: 12px; color: #00f5d4; transition: transform 0.3s; }
+    .accordion.open .accordion-arrow { transform: rotate(180deg); }
+
+    /* Checkbox */
+    .checkbox-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+    .checkbox-box {
+      width: 18px; height: 18px; border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .checkbox-row.active .checkbox-box { border-color: #00f5d4; background: rgba(0,245,212,0.1); box-shadow: 0 0 8px rgba(0,245,212,0.3); }
+    .checkbox-box::after {
+      content: '✓'; font-size: 12px; color: #00f5d4; opacity: 0; transform: scale(0.5); transition: all 0.2s;
+    }
+    .checkbox-row.active .checkbox-box::after { opacity: 1; transform: scale(1); }
+    .checkbox-label { font-size: 13px; color: rgba(255,255,255,0.8); }
+
+    /* Sliders */
+    .slider-box { display: flex; flex-direction: column; gap: 12px; padding: 12px 0; }
+    .slider-header { display: flex; justify-content: space-between; }
+    .slider-val { color: #00f5d4; font-size: 12px; font-family: 'Orbitron', sans-serif; font-weight: 700; text-shadow: 0 0 5px #00f5d4; }
+    
+    .range-input {
+      -webkit-appearance: none; width: 100%; height: 4px; border-radius: 5px;
+      background: rgba(255,255,255,0.1); outline: none; transition: 0.2s;
+    }
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: #00f5d4; cursor: pointer; border: 2px solid #fff;
+      box-shadow: 0 0 15px #00f5d4;
+    }
+
+    /* Buttons */
+    .risk-btn {
+      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255, 61, 113, 0.4);
+      background: rgba(255, 61, 113, 0.1); color: #ff3d71;
+      font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 12px;
+    }
+    .risk-btn:hover { background: #ff3d71; color: #000; box-shadow: 0 0 20px rgba(255, 61, 113, 0.4); }
+    .risk-btn:last-child { margin-bottom: 0; }
+    .risk-btn.secondary { background: transparent; border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+
+    /* Socials */
+    .social-links {
+      display: flex; align-items: center; justify-content: center; gap: 24px;
+      padding: 20px 0 40px; margin-top: auto;
+    }
+    .soc-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer; transition: all 0.2s; font-size: 20px;
+    }
+    .soc-icon:hover {
+      background: rgba(0,245,212,0.1); border-color: #00f5d4; color: #00f5d4;
+      box-shadow: 0 0 15px rgba(0,245,212,0.3); transform: translateY(-3px);
+    }
+    .join-text {
+      text-align: center; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;
+    }
+
+    /* Animations */
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-main"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Community</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Settings</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Control Panel</span>
+      </div>
+      <div class="step-label-global">Screen 18 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="page-title">SYSTEM SETTINGS</div>
+      <div style="width:32px;"></div> <!-- Spacer -->
+    </div>
+  </div>
+
+  <!-- SCROLLABLE CONTENT -->
+  <div class="content-area">
+
+    <!-- PROFILE PRIVACY -->
+    <section class="settings-section">
+      <div class="section-header">Hero Profile Privacy</div>
+      <div class="glass-card">
+        <div class="setting-row">
+          <div class="setting-label-box">
+            <span class="setting-name">Public Hero Profile</span>
+            <span class="setting-desc">Allow others to see your Skill Matrix.</span>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label-box">
+            <span class="setting-name">Show My Location</span>
+            <span class="setting-desc">Visible on Global Map during Quests.</span>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label-box">
+            <span class="setting-name">Allow Squad Invitations</span>
+            <span class="setting-desc">Receive Scouter alerts for matches.</span>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="settings-section">
+      <div class="section-header">Communications</div>
+      <div class="glass-card accordion" id="notifAccordion">
+        <div class="accordion-header" onclick="toggleAccordion('notifAccordion')">
+          <div class="setting-label-box">
+            <span class="setting-name">Notification Channels</span>
+            <span class="setting-desc">Customize your tactical alerts.</span>
+          </div>
+          <div class="accordion-arrow">▼</div>
+        </div>
+        <div class="accordion-content">
+          <div class="checkbox-row active" onclick="this.classList.toggle('active')">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-label">Quest Reminders (30m before)</span>
+          </div>
+          <div class="checkbox-row active" onclick="this.classList.toggle('active')">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-label">Squad Chat Alerts</span>
+          </div>
+          <div class="checkbox-row" onclick="this.classList.toggle('active')">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-label">Level Up Celebrations</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUDIO VISUAL -->
+    <section class="settings-section">
+      <div class="section-header">Interface & Feedback</div>
+      <div class="glass-card">
+        <div class="slider-box">
+          <div class="slider-header">
+            <span class="setting-name">Haptic Feedback</span>
+            <span class="slider-val" id="hapticVal">75%</span>
+          </div>
+          <input type="range" class="range-input" min="0" max="100" value="75" oninput="updateSlider('hapticVal', this.value)">
+        </div>
+        <div class="slider-box">
+          <div class="slider-header">
+            <span class="setting-name">Map Neon Brightness</span>
+            <span class="slider-val" id="mapVal">90%</span>
+          </div>
+          <input type="range" class="range-input" min="20" max="100" value="90" oninput="updateSlider('mapVal', this.value)">
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCOUNT ACTIONS -->
+    <section class="settings-section">
+      <div class="section-header">Protocol Termination</div>
+      <div class="glass-card risk">
+        <button class="risk-btn secondary" onclick="alert('Cache Cleared')">Clear Quest Cache</button>
+        <button class="risk-btn" onclick="alert('Logging out...')">Logout of FitQuest HQ</button>
+      </div>
+    </section>
+
+    <!-- SOCIAL LINKS -->
+    <div style="margin-top:20px;">
+      <div class="join-text">Join the FitQuest HQ</div>
+      <div class="social-links">
+        <div class="soc-icon">📱</div>
+        <div class="soc-icon">💬</div>
+        <div class="soc-icon">🐦</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+  shell.style.transform = 'translateX(100%)';
+  shell.style.opacity = '0';
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.history.back(); }, 300);
+}
+
+function toggleAccordion(id) {
+  const acc = document.getElementById(id);
+  acc.classList.toggle('open');
+}
+
+function updateSlider(valId, val) {
+  document.getElementById(valId).innerText = val + '%';
+}
+
+// Entry transition
+(function() {
+  try {
+    const d = sessionStorage.getItem('navDir');
+    const s = document.querySelector('.phone-shell');
+    if (!s) return;
+    s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+    setTimeout(() => {
+        s.classList.remove('slide-in-left', 'slide-in-right');
+        s.style.opacity = '1';
+        s.style.transform = 'none';
+    }, 400);
+    sessionStorage.removeItem('navDir');
+  } catch(e) { console.error("Nav error:", e); }
+})();
+</script>
+</body>
+</html>

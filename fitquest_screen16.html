@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 16: Hall of Heroes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; overflow: hidden; color: #fff;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── PRESTIGE BACKGROUND ─── */
+    .bg-main {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: 
+        radial-gradient(circle at 50% 10%, rgba(255,215,0,0.08) 0%, transparent 60%),
+        radial-gradient(circle at 10% 90%, rgba(224,224,224,0.05) 0%, transparent 50%),
+        #060913;
+    }
+    .grid-overlay {
+      position: absolute; inset: 0; opacity: 0.1;
+      background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(255,215,0,0.5); }
+    .flow-item.active { color: #FFD700; text-shadow: 0 0 8px #FFD700; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 80%; background: #FFD700; border-radius: 10px; box-shadow: 0 0 10px #FFD700; } /* 16/20 */
+
+    /* Top Nav (Inline) */
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 4px; pointer-events: auto;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #FFD700;
+      background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.3);
+      box-shadow: 0 0 10px rgba(255,215,0,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,215,0,0.15); transform: scale(1.05); }
+
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
+      box-shadow: 0 0 15px rgba(255,215,0,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(255,215,0,0.2); box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #FFD700; border-radius: 2px; box-shadow: 0 0 5px #FFD700; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(255,215,0,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8); pointer-events: auto;
+    }
+    .nav-drawer.open { right: 0; }
+    
+    /* Dual Tab Navigation */
+    .tab-nav {
+      display: flex; gap: 10px; padding: 120px 20px 20px;
+      position: relative; z-index: 100;
+    }
+    .tab-btn {
+      flex: 1; padding: 12px 0; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.4);
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+      cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .tab-btn.active {
+      background: rgba(255,215,0,0.1); border-color: #FFD700; color: #FFD700;
+      box-shadow: 0 0 15px rgba(255,215,0,0.2); text-shadow: 0 0 5px rgba(255,215,0,0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding-bottom: 120px;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    .tab-content { display: none; animation: fadeIn 0.4s ease forwards; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Vouch For Teammates (List) */
+    .vouch-list { padding: 0 20px; display: flex; flex-direction: column; gap: 16px; }
+    
+    .vouch-card {
+      background: rgba(16, 22, 34, 0.4); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 20px; padding: 16px; position: relative;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: transform 0.2s;
+    }
+    .vc-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .vc-ava { width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid rgba(255,215,0,0.4); overflow: hidden; }
+    .vc-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .vc-info { flex: 1; }
+    .vc-name { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .vc-role { font-size: 11px; font-weight: 700; color: #FFD700; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; }
+    
+    .vc-actions { display: flex; gap: 10px; }
+    .vouch-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 10px 0; border-radius: 12px; border: 1.5px solid transparent;
+      background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .vouch-btn span.icon { font-size: 18px; line-height: 1; }
+    .vouch-btn span.label { font-size: 8px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+    
+    /* Vouch Variations */
+    .vbtn-tactical:hover { background: rgba(0,122,255,0.1); border-color: #007aff; }
+    .vbtn-tactical:hover .label { color: #007aff; }
+    .vbtn-tactical.sent { background: #007aff; border-color: #007aff; animation: bounce 0.4s; }
+    .vbtn-tactical.sent .label, .vbtn-tactical.sent .icon { color: #fff; }
+
+    .vbtn-stamina:hover { background: rgba(255,149,0,0.1); border-color: #ff9500; }
+    .vbtn-stamina:hover .label { color: #ff9500; }
+    .vbtn-stamina.sent { background: #ff9500; border-color: #ff9500; animation: bounce 0.4s; }
+    .vbtn-stamina.sent .label, .vbtn-stamina.sent .icon { color: #fff; }
+
+    .vbtn-synergy:hover { background: rgba(191,90,242,0.1); border-color: #bf5af2; }
+    .vbtn-synergy:hover .label { color: #bf5af2; }
+    .vbtn-synergy.sent { background: #bf5af2; border-color: #bf5af2; animation: bounce 0.4s; }
+    .vbtn-synergy.sent .label, .vbtn-synergy.sent .icon { color: #fff; }
+
+    @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+    /* My Endorsements (Summary) */
+    .my-endo { padding: 0 20px; text-align: center; }
+    .rep-score-block { margin: 20px 0 40px; }
+    .rep-label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 10px; }
+    .rep-val { font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 900; color: #FFD700; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+    .rep-unit { font-size: 14px; font-weight: 800; color: #FFD700; opacity: 0.7; }
+    
+    .badges-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px; }
+    .prestige-badge {
+      background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,215,0,0.3); border-radius: 16px; padding: 20px 14px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .pb-icon { font-size: 28px; filter: drop-shadow(0 0 10px gold); }
+    .pb-name { font-size: 12px; font-weight: 800; color: #fff; line-height: 1.2; }
+    .pb-loc { font-size: 9px; font-weight: 700; color: #FFD700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; }
+
+    /* ─── FIXED BOTTOM CTA ─── */
+    .fixed-footer-block {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 20px 30px; 
+      background: linear-gradient(0deg, rgba(6,9,19,1) 30%, rgba(6,9,19,0.8) 70%, transparent 100%);
+    }
+    .primary-btn {
+      width: 100%; padding: 20px; border-radius: 16px; border: none; cursor: pointer;
+      background: #39ff14; color: #000;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.05em;
+      box-shadow: 0 0 25px rgba(57,255,20,0.5); transition: transform 0.15s ease;
+      text-align: center; text-transform: uppercase; text-decoration: none; display: block;
+    }
+    .primary-btn:active { transform: scale(0.96); }
+
+    /* Drawer Styles re-inclusion */
+    .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava-side { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.3); overflow: hidden; }
+    .drawer-ava-side img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; text-transform: uppercase; }
+    .drawer-close { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; }
+    .drawer-link { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; background: rgba(0,245,212,0.05); text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* Animation */
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.3s ease forwards; }
+    .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
+    .phone-shell.slide-out-left { animation: slideOutLeft 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-main"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Community</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Reputation</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Hall of Heroes</span>
+      </div>
+      <div class="step-label-global">Screen 16 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="menu-trigger" onclick="toggleNavDrawer()">
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER OVERLAYS -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava-side"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS NAV -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('vouch')">Vouch For Teammates</button>
+    <button class="tab-btn" onclick="switchTab('my-rep')">My Endorsements</button>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div class="content-area">
+    
+    <!-- TAB 1: VOUCH LIST -->
+    <div id="tab-vouch" class="tab-content active">
+      <div class="vouch-list">
+        
+        <!-- CARD 1: AMAN -->
+        <div class="vouch-card">
+          <div class="vc-top">
+            <div class="vc-ava"><img src="https://i.pravatar.cc/100?img=53" alt="Aman"></div>
+            <div class="vc-info">
+              <div class="vc-name">Aman Sharma</div>
+              <div class="vc-role">Primary: Striker ⚽</div>
+            </div>
+          </div>
+          <div class="vc-actions">
+            <button class="vouch-btn vbtn-tactical" onclick="vouch(this)">
+              <span class="icon">🧭</span><span class="label">Tactical</span>
+            </button>
+            <button class="vouch-btn vbtn-stamina" onclick="vouch(this)">
+              <span class="icon">⚡</span><span class="label">Stamina</span>
+            </button>
+            <button class="vouch-btn vbtn-synergy" onclick="vouch(this)">
+              <span class="icon">❤️</span><span class="label">Synergy</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 2: PRIYA -->
+        <div class="vouch-card">
+          <div class="vc-top">
+            <div class="vc-ava"><img src="https://i.pravatar.cc/100?img=16" alt="Priya"></div>
+            <div class="vc-info">
+              <div class="vc-name">Priya Desai</div>
+              <div class="vc-role">Primary: Midfielder 🧘</div>
+            </div>
+          </div>
+          <div class="vc-actions">
+            <button class="vouch-btn vbtn-tactical" onclick="vouch(this)">
+              <span class="icon">🧭</span><span class="label">Tactical</span>
+            </button>
+            <button class="vouch-btn vbtn-stamina" onclick="vouch(this)">
+              <span class="icon">⚡</span><span class="label">Stamina</span>
+            </button>
+            <button class="vouch-btn vbtn-synergy" onclick="vouch(this)">
+              <span class="icon">❤️</span><span class="label">Synergy</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: COACH RAHUL -->
+        <div class="vouch-card">
+          <div class="vc-top">
+            <div class="vc-ava"><img src="https://i.pravatar.cc/100?img=12" alt="Rahul"></div>
+            <div class="vc-info">
+              <div class="vc-name">Coach Rahul</div>
+              <div class="vc-role">Primary: Coach 📋</div>
+            </div>
+          </div>
+          <div class="vc-actions">
+            <button class="vouch-btn vbtn-tactical" onclick="vouch(this)">
+              <span class="icon">🧭</span><span class="label">Tactical</span>
+            </button>
+            <button class="vouch-btn vbtn-stamina" onclick="vouch(this)">
+              <span class="icon">⚡</span><span class="label">Stamina</span>
+            </button>
+            <button class="vouch-btn vbtn-synergy" onclick="vouch(this)">
+              <span class="icon">❤️</span><span class="label">Synergy</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: MY ENDORSEMENTS -->
+    <div id="tab-my-rep" class="tab-content">
+      <div class="my-endo">
+        <div class="rep-score-block">
+          <div class="rep-label">Reputation Status</div>
+          <div class="rep-val">980 <span class="rep-unit">VOUCHES</span></div>
+        </div>
+        
+        <div class="rep-label" style="text-align: left; margin-left: 10px;">Elite Badges</div>
+        <div class="badges-summary">
+          <div class="prestige-badge">
+            <span class="pb-icon">🏆</span>
+            <span class="pb-name">Top Tactician</span>
+            <span class="pb-loc">HSR Sector 7</span>
+          </div>
+          <div class="prestige-badge">
+            <span class="pb-icon">💎</span>
+            <span class="pb-name">Unstoppable</span>
+            <span class="pb-loc">Level 2 Elite</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FIXED BOTTOM FOOTER -->
+  <div class="fixed-footer-block">
+    <button class="primary-btn" onclick="navTo('fitquest_screen17.html')">Go to Arena Feed (Social)</button>
+  </div>
+
+</div>
+
+<script>
+function switchTab(target) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  
+  if (target === 'vouch') {
+    document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+    document.getElementById('tab-vouch').classList.add('active');
+  } else {
+    document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+    document.getElementById('tab-my-rep').classList.add('active');
+  }
+}
+
+function vouch(btn) {
+  if (btn.classList.contains('sent')) return;
+  btn.classList.add('sent');
+  const label = btn.querySelector('.label');
+  const original = label.innerText;
+  label.innerText = 'VOUCHED!';
+  setTimeout(() => { 
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+  }, 500);
+}
+
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-right');
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.location.href = 'fitquest_screen15.html'; }, 330);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) { navTo(url); }
+
+// Entry transition
+(function() {
+  const d = sessionStorage.getItem('navDir');
+  const s = document.querySelector('.phone-shell');
+  s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+  setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>
