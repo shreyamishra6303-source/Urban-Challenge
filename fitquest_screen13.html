@@ -287,6 +287,19 @@
     .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
     .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
     .phone-shell.slide-out-left { animation: slideOutLeft 0.3s ease forwards; }
+
+    /* AI Scout Pulse Animation */
+    @keyframes scoutPulse {
+      0% { box-shadow: 0 0 15px rgba(0,245,212,0.4); transform: scale(1); }
+      50% { box-shadow: 0 0 40px rgba(0,245,212,0.8); transform: scale(1.02); }
+      100% { box-shadow: 0 0 15px rgba(0,245,212,0.4); transform: scale(1); }
+    }
+    .pulse-loading {
+      animation: scoutPulse 0.4s ease-in-out infinite !important;
+      background: rgba(0,245,212,0.3) !important;
+      border-color: #fff !important;
+      color: #fff !important;
+    }
   </style>
 </head>
 <body>
@@ -340,10 +353,10 @@
       <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
       <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
@@ -465,7 +478,7 @@
 
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
-    <button class="primary-btn" onclick="navTo('fitquest_screen15.html')">Find Compatible Squads to Level Up</button>
+    <button class="primary-btn" id="scoutBtn" onclick="startScout('fitquest_screen14.html')">Find Compatible Squads to Level Up</button>
   </div>
 
 </div>
@@ -482,6 +495,17 @@ function navTo(url) {
   const shell = document.querySelector('.phone-shell');
   shell.classList.add('slide-out-left');
   setTimeout(() => { window.location.href = url; }, 330);
+}
+
+function startScout(url) {
+  const btn = document.getElementById('scoutBtn');
+  btn.classList.add('pulse-loading');
+  btn.innerText = "INITIALIZING AI SCOUT...";
+  
+  // Brief delay to show off the pulse before navigating
+  setTimeout(() => {
+    navTo(url);
+  }, 800);
 }
 
 function toggleNavDrawer() {
