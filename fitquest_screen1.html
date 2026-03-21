@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FitQuest Bangalore – Screen 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --neon-teal: #00f5d4;
+      --neon-purple: #bf5af2;
+      --neon-green: #39ff14;
+      --neon-blue: #00b4d8;
+      --neon-pink: #ff2d78;
+      --dark-bg: #050b18;
+      --card-glass: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.12);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    /* ── Phone Shell ── */
+    .phone-shell {
+      position: relative;
+      width: 390px;
+      max-width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      background: var(--dark-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── 3D Bangalore Map Canvas ── */
+    .map-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .map-canvas canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Overlay gradient for readability */
+    .map-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(5,11,24,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 100%, rgba(5,11,24,0.95) 0%, rgba(5,11,24,0.7) 55%, transparent 80%);
+    }
+
+    /* ── Content Wrapper ── */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: visible;
+      padding: 0 18px 20px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* ══════════════════════════════
+       STEP INDICATOR
+    ══════════════════════════════ */
+    .step-indicator {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      flex-shrink: 0;
+      padding: 10px 18px 8px;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,245,212,0.25);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.7);
+    }
+
+    .step-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .flow-item {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.3s;
+    }
+
+    .flow-item.active {
+      color: var(--neon-teal);
+      text-shadow: 0 0 8px var(--neon-teal);
+    }
+
+    .flow-arrow {
+      color: rgba(255,255,255,0.2);
+      font-size: 10px;
+    }
+
+    .progress-track {
+      position: relative;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 5%; /* 1/20 */
+      background: linear-gradient(90deg, var(--neon-teal), var(--neon-purple));
+      border-radius: 100px;
+      box-shadow: 0 0 10px var(--neon-teal), 0 0 20px rgba(0,245,212,0.4);
+      animation: progressPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes progressPulse {
+      0%, 100% { box-shadow: 0 0 6px var(--neon-teal); }
+      50% { box-shadow: 0 0 14px var(--neon-teal), 0 0 28px rgba(0,245,212,0.5); }
+    }
+
+    .step-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 5px;
+    }
+
+    .step-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--neon-teal);
+      letter-spacing: 0.12em;
+      text-shadow: 0 0 8px var(--neon-teal);
+    }
+
+    .step-fraction {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.06em;
+    }
+
+    /* ══════════════════════════════
+       HEADER / LOGO
+    ══════════════════════════════ */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 18px;
+      padding-bottom: 10px;
+    }
+
+    .logo-ring {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+    }
+
+    .logo-ring svg {
+      width: 100%;
+      height: 100%;
+      animation: rotateLogo 8s linear infinite;
+      filter: drop-shadow(0 0 12px var(--neon-teal));
+    }
+
+    @keyframes rotateLogo {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .logo-inner {
+      position: absolute;
+      inset: 8px;
+      background: linear-gradient(135deg, #0d1a2e, #1a0533);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(0,245,212,0.2), inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .logo-q {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--neon-teal);
+      text-shadow: 0 0 15px var(--neon-teal), 0 0 30px rgba(0,245,212,0.4);
+      line-height: 1;
+      position: relative;
+    }
+
+    .logo-bolt {
+      position: absolute;
+      bottom: -2px;
+      right: -4px;
+      font-size: 13px;
+      text-shadow: 0 0 8px #ffdd00;
+    }
+
+    .app-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-align: center;
+      background: linear-gradient(90deg, var(--neon-teal), var(--neon-purple), var(--neon-teal));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 3s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(0,245,212,0.3));
+      margin-bottom: 3px;
+    }
+
+    @keyframes shimmerText {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .app-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ══════════════════════════════
+       CHOOSE ROLE LABEL
+    ══════════════════════════════ */
+    .role-label {
+      text-align: center;
+      margin-bottom: 14px;
+      margin-top: 2px;
+    }
+
+    .role-label h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .role-label .glow-dash {
+      display: inline-block;
+      width: 36px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--neon-teal), transparent);
+      vertical-align: middle;
+      margin: 0 8px;
+    }
+
+    /* ══════════════════════════════
+       ROLE CARDS
+    ══════════════════════════════ */
+    .cards-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .role-card {
+      position: relative;
+      border-radius: 18px;
+      padding: 16px 18px;
+      background: var(--card-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .role-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .role-card:active {
+      transform: scale(0.97);
+    }
+
+    /* Teal / Player */
+    .card-player {
+      border-color: rgba(0,180,216,0.4);
+      box-shadow: 0 4px 30px rgba(0,180,216,0.12), inset 0 0 0 1px rgba(0,180,216,0.12);
+    }
+    .card-player::before {
+      background: radial-gradient(ellipse at left, rgba(0,180,216,0.15), transparent 70%);
+      opacity: 1;
+    }
+    .card-player:hover {
+      box-shadow: 0 6px 40px rgba(0,180,216,0.3), 0 0 0 1px rgba(0,180,216,0.5);
+    }
+
+    /* Purple / Trainer */
+    .card-trainer {
+      border-color: rgba(191,90,242,0.4);
+      box-shadow: 0 4px 30px rgba(191,90,242,0.12), inset 0 0 0 1px rgba(191,90,242,0.12);
+    }
+    .card-trainer::before {
+      background: radial-gradient(ellipse at left, rgba(191,90,242,0.15), transparent 70%);
+      opacity: 1;
+    }
+    .card-trainer:hover {
+      box-shadow: 0 6px 40px rgba(191,90,242,0.3), 0 0 0 1px rgba(191,90,242,0.5);
+    }
+
+    /* Lime / Venue Host */
+    .card-venue {
+      border-color: rgba(57,255,20,0.35);
+      box-shadow: 0 4px 30px rgba(57,255,20,0.1), inset 0 0 0 1px rgba(57,255,20,0.1);
+    }
+    .card-venue::before {
+      background: radial-gradient(ellipse at left, rgba(57,255,20,0.12), transparent 70%);
+      opacity: 1;
+    }
+    .card-venue:hover {
+      box-shadow: 0 6px 40px rgba(57,255,20,0.25), 0 0 0 1px rgba(57,255,20,0.45);
+    }
+
+    /* Icon badge */
+    .card-icon-wrap {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      position: relative;
+    }
+
+    .card-player .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(0,180,216,0.25), rgba(0,180,216,0.08));
+      box-shadow: 0 0 18px rgba(0,180,216,0.35);
+      border: 1px solid rgba(0,180,216,0.3);
+    }
+    .card-trainer .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(191,90,242,0.25), rgba(191,90,242,0.08));
+      box-shadow: 0 0 18px rgba(191,90,242,0.35);
+      border: 1px solid rgba(191,90,242,0.3);
+    }
+    .card-venue .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(57,255,20,0.2), rgba(57,255,20,0.05));
+      box-shadow: 0 0 18px rgba(57,255,20,0.3);
+      border: 1px solid rgba(57,255,20,0.3);
+    }
+
+    .card-text { flex: 1; }
+
+    .card-role-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .card-player .card-role-tag { color: var(--neon-blue); text-shadow: 0 0 8px var(--neon-blue); }
+    .card-trainer .card-role-tag { color: var(--neon-purple); text-shadow: 0 0 8px var(--neon-purple); }
+    .card-venue .card-role-tag { color: var(--neon-green); text-shadow: 0 0 8px var(--neon-green); }
+
+    .card-headline {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.03em;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.5;
+    }
+
+    .card-chevron {
+      flex-shrink: 0;
+      font-size: 18px;
+      color: rgba(255,255,255,0.2);
+    }
+    .card-player .card-chevron { color: rgba(0,180,216,0.5); }
+    .card-trainer .card-chevron { color: rgba(191,90,242,0.5); }
+    .card-venue .card-chevron { color: rgba(57,255,20,0.5); }
+
+    /* Selected state */
+    .role-card.selected {
+      transform: scale(1.01);
+    }
+    .card-player.selected {
+      box-shadow: 0 0 0 2px var(--neon-blue), 0 8px 40px rgba(0,180,216,0.45);
+    }
+    .card-trainer.selected {
+      box-shadow: 0 0 0 2px var(--neon-purple), 0 8px 40px rgba(191,90,242,0.45);
+    }
+    .card-venue.selected {
+      box-shadow: 0 0 0 2px var(--neon-green), 0 8px 40px rgba(57,255,20,0.35);
+    }
+
+    /* ══════════════════════════════
+       CTA BUTTON
+    ══════════════════════════════ */
+    .cta-area {
+      padding-top: 14px;
+    }
+
+    .cta-btn {
+      position: relative;
+      width: 100%;
+      padding: 18px 24px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #0d4a1a 0%, #145a20 50%, #1a6b26 100%);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.15s ease;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(57,255,20,0.2), rgba(0,245,212,0.1));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .cta-btn:hover::before { opacity: 1; }
+    .cta-btn:active { transform: scale(0.97); }
+
+    .cta-glow {
+      position: absolute;
+      inset: -2px;
+      border-radius: 18px;
+      background: transparent;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      box-shadow:
+        0 0 12px rgba(57,255,20,0.5),
+        0 0 30px rgba(57,255,20,0.25),
+        0 0 60px rgba(57,255,20,0.1),
+        inset 0 0 0 1px rgba(57,255,20,0.6);
+      border-radius: 16px;
+      animation: ctaPulse 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes ctaPulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(57,255,20,0.4), 0 0 30px rgba(57,255,20,0.2), inset 0 0 0 1px rgba(57,255,20,0.55); }
+      50% { box-shadow: 0 0 22px rgba(57,255,20,0.7), 0 0 50px rgba(57,255,20,0.35), inset 0 0 0 2px rgba(57,255,20,0.8); }
+    }
+
+    .cta-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-icon { font-size: 22px; }
+
+    .cta-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--neon-green);
+      text-shadow: 0 0 12px var(--neon-green), 0 0 24px rgba(57,255,20,0.4);
+      text-transform: uppercase;
+    }
+
+    .cta-hint {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(57,255,20,0.6);
+      text-align: center;
+      margin-top: 6px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* Ambient floating particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatParticle {
+      0% { opacity: 0; transform: translateY(0) scale(0.5); }
+      10% { opacity: 1; }
+      90% { opacity: 0.5; }
+      100% { opacity: 0; transform: translateY(-200px) scale(1.2); }
+    }
+
+    /* Landmark labels on map */
+    .landmark {
+      position: absolute;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .landmark-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--neon-teal);
+      box-shadow: 0 0 8px var(--neon-teal);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    .landmark-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 8.5px;
+      font-weight: 600;
+      color: rgba(0,245,212,0.7);
+      white-space: nowrap;
+      margin-top: 3px;
+      letter-spacing: 0.08em;
+    }
+    @keyframes dotPulse {
+      0%, 100% { box-shadow: 0 0 6px var(--neon-teal); }
+      50% { box-shadow: 0 0 16px var(--neon-teal), 0 0 30px rgba(0,245,212,0.4); }
+    }
+
+    /* Breathing ring animation for logo */
+    @keyframes breatheRing {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .logo-ring svg { animation: rotateLogo 8s linear infinite, breatheRing 3s ease-in-out infinite alternate; }
+
+    /* ── Page transition animations ── */
+    @keyframes slideOutLeft {
+      from { transform: translateX(0); opacity: 1; }
+      to   { transform: translateX(-100%); opacity: 0; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to   { transform: translateX(100%); opacity: 0; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+    .phone-shell.slide-out-left  { animation: slideOutLeft  0.32s ease forwards; }
+    .phone-shell.slide-in-right  { animation: slideInRight  0.32s ease forwards; }
+    .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
+    .phone-shell.slide-in-left   { animation: slideInLeft   0.32s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- ── Bangalore 3D Map Background ── -->
+  <div class="map-canvas">
+    <canvas id="mapCanvas"></canvas>
+  </div>
+
+  <!-- particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Map overlay -->
+  <div class="map-overlay"></div>
+
+  <!-- Landmark labels -->
+  <div class="landmark" style="left:165px;top:195px">
+    <div class="landmark-dot"></div>
+    <div class="landmark-label">Vidhana Soudha</div>
+  </div>
+  <div class="landmark" style="left:220px;top:230px">
+    <div class="landmark-dot" style="background:var(--neon-purple);box-shadow:0 0 8px var(--neon-purple)"></div>
+    <div class="landmark-label" style="color:rgba(191,90,242,0.8)">Cubbon Park</div>
+  </div>
+  <div class="landmark" style="left:95px;top:270px">
+    <div class="landmark-dot" style="background:var(--neon-green);box-shadow:0 0 8px var(--neon-green)"></div>
+    <div class="landmark-label" style="color:rgba(57,255,20,0.8)">Lalbagh</div>
+  </div>
+  <div class="landmark" style="left:280px;top:185px">
+    <div class="landmark-dot" style="background:#ffdd00;box-shadow:0 0 8px #ffdd00"></div>
+    <div class="landmark-label" style="color:rgba(255,221,0,0.8)">MG Road</div>
+  </div>
+
+  <!-- ══ STEP INDICATOR — dedicated top bar, above logo & header ══ -->
+  <div class="step-indicator">
+    <div class="step-flow">
+      <span class="flow-item active">Discovery</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item">Booking</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-item">Community</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="step-label">
+      <span class="step-tag">SCREEN 1 · ROLE SELECTION</span>
+      <span class="step-fraction">1 / 20</span>
+    </div>
+  </div>
+
+  <!-- ── Content ── -->
+  <div class="content">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="logo-ring">
+        <svg viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="28" stroke="url(#ringGrad)" stroke-width="2" stroke-dasharray="6 4"/>
+        </svg>
+        <div class="logo-inner">
+          <span class="logo-q">Q<span class="logo-bolt">⚡</span></span>
+        </div>
+      </div>
+      <div class="app-title">FitQuest Bangalore</div>
+      <div class="app-subtitle">Choose Your Path</div>
+    </div>
+
+    <!-- ROLE SELECT LABEL -->
+    <div class="role-label">
+      <h2>
+        <span class="glow-dash"></span>
+        Select Your Role
+        <span class="glow-dash"></span>
+      </h2>
+    </div>
+
+    <!-- ROLE CARDS -->
+    <div class="cards-wrapper">
+
+      <!-- PLAYER -->
+      <div class="role-card card-player" id="cardPlayer" onclick="selectCard(this); navigateTo('fitquest_screen2.html')">
+        <div class="card-icon-wrap">🏃</div>
+        <div class="card-text">
+          <div class="card-role-tag">PLAYER</div>
+          <div class="card-headline">Embark on Quests</div>
+          <div class="card-desc">Unlock venues, join matches, and explore Bangalore's sport scene.</div>
+        </div>
+        <div class="card-chevron">›</div>
+      </div>
+
+      <!-- TRAINER -->
+      <div class="role-card card-trainer" id="cardTrainer" onclick="selectCard(this); navigateTo('fitquest_screen2.html')">
+        <div class="card-icon-wrap">⏱️</div>
+        <div class="card-text">
+          <div class="card-role-tag">TRAINER</div>
+          <div class="card-headline">Mentor Others</div>
+          <div class="card-desc">Coach beginners, manage schedules, and grow your expertise.</div>
+        </div>
+        <div class="card-chevron">›</div>
+      </div>
+
+      <!-- VENUE HOST -->
+      <div class="role-card card-venue" id="cardVenue" onclick="selectCard(this); navigateTo('fitquest_screen2.html')">
+        <div class="card-icon-wrap">🏟️</div>
+        <div class="card-text">
+          <div class="card-role-tag">VENUE HOST</div>
+          <div class="card-headline">Manage Your Realm</div>
+          <div class="card-desc">Showcase your facility, handle bookings, and build your community.</div>
+        </div>
+        <div class="card-chevron">›</div>
+      </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-area">
+      <button class="cta-btn" id="ctaBtn" onclick="navigateTo('fitquest_screen2.html')">
+        <div class="cta-glow"></div>
+        <div class="cta-content">
+          <span class="cta-icon">🗺️</span>
+          <span class="cta-label">Enter the Quest Map</span>
+          <span class="cta-icon">⚡</span>
+        </div>
+      </button>
+      <div class="cta-hint" id="ctaHint">Select a role above to begin your journey</div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /phone-shell -->
+
+<!-- Defs -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5d4"/>
+      <stop offset="50%" stop-color="#bf5af2"/>
+      <stop offset="100%" stop-color="#00f5d4"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<script>
+/* ─────────────────────────────────────────
+   3D Bangalore Neon Map
+───────────────────────────────────────── */
+(function() {
+  const canvas = document.getElementById('mapCanvas');
+  const shell = canvas.closest('.phone-shell');
+  canvas.width = Math.min(390, window.innerWidth);
+  canvas.height = Math.max(shell.scrollHeight, window.innerHeight, 1100);
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // City grid road network
+  const roads = [];
+
+  // Isometric projection helpers
+  function iso(gx, gy) {
+    const tx = (gx - gy) * 28 + W / 2;
+    const ty = (gx + gy) * 14 + 120;
+    return { x: tx, y: ty };
+  }
+
+  // Draw grid roads
+  const GRID = 10;
+  function drawRoads(t) {
+    // horizontal streets
+    for (let r = 0; r <= GRID; r++) {
+      ctx.beginPath();
+      const p0 = iso(0, r);
+      const p1 = iso(GRID, r);
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      const alpha = 0.12 + 0.06 * Math.sin(t * 0.5 + r);
+      ctx.strokeStyle = `rgba(0,245,212,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    // vertical streets
+    for (let c = 0; c <= GRID; c++) {
+      ctx.beginPath();
+      const p0 = iso(c, 0);
+      const p1 = iso(c, GRID);
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      const alpha = 0.12 + 0.06 * Math.sin(t * 0.5 + c * 0.7);
+      ctx.strokeStyle = `rgba(191,90,242,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // Major glowing paths (routes)
+  const routeSegs = [
+    { from: [1,2], to: [5,2] },
+    { from: [5,2], to: [8,5] },
+    { from: [2,5], to: [8,5] },
+    { from: [3,1], to: [3,8] },
+    { from: [6,0], to: [6,9] },
+  ];
+
+  function drawRoutes(t) {
+    routeSegs.forEach((seg, i) => {
+      const a = iso(seg.from[0], seg.from[1]);
+      const b = iso(seg.to[0], seg.to[1]);
+      const progress = (t * 0.4 + i * 0.6) % 1;
+      const px = a.x + (b.x - a.x) * progress;
+      const py = a.y + (b.y - a.y) * progress;
+
+      // Static glow path
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, 'rgba(0,245,212,0.08)');
+      grad.addColorStop(0.5, 'rgba(0,245,212,0.22)');
+      grad.addColorStop(1, 'rgba(0,245,212,0.08)');
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Moving packet of light
+      ctx.beginPath();
+      ctx.arc(px, py, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#00f5d4';
+      ctx.shadowColor = '#00f5d4';
+      ctx.shadowBlur = 12;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+  }
+
+  // Buildings as isometric blocks
+  const buildings = [];
+  for (let r = 1; r < GRID; r++) {
+    for (let c = 1; c < GRID; c++) {
+      if (Math.random() > 0.45) {
+        buildings.push({ r, c, h: 5 + Math.random() * 25, color: Math.random() });
+      }
+    }
+  }
+
+  function drawBuildings() {
+    buildings.forEach(b => {
+      const base = iso(b.c, b.r);
+      const bh = b.h;
+      const ox = 28, oy = 14; // half iso unit
+      // top face
+      const t  = { x: base.x,        y: base.y - bh };
+      const tr = { x: base.x + ox,   y: base.y - bh + oy };
+      const br = { x: base.x + ox,   y: base.y + oy };
+      const bl = { x: base.x - ox,   y: base.y + oy };
+      const tl = { x: base.x - ox,   y: base.y - bh + oy };
+
+      const hue = b.color < 0.33 ? 180 : b.color < 0.66 ? 271 : 150;
+      const alpha = 0.15 + b.color * 0.1;
+
+      // right face
+      ctx.beginPath();
+      ctx.moveTo(t.x, t.y);
+      ctx.lineTo(tr.x, tr.y);
+      ctx.lineTo(br.x, br.y);
+      ctx.lineTo(base.x, base.y);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(${hue},80%,35%,${alpha * 0.9})`;
+      ctx.fill();
+
+      // left face
+      ctx.beginPath();
+      ctx.moveTo(t.x, t.y);
+      ctx.lineTo(tl.x, tl.y);
+      ctx.lineTo(bl.x, bl.y);
+      ctx.lineTo(base.x, base.y);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(${hue},80%,20%,${alpha})`;
+      ctx.fill();
+
+      // top face
+      ctx.beginPath();
+      ctx.moveTo(t.x, t.y);
+      ctx.lineTo(tr.x, tr.y);
+      ctx.lineTo(base.x, base.y - bh + oy * 2);
+      ctx.lineTo(tl.x, tl.y);
+      ctx.closePath();
+      ctx.fillStyle = `hsla(${hue},90%,55%,${alpha * 0.6})`;
+      ctx.fill();
+    });
+  }
+
+  let t = 0;
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Sky gradient
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#050b18');
+    sky.addColorStop(0.4, '#0a1a2e');
+    sky.addColorStop(1, '#050b18');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    drawRoads(t);
+    drawBuildings();
+    drawRoutes(t);
+
+    t += 0.005;
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* ─────────────────────────────────────────
+   Floating Particles
+───────────────────────────────────────── */
+(function() {
+  const container = document.getElementById('particles');
+  const colors = ['#00f5d4', '#bf5af2', '#39ff14', '#00b4d8', '#ff2d78'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 1.5 + Math.random() * 3;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const dur = 5 + Math.random() * 8;
+    const delay = -Math.random() * dur;
+    const left = Math.random() * 100;
+    const startY = 60 + Math.random() * 40;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${left}%;
+      top:${startY}%;
+      background:${color};
+      box-shadow:0 0 ${size*3}px ${color};
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+    `;
+    container.appendChild(p);
+  }
+})();
+
+/* ─────────────────────────────────────────
+   Card Selection
+───────────────────────────────────────── */
+function selectCard(el) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const hint = document.getElementById('ctaHint');
+  if (hint) {
+    hint.textContent = 'Ready! Tap to Enter the Quest Map ›';
+    hint.style.color = 'rgba(57,255,20,0.9)';
+  }
+}
+
+/* ─────────────────────────────────────────
+   Slide-Left Navigation
+───────────────────────────────────────── */
+function navigateTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => { window.location.href = url; }, 330);
+}
+
+/* Entry animation on load */
+(function() {
+  const dir = sessionStorage.getItem('navDir');
+  const shell = document.querySelector('.phone-shell');
+  if (dir === 'back') {
+    shell.classList.add('slide-in-left');
+    setTimeout(() => shell.classList.remove('slide-in-left'), 350);
+  } else {
+    shell.classList.add('slide-in-right');
+    setTimeout(() => shell.classList.remove('slide-in-right'), 350);
+  }
+  sessionStorage.removeItem('navDir');
+})();
+</script>
+</body>
+</html>
