@@ -1036,9 +1036,15 @@ function navigateTo(url) {
 
 function navigateBack(fallbackUrl) {
   const shell = document.querySelector('.phone-shell');
-  shell.classList.add('slide-out-right');
+  if(shell) shell.classList.add('slide-out-right');
   sessionStorage.setItem('navDir', 'back');
-  setTimeout(() => { window.location.href = 'fitquest_screen1.html'; }, 330);
+  setTimeout(() => { 
+    if (document.referrer && document.referrer.indexOf(window.location.host) !== -1 && window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = fallbackUrl || 'index.html';
+    }
+  }, 330);
 }
 
 /* Entry animation on page load */
