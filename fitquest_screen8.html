@@ -273,6 +273,16 @@
     .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
 
   </style>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html'; // Fallback to home if no history
+  }
+}
+</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -294,7 +304,7 @@
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" onclick="goBack()">←</div>
     </div>
   </div>
 
@@ -349,7 +359,7 @@
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
     <button class="primary-btn" onclick="navTo('fitquest_screen9.html')">Confirm & Book Optimized Slot</button>
-    <div class="secondary-link" onclick="navigateBack()">Choose Different Slot</div>
+    <div class="secondary-link" onclick="goBack()">Choose Different Slot</div>
   </div>
 
 

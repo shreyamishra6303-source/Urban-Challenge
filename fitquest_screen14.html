@@ -301,6 +301,16 @@
       color: #fff !important;
     }
   </style>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html'; // Fallback to home if no history
+  }
+}
+</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -322,7 +332,7 @@
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" onclick="goBack()">←</div>
     </div>
     
     <!-- GLOBAL NAV DRAWER -->

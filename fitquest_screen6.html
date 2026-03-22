@@ -258,6 +258,16 @@
     .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
 
   </style>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html'; // Fallback to home if no history
+  }
+}
+</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -277,7 +287,7 @@
     
     <!-- Top Nav -->
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" onclick="goBack()">←</div>
       <div class="hero-ring">
         <svg viewBox="0 0 100 100" fill="none" class="ring-svg">
           <circle cx="50" cy="50" r="40" stroke="rgba(0,245,212,0.3)" stroke-width="4"/>

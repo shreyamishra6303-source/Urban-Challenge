@@ -221,6 +221,16 @@
     .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
     .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
   </style>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html'; // Fallback to home if no history
+  }
+}
+</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -242,7 +252,7 @@
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" onclick="goBack()">←</div>
       <div class="menu-trigger" onclick="toggleNavDrawer()">
         <div class="menu-trig-line"></div>
         <div class="menu-trig-line"></div>

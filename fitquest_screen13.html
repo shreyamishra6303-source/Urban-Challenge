@@ -326,6 +326,16 @@
     }
     @keyframes syncPulse { from { opacity: 0.5; transform: scale(0.98); } to { opacity: 1; transform: scale(1.05); } }
   </style>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html'; // Fallback to home if no history
+  }
+}
+</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -355,7 +365,7 @@
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" onclick="goBack()">←</div>
       <div class="page-title">QUEST SUMMARY</div>
       <div class="page-subtitle">Level 1 Progress</div>
     </div>

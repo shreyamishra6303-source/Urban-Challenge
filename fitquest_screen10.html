@@ -305,6 +305,16 @@
     .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
 
   </style>
+
+<script>
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'index.html'; // Fallback to home if no history
+  }
+}
+</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -326,7 +336,7 @@
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" onclick="goBack()">←</div>
       <div class="page-title">Your Digital Quest Pass</div>
     </div>
   </div>
@@ -396,7 +406,7 @@
     <button class="primary-btn" onclick="navTo('fitquest_screen11.html')">Check-In to Arena</button>
     <div class="footer-links">
       <div class="tertiary-link">Invite More Friends</div>
-      <div class="cancel-link" onclick="navigateBack()">Cancel Booking</div>
+      <div class="cancel-link" onclick="goBack()">Cancel Booking</div>
     </div>
   </div>
 
