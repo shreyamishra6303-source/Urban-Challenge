@@ -248,7 +248,7 @@ function goBack() {
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="goBack()">←</div>
+      <div style="width:32px;"></div> <!-- Spacer to keep menu on the right -->
       
       <!-- GLOBAL NAV DRAWER TRIGGER -->
       <div class="menu-trigger" onclick="toggleNavDrawer()">
@@ -302,11 +302,8 @@ function goBack() {
       <div class="success-badge">
         <span class="success-check">✓</span>
       </div>
-      <div class="squad-congrats">SQUAD CONFIRMED!</div>
-      <div class="role-tag" id="dynamicRoleTag" style="margin-bottom: 8px;">Assigned Role: Squad Defender</div>
-      <div style="font-size:12px; color:rgba(255,255,255,0.6); font-weight:700; text-transform:uppercase; margin-top:5px;">
-        Operating at: <span id="dynamicHubVenue" style="color:#00f5d4; font-weight:900;">KORAMANGALA</span> Node
-      </div>
+      <div class="squad-congrats">YOU ARE NOW A MEMBER OF THE <span id="dynamicSquadName">HSR ELITE STRIKERS!</span></div>
+      <div class="role-tag" id="dynamicRoleTag">Assigned Role: Squad Defender (Level 1)</div>
     </div>
 
     <!-- Squad Hub Action Cards -->
@@ -352,7 +349,7 @@ function goBack() {
 
   <!-- FIXED BOTTOM FOOTER -->
   <div class="fixed-footer-block">
-    <button class="primary-btn" onclick="navTo('fitquest_screen18.html')">ENTER SQUAD CHAT / ARENA FEED</button>
+    <button class="primary-btn" onclick="navTo('fitquest_screen4.html')">Return to Quest Map</button>
   </div>
 
 </div>
@@ -414,13 +411,12 @@ function runNavTo(url) {
 
   const squad = localStorage.getItem('selectedSquad') || 'HSR ELITE STRIKERS';
   const role = localStorage.getItem('assignedRole') || 'Squad Defender (Level 1)';
-  const venue = localStorage.getItem('selectedVenue') || 'Koramangala';
+  
+  const sName = document.getElementById('dynamicSquadName');
+  if (sName) sName.innerText = squad + '!';
   
   const rTag = document.getElementById('dynamicRoleTag');
-  if (rTag) rTag.innerText = `Role: ${role} | ${squad}`;
-  
-  const vTag = document.getElementById('dynamicHubVenue');
-  if (vTag) vTag.innerText = venue.toUpperCase();
+  if (rTag) rTag.innerText = 'Assigned Role: ' + role;
 })();
 </script>
 </body>
