@@ -292,17 +292,6 @@
 
 
 
-<script>
-function goBack() {
-  // Check if there is a history to go back to
-  if (document.referrer.indexOf(window.location.host) !== -1 && window.history.length > 1) {
-    window.history.back();
-  } else {
-    // Fallback if the user landed directly on the page or history is empty
-    window.location.href = 'fitquest_screen2.html'; 
-  }
-}
-</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -485,7 +474,7 @@ function runNavTo(url) {
   else { window.location.href = url; }
 }
 
-function navigateBack() {
+function navigateBack(fallbackUrl) {
   const shell = document.querySelector('.phone-shell');
   shell.classList.add('slide-out-right');
   sessionStorage.setItem('navDir', 'back');

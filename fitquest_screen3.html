@@ -224,17 +224,6 @@
 
 
 
-<script>
-function goBack() {
-  // Check if there is a history to go back to
-  if (document.referrer.indexOf(window.location.host) !== -1 && window.history.length > 1) {
-    window.history.back();
-  } else {
-    // Fallback if the user landed directly on the page or history is empty
-    window.location.href = 'fitquest_screen2.html'; 
-  }
-}
-</script>
 </head>
 <body>
 <div class="phone-shell">
@@ -424,7 +413,7 @@ function goBack() {
 </div>
 
 <script>
-function navigateBack() {
+function navigateBack(fallbackUrl) {
   const shell = document.querySelector('.phone-shell');
   shell.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
   shell.style.transform = 'translateX(100%)';
