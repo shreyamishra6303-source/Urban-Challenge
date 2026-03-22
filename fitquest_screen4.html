@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>FitQuest Bangalore – Screen 4: Quest Details</title>
+  <title>FitQuest Bangalore – Screen 3: Quest Map</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,44 +45,54 @@
     .flow-item.active { color: var(--teal); text-shadow: 0 0 8px var(--teal); }
     .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
     .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: visible; }
-    .progress-fill { height: 100%; width: 20%; background: var(--teal); border-radius: 10px; box-shadow: 0 0 10px var(--teal); }
+    .progress-fill { height: 100%; width: 15%; background: var(--teal); border-radius: 10px; box-shadow: 0 0 10px var(--teal); }
 
-    /* Meta Header */
+    /* Meta Header (Matches Reference exactly) */
     .meta-header {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: flex-start;
       padding: 12px 18px;
+      /* Add background to hide scrolling elements behind it */
       background: linear-gradient(180deg, rgba(4,6,12,0.95) 0%, rgba(4,6,12,0.8) 50%, rgba(4,6,12,0) 100%);
       backdrop-filter: blur(8px);
     }
-    .mh-left-group { display: flex; align-items: center; gap: 10px; }
     
+    .mh-left-group { display: flex; align-items: center; gap: 8px; }
     .back-btn {
-      width: 28px; height: 28px; border-radius: 8px;
+      width: 25px; height: 25px; border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 16px; color: var(--teal);
-      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.4);
-      box-shadow: 0 0 12px rgba(0,245,212,0.2);
+      cursor: pointer; font-size: 15px; color: var(--teal);
+      background: rgba(0,245,212,0.06); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 8px rgba(0,245,212,0.15);
       transition: all 0.2s; flex-shrink: 0;
     }
-    .back-btn:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 18px rgba(0,245,212,0.5); }
-    
-    .mh-screen { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    
-    .newbie-badge {
-      background: var(--blue); color: #000;
-      font-family: 'Orbitron', sans-serif; font-size: 8px; font-weight: 900;
-      padding: 3px 7px; border-radius: 4px; letter-spacing: 0.1em;
-      box-shadow: 0 0 12px var(--blue);
-    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); box-shadow: 0 0 15px rgba(0,245,212,0.4); }
 
-    .hero-ring { width: 38px; height: 38px; position: relative; margin-right: 5px; }
+    .mh-left { display: flex; flex-direction: column; gap: 2px; }
+    .mh-screen { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 400; }
+    .mh-subtitle { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 400; }
+
+    .mh-center { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 5px; }
+    .hero-ring { width: 44px; height: 44px; position: relative; }
     .hero-ring svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(0,245,212,0.5)); animation: spin 10s linear infinite; }
     .hero-ring::after {
       content: '⚡'; position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; color: var(--teal); text-shadow: 0 0 10px var(--teal);
+      font-size: 18px; color: var(--teal); text-shadow: 0 0 10px var(--teal);
     }
     @keyframes spin { 100% { transform: rotate(360deg); } }
+    .hero-brand { text-align: center; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -0.02em; }
+    .hero-brand span { font-size: 9px; font-weight: 600; color: var(--teal); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .mh-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .lvl-label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #fff; font-weight: 400; }
+    .lvl-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .lvl-num { color: var(--teal); font-weight: 600; }
+    .lvl-bar { width: 70px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px; margin-bottom: 6px; overflow: hidden; }
+    .lvl-fill { width: 5%; height: 100%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .gift-text { font-size: 9px; color: rgba(255,255,255,0.6); margin-bottom: 2px; }
+    .gift-row { display: flex; align-items: center; gap: 6px; background: rgba(0,245,212,0.05); padding: 4px 6px 4px 4px; border-radius: 6px; border: 1px solid rgba(0,245,212,0.2); cursor: pointer; }
+    .gift-icon { font-size: 18px; filter: drop-shadow(0 0 6px var(--purple)); }
+    .gift-promo { font-size: 8px; font-weight: 700; color: var(--teal); line-height: 1.2; letter-spacing: 0.05em; text-align: center; }
 
     /* ─── SCROLLABLE MAP AREA ─── */
     .scroll-body {
@@ -90,129 +100,99 @@
       overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
     }
     .scroll-content {
-      position: relative; width: 100%; min-height: 850px; padding-bottom: 120px;
+      position: relative; width: 100%; height: 900px; /* Tall to allow scrolling */
     }
 
-    /* Fog of War (Cloud layers) */
-    .fog {
-      position: absolute; left: -20%; right: -20%; z-index: 0; pointer-events: none;
-      filter: blur(40px); mix-blend-mode: screen;
-    }
-    .fog-top {
-      top: -150px; height: 360px;
-      background: radial-gradient(ellipse at 50% 60%, rgba(200,210,230,0.5) 0%, rgba(180,185,200,0.3) 40%, transparent 70%),
-                  radial-gradient(ellipse at 20% 50%, rgba(220,230,255,0.4) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 50%, rgba(190,200,220,0.4) 0%, transparent 60%);
-    }
-    .fog-bottom {
-      bottom: -150px; height: 400px;
-      background: radial-gradient(ellipse at 50% 40%, rgba(200,210,230,0.6) 0%, rgba(180,185,200,0.4) 50%, transparent 70%),
-                  radial-gradient(ellipse at 15% 50%, rgba(220,230,255,0.5) 0%, transparent 60%),
-                  radial-gradient(ellipse at 85% 50%, rgba(190,200,220,0.5) 0%, transparent 60%);
-    }
-
+    /* Canvas Map */
     #cityCanvas {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
     }
 
-    /* ─── HERO PITCH VISUAL ─── */
-    .hero-pitch-container {
-      position: relative; width: 100%; display: flex; justify-content: center;
-      margin-top: 140px; margin-bottom: 20px; z-index: 20;
-    }
-    .hero-glow {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 250px; height: 120px; border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(0,245,212,0.4) 0%, transparent 70%);
-      filter: blur(20px); z-index: -1;
+    /* Title */
+    .massive-title {
+      position: absolute; top: 190px; left: 0; right: 0; z-index: 20;
+      text-align: center; font-size: 32px; font-weight: 800; color: #fff;
+      line-height: 1.15; letter-spacing: -0.01em;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 25px rgba(0,245,212,0.4);
+      pointer-events: none;
+      text-transform: uppercase;
     }
 
-    /* ─── CONTENT BLOCKS ─── */
-    .quest-header {
-      padding: 0 20px; position: relative; z-index: 25; margin-bottom: 24px;
-    }
-    .quest-label {
-      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
-      color: var(--teal); letter-spacing: 0.15em; text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(0,245,212,0.4); margin-bottom: 6px;
-    }
-    .quest-title {
-      font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800;
-      color: #fff; line-height: 1.1; letter-spacing: -0.02em;
+    /* Landmarks */
+    .landmark {
+      position: absolute; z-index: 15; pointer-events: none;
+      font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8); letter-spacing: 0.05em; text-align: center;
     }
 
-    /* Glassmorphism Feature List */
-    .feature-card {
-      margin: 0 20px 24px; position: relative; z-index: 25;
-      background: rgba(10,14,28,0.65); border: 1.5px solid rgba(255,255,255,0.08);
-      border-radius: 20px; padding: 20px;
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-    }
-    .feature-item {
-      display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px;
-    }
-    .feature-item:last-child { margin-bottom: 0; }
+    /* Connecting Dashed Paths */
+    .path-svg { position: absolute; inset: 0; z-index: 12; width: 100%; height: 100%; pointer-events: none; }
     
-    .feat-icon-wrap {
-      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 20px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    /* ─── QUEST NODES (Isometric SVGs) ─── */
+    .qnode {
+      position: absolute; z-index: 25; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    /* Specific Icon Colors */
-    .ic-turf { color: var(--green); text-shadow: 0 0 12px var(--green); border-color: rgba(57,255,20,0.3); background: rgba(57,255,20,0.05); }
-    .ic-water { color: var(--blue); text-shadow: 0 0 12px var(--blue); border-color: rgba(0,180,216,0.3); background: rgba(0,180,216,0.05); }
-    .ic-light { color: #facc15; text-shadow: 0 0 12px #facc15; border-color: rgba(250,204,21,0.3); background: rgba(250,204,21,0.05); }
-    .ic-gift { color: var(--purple); text-shadow: 0 0 12px var(--purple); border-color: rgba(191,90,242,0.3); background: rgba(191,90,242,0.05); }
+    .qnode:hover { transform: scale(1.06) translateY(-4px); z-index: 26; }
+    .qnode:active { transform: scale(0.95); }
 
-    .feat-text { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-    .feat-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.03em; }
-    .feat-desc { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.55); line-height: 1.4; }
+    .venue-orb {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #00b4d8);
+      box-shadow: 0 0 15px #00b4d8, 0 0 30px rgba(0,180,216,0.6);
+      border: 2px solid #00f5d4;
+      margin-bottom: 8px;
+    }
+    .active-orb {
+      animation: orbPulse 2s infinite;
+    }
+    @keyframes orbPulse {
+      0%,100% { transform: scale(1); box-shadow: 0 0 15px #00b4d8, 0 0 30px rgba(0,180,216,0.6); }
+      50% { transform: scale(1.15); box-shadow: 0 0 25px #00b4d8, 0 0 50px rgba(0,180,216,0.8); border-color: #fff; }
+    }
 
-    /* Promo Highlight */
-    .promo-highlight .feat-title { color: var(--teal); text-shadow: 0 0 10px rgba(0,245,212,0.4); }
+    /* Node 1 Tooltip */
+    .node-tooltip {
+      position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%);
+      margin-bottom: 20px; z-index: 30; width: 175px;
+      background: rgba(10,14,24,0.95); border: 1.5px solid rgba(0,245,212,0.6);
+      border-radius: 12px; padding: 12px 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 20px rgba(0,245,212,0.35);
+      backdrop-filter: blur(12px);
+    }
+    .node-tooltip::after {
+      content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+      border-width: 6px 6px 0; border-style: solid; border-color: rgba(0,245,212,0.5) transparent transparent;
+    }
+    .newbie-badge {
+      position: absolute; top: -8px; right: -8px;
+      background: var(--blue); color: #000;
+      font-family: 'Orbitron', sans-serif; font-size: 7px; font-weight: 900;
+      padding: 3px 6px; border-radius: 4px; letter-spacing: 0.1em;
+      box-shadow: 0 0 10px var(--blue);
+    }
+    .tooltip-title { font-size: 11px; font-weight: 700; color: #fff; line-height: 1.3; }
+    .tooltip-sub { font-size: 9px; color: var(--teal); font-weight: 600; margin-top: 4px; letter-spacing: 0.05em; }
 
-    /* Team Status Bar */
-    .team-status {
-      margin: 0 20px; position: relative; z-index: 25;
-      background: linear-gradient(90deg, rgba(10,14,28,0.8), rgba(0,245,212,0.05));
-      border: 1px solid rgba(0,245,212,0.2); border-radius: 100px;
-      padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+    /* Node Labels */
+    .node-label {
+      font-size: 11px; font-weight: 700; color: var(--teal); margin-top: -5px; text-shadow: 0 0 8px var(--teal);
     }
-    .ts-avatars { display: flex; align-items: center; }
-    .avatar { 
-      width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #060c1b; margin-left: -8px;
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      display: flex; align-items: center; justify-content: center; font-size: 12px;
-    }
-    .avatar:first-child { margin-left: 0; }
-    .ava-1 { background: radial-gradient(circle at top right, #3b82f6, #1e3a8a); }
-    .ava-2 { background: radial-gradient(circle at top right, #ec4899, #831843); }
-    .ava-3 { background: radial-gradient(circle at top right, #10b981, #064e3b); }
-    .ava-4 { background: radial-gradient(circle at top right, #f59e0b, #064e3b); }
-    .ts-text {
-      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; color: #fff;
-      letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;
-    }
-    .ts-count { color: var(--teal); font-weight: 800; text-shadow: 0 0 8px var(--teal); }
+    .node-label.locked { color: rgba(255,255,255,0.6); text-shadow: none; margin-top: -10px; }
 
     /* ─── FIXED CTA FOOTER ─── */
     .fixed-footer-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
       padding: 0 20px 24px; pointer-events: none;
-      background: linear-gradient(0deg, rgba(4,6,12,0.95) 0%, rgba(4,6,12,0.8) 50%, transparent 100%);
-      backdrop-filter: blur(8px);
     }
     .fixed-footer-layer > * { pointer-events: auto; }
     .cta-btn {
       width: 100%; padding: 18px 24px; border-radius: 14px; border: none; cursor: pointer;
       background: var(--green); color: #000;
       font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -0.01em;
-      box-shadow: 0 0 20px rgba(57,255,20,0.35), inset 0 2px 4px rgba(255,255,255,0.5);
+      box-shadow: 0 0 20px rgba(57,255,20,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
       transition: transform 0.15s ease;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .cta-btn:active { transform: scale(0.96); }
 
@@ -300,130 +280,95 @@
     <div class="meta-header">
       <div class="mh-left-group">
         <div class="back-btn" onclick="navigateBack()">←</div>
-        <div class="newbie-badge">NEWBIE</div>
-        <div class="mh-screen">Screen 4 of 20</div>
+        <div class="mh-left">
+          <div class="mh-screen">Screen 4 of 20</div>
+          <div class="mh-subtitle">Quest Map</div>
+        </div>
       </div>
-      <div class="hero-ring">
-        <svg viewBox="0 0 100 100" fill="none" stroke="url(#qGrad)" stroke-width="8" stroke-linecap="round">
-          <defs>
-            <linearGradient id="qGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00b4d8"/><stop offset="100%" stop-color="#bf5af2"/></linearGradient>
-          </defs>
-          <path d="M 50 15 A 35 35 0 1 1 20 75" />
-          <line x1="70" y1="70" x2="85" y2="85" stroke="#bf5af2" />
-        </svg>
+      <div class="mh-center">
+        <div class="hero-ring">
+          <svg viewBox="0 0 100 100" fill="none" stroke="url(#qGrad)" stroke-width="8" stroke-linecap="round">
+            <defs>
+              <linearGradient id="qGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00b4d8"/><stop offset="100%" stop-color="#bf5af2"/></linearGradient>
+            </defs>
+            <path d="M 50 15 A 35 35 0 1 1 20 75" />
+            <line x1="70" y1="70" x2="85" y2="85" stroke="#bf5af2" />
+          </svg>
+        </div>
+        <div class="hero-brand">FitQuest<br><span>Bangalore</span></div>
+      </div>
+      <div class="mh-right">
+        <div class="lvl-label">Level <div class="lvl-dot"></div> <span class="lvl-num">1/20</span></div>
+        <div class="lvl-bar"><div class="lvl-fill"></div></div>
+        <div class="gift-text">Newbie Gift:</div>
+        <div class="gift-row" onclick="alert('🎁 20% OFF FIRST QUEST activated!')">
+          <div class="gift-icon">🎁</div>
+          <div class="gift-promo">20% OFF<br>FIRST QUEST</div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- SCROLLABLE MAP BODY -->
   <div class="scroll-body">
-    <div class="fog fog-top" style="position:fixed; top:120px; left:-20%; width:140%; height:250px; z-index:0;"></div>
-    
     <div class="scroll-content">
-      <!-- 3D Isometric Map Background -->
+      
+      <!-- 3D Isometric Map Script -->
       <canvas id="cityCanvas"></canvas>
 
-      <!-- Hero Pitch Visual -->
-      <div class="hero-pitch-container">
-        <div class="hero-glow"></div>
-        <svg width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9));">
-          <g transform="translate(140, 45) scale(1, 0.5) rotate(45)">
-            <!-- Base footprint -->
-            <rect x="-80" y="-100" width="160" height="200" fill="#1da944" stroke="#00f5d4" stroke-width="2.5"/>
-            <!-- Inner white bounds -->
-            <rect x="-72" y="-92" width="144" height="184" fill="none" stroke="#fff" stroke-width="2"/>
-            <!-- Center line & circle -->
-            <line x1="-72" y1="0" x2="72" y2="0" stroke="#fff" stroke-width="2"/>
-            <circle cx="0" cy="0" r="22" fill="none" stroke="#fff" stroke-width="2"/>
-            <!-- Goal Areas -->
-            <rect x="-30" y="-100" width="60" height="20" fill="none" stroke="#fff" stroke-width="2"/>
-            <rect x="-30" y="80" width="60" height="20" fill="none" stroke="#fff" stroke-width="2"/>
-          </g>
-          
-          <!-- 3D Elements standing up -->
-          <g transform="translate(140, 45)">
-             <!-- Red Team Player -->
-             <ellipse cx="-15" cy="50" rx="5" ry="3" fill="rgba(0,0,0,0.5)"/>
-             <path d="M-15,50 L-10,20 L-20,20 Z" fill="#ff4444"/>
-             <circle cx="-15" cy="15" r="4.5" fill="#f0c0a0"/>
-             
-             <!-- Blue Team Player -->
-             <ellipse cx="20" cy="10" rx="5" ry="3" fill="rgba(0,0,0,0.5)"/>
-             <path d="M20,10 L25,-20 L15,-20 Z" fill="#2a2aff"/>
-             <circle cx="20" cy="-25" r="4.5" fill="#f0c0a0"/>
+      <!-- Connection Lines SVG -->
+      <svg class="path-svg">
+        <defs>
+          <filter id="glowPath"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <linearGradient id="pGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00f5d4"/><stop offset="100%" stop-color="#fff"/></linearGradient>
+        </defs>
+        <path d="M 120 460 C 180 390, 240 380, 260 380" stroke="url(#pGrad)" stroke-width="2.5" stroke-dasharray="6 4" fill="none" filter="url(#glowPath)">
+          <animate attributeName="stroke-dashoffset" from="0" to="-100" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M 120 460 C 180 530, 240 550, 260 550" stroke="url(#pGrad)" stroke-width="2.5" stroke-dasharray="6 4" fill="none" filter="url(#glowPath)">
+          <animate attributeName="stroke-dashoffset" from="0" to="-100" dur="2s" repeatCount="indefinite"/>
+        </path>
+      </svg>
 
-             <!-- Ball -->
-             <ellipse cx="2" cy="38" rx="6" ry="4" fill="rgba(0,0,0,0.5)"/>
-             <circle cx="2" cy="34" r="4" fill="#00f5d4" stroke="#fff" stroke-width="0.5"/>
-          </g>
-        </svg>
+      <!-- Huge Title -->
+      <div class="massive-title">SELECT YOUR VENUE</div>
+
+      <!-- Landmark Text -->
+      <div class="landmark" style="top:320px; left:50%; transform:translateX(-50%);">Indiranagar</div>
+      <div class="landmark" style="top:380px; right:20px;">Whitefield</div>
+      <div class="landmark" style="top:600px; left:30px;">Electronic<br>City</div>
+      <div class="landmark" style="top:580px; right:30px;">Koramangala<br>City</div>
+
+      <!-- ── NODE 1: Koramangala (Active) ── -->
+      <div class="qnode" style="left:50px; top:420px;" onclick="selectVenue('Koramangala')">
+        <div class="node-tooltip">
+          <div class="newbie-badge">NEWBIE</div>
+          <div class="tooltip-title">Koramangala Venue —</div>
+          <div class="tooltip-sub">Available Quests Found!</div>
+        </div>
+        <div class="venue-orb active-orb"></div>
+        <div class="node-label">Koramangala Node</div>
       </div>
 
-      <!-- Quest Info -->
-      <div class="quest-header">
-        <div class="quest-label">Quest Objective:</div>
-        <div class="quest-title">Koramangala Football Arena <span style="color:var(--teal)">(Level 1)</span></div>
+      <!-- ── NODE 2: HSR (Locked) ── -->
+      <div class="qnode" style="left:240px; top:350px;" onclick="selectVenue('HSR')">
+        <div class="venue-orb"></div>
+        <div class="node-label">HSR Node</div>
       </div>
 
-      <!-- Feature List -->
-      <div class="feature-card">
-        
-        <div class="feature-item">
-          <div class="feat-icon-wrap ic-turf">⚽</div>
-          <div class="feat-text">
-            <div class="feat-title">Flawless Pitch</div>
-            <div class="feat-desc">High-Grip Pro Turf for maximum control.</div>
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="feat-icon-wrap ic-water">💧</div>
-          <div class="feat-text">
-            <div class="feat-title">Stamina Zone</div>
-            <div class="feat-desc">Complimentary Hydration Station equipped.</div>
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="feat-icon-wrap ic-light">🔦</div>
-          <div class="feat-text">
-            <div class="feat-title">Night Vision</div>
-            <div class="feat-desc">Pro Floodlights activated for evening matches.</div>
-          </div>
-        </div>
-
-        <div class="feature-item promo-highlight" style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.1);">
-          <div class="feat-icon-wrap ic-gift">🎁</div>
-          <div class="feat-text">
-            <div class="feat-title">Newbie Shield Active</div>
-            <div class="feat-desc">20% Discount applied automatically at checkout!</div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Team Status -->
-      <div class="team-status">
-        <div class="ts-avatars">
-          <div class="avatar ava-1">🙎‍♂️</div>
-          <div class="avatar ava-2">🙍‍♀️</div>
-          <div class="avatar ava-3">🙎‍♂️</div>
-          <div class="avatar ava-4">🙍‍♀️</div>
-        </div>
-        <div class="ts-text">READY TEAMS: <span class="ts-count">4/5</span> HSR Ninjas</div>
+      <!-- ── NODE 3: Indiranagar (Locked) ── -->
+      <div class="qnode" style="left:180px; top:520px;" onclick="selectVenue('Indiranagar')">
+        <div class="venue-orb"></div>
+        <div class="node-label">Indiranagar Node</div>
       </div>
 
     </div>
 
-    <!-- Bottom fog fixed inside scroll container to wrap content -->
-    <div class="fog fog-bottom" style="position:fixed; bottom:0; left:-20%; width:140%; height:250px; z-index:0;"></div>
   </div>
 
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
-    <button class="cta-btn" onclick="navTo('fitquest_screen5.html')">
-      INITIATE QUEST BOOKING
-    </button>
+    <button class="cta-btn" onclick="selectVenue('Koramangala')">View Venue Details</button>
   </div>
 
 
@@ -447,19 +392,22 @@
       <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
     </div>
     <div class="drawer-nav">
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
         <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
       </div>
       <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
         <span class="drawer-icon">⚙️</span><span>App Settings</span>
       </div>
     </div>
@@ -485,6 +433,7 @@ function runNavTo(url) {
 /* ── Isometric 3D City Map Generator ── */
 (function() {
   const canvas = document.getElementById('cityCanvas');
+  const scrollContent = document.querySelector('.scroll-content');
   const W = Math.min(390, window.innerWidth);
   const H = 900;
   canvas.width = W; canvas.height = H;
@@ -492,22 +441,41 @@ function runNavTo(url) {
 
   function drawMap(t) {
     ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#05070e';
+    ctx.fillStyle = '#060810';
     ctx.fillRect(0,0,W,H);
 
     // Grid offset
-    const gx = W/2, gy = H/4 - 100;
-    const cw = 45, ch = 22.5;
+    const gx = W/2, gy = H/4;
+    const cw = 40, ch = 20;
+
+    // Draw grid lines (Streets)
+    for(let i=0; i<=20; i++){
+      let pulse = 0.5 + 0.3 * Math.sin(t*0.5 + i*0.2);
+      ctx.beginPath();
+      ctx.moveTo(gx + (i - 0)*cw, gy + (i + 0)*ch);
+      ctx.lineTo(gx + (i - 20)*cw, gy + (i + 20)*ch);
+      ctx.strokeStyle = `rgba(0,245,212,${0.4 * pulse})`;
+      ctx.lineWidth = 1.5; ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(gx + (0 - i)*cw, gy + (0 + i)*ch);
+      ctx.lineTo(gx + (20 - i)*cw, gy + (20 + i)*ch);
+      ctx.strokeStyle = `rgba(0,245,212,${0.4 * pulse})`;
+      ctx.lineWidth = 1.5; ctx.stroke();
+    }
 
     // Draw isometric building blocks
-    let seed = 9999;
+    // Seeded random pseudo-blocks
+    let seed = 12345;
     function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
     
+    // Sort by depth (r+c)
     const blocks = [];
     for(let r=0; r<18; r++){
       for(let c=0; c<18; c++){
-        if (rand() < 0.4 && !(c > 6 && c < 12 && r > 4 && r < 12)) { 
-          blocks.push({c, r, h: 20 + rand() * 60});
+        if (rand() < 0.35 && !(c > 6 && c < 12 && r > 6 && r < 12)) { 
+          // leave a hole in center for nodes
+          blocks.push({c, r, h: 10 + rand() * 40});
         }
       }
     }
@@ -519,27 +487,33 @@ function runNavTo(url) {
       
       // Top face
       ctx.beginPath(); ctx.moveTo(x0, y0 - b.h); ctx.lineTo(x0+cw, y0+ch - b.h); ctx.lineTo(x0, y0+2*ch - b.h); ctx.lineTo(x0-cw, y0+ch - b.h);
-      ctx.fillStyle = '#0a0f1d'; ctx.fill();
-      ctx.strokeStyle = `rgba(0,180,216,0.3)`; ctx.lineWidth = 0.5; ctx.stroke();
+      ctx.fillStyle = '#0a0e1c'; ctx.fill();
+      ctx.strokeStyle = `rgba(0,245,212,0.6)`; ctx.lineWidth = 1; ctx.stroke();
       
       // Left face
       ctx.beginPath(); ctx.moveTo(x0-cw, y0+ch - b.h); ctx.lineTo(x0, y0+2*ch - b.h); ctx.lineTo(x0, y0+2*ch); ctx.lineTo(x0-cw, y0+ch);
-      ctx.fillStyle = '#0b1226'; ctx.fill();
-      ctx.strokeStyle = `rgba(191,90,242,0.3)`; ctx.stroke();
+      ctx.fillStyle = '#11182c'; ctx.fill();
+      ctx.strokeStyle = `rgba(0,245,212,0.3)`; ctx.stroke();
 
       // Right face
       ctx.beginPath(); ctx.moveTo(x0, y0+2*ch - b.h); ctx.lineTo(x0+cw, y0+ch - b.h); ctx.lineTo(x0+cw, y0+ch); ctx.lineTo(x0, y0+2*ch);
-      ctx.fillStyle = '#060a16'; ctx.fill();
+      ctx.fillStyle = '#0d1324'; ctx.fill();
     });
   }
 
-  // Draw static map for Screen 4 since focus is on the content
-  drawMap(1.5);
+  let t=0;
+  function loop() { drawMap(t); t+=0.016; requestAnimationFrame(loop); }
+  loop();
 })();
 
 function navTo(url) {
   document.querySelector('.phone-shell').classList.add('slide-out-left');
   setTimeout(() => window.location.href = url, 320);
+}
+
+function selectVenue(name) {
+  localStorage.setItem('selectedVenue', name);
+  navTo('fitquest_screen5.html');
 }
 
 function navigateBack() {
@@ -549,6 +523,14 @@ function navigateBack() {
   setTimeout(() => { window.location.href = 'fitquest_screen3.html'; }, 330);
 }
 
+function showLocked(msg) {
+  alert(msg);
+  const s = document.querySelector('.phone-shell');
+  s.style.transform = 'translateX(6px)';
+  setTimeout(() => s.style.transform = 'translateX(-6px)', 80);
+  setTimeout(() => s.style.transform = '', 160);
+}
+
 // Entry transition
 (function() {
   const d = sessionStorage.getItem('navDir');
@@ -556,6 +538,8 @@ function navigateBack() {
   s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
   setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
   sessionStorage.removeItem('navDir');
+  
+// removed auto-scroll
 })();
 </script>
 </body>

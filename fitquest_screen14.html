@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>FitQuest Bangalore – Screen 14: Squad Compatibility</title>
+  <title>FitQuest Bangalore – Screen 13: Hero Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,8 +16,9 @@
     
     .phone-shell {
       position: relative; width: 390px; max-width: 100%; height: 100%;
-      background: #060913; overflow: hidden; color: #fff;
-      display: flex; flex-direction: column;
+      background: #060913;
+      display: flex; flex-direction: column; overflow: hidden;
+      color: #fff;
     }
 
     /* ─── BACKGROUND MAP ─── */
@@ -29,23 +30,11 @@
         linear-gradient(-35deg, rgba(191, 90, 242, 0.05) 1px, transparent 1px);
       background-size: 60px 104px;
     }
-    /* Sonar Pulse Overlays */
-    .sonar-base {
-      position: absolute; width: 500px; height: 500px; top: -5%; left: 50%;
-      transform: translateX(-50%); border-radius: 50%; pointer-events: none;
-      background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, transparent 60%);
-    }
-    .sonar-ring {
-      position: absolute; width: 100px; height: 100px; top: 15%; left: 50%;
-      transform: translate(-50%, -50%); border-radius: 50%;
-      border: 1.5px solid rgba(57,255,20,0.6); pointer-events: none;
-      animation: sonarPulse 3s cubic-bezier(0.1, 0.5, 0.3, 1) infinite;
-    }
-    .sonar-ring:nth-child(3) { animation-delay: 1.5s; }
-    
-    @keyframes sonarPulse {
-      0% { width: 40px; height: 40px; opacity: 1; border-width: 2px; }
-      100% { width: 350px; height: 350px; opacity: 0; border-width: 0.5px; }
+    .map-glow {
+      position: absolute; width: 400px; height: 400px; top: 10%; left: 50%;
+      transform: translateX(-50%); border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,245,212,0.15) 0%, transparent 60%);
+      pointer-events: none;
     }
 
     /* ─── FIXED UI LAYER (Top) ─── */
@@ -61,29 +50,15 @@
       backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.03);
     }
-    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
-    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
     .flow-item.done { color: rgba(0,245,212,0.5); }
     .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
     .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
     .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
     
     .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
-    .progress-fill { height: 100%; width: 70%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 14/20 */
-
-    /* Top Nav */
-    .top-nav {
-      display: flex; flex-direction: column; align-items: flex-start;
-      padding: 16px 20px 4px; pointer-events: auto;
-    }
-    .back-btn {
-      width: 32px; height: 32px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 16px; color: #00f5d4;
-      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
-      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
-    }
-    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+    .progress-fill { height: 100%; width: 65%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 13/20 */
 
     /* ─── GLOBAL NAV DRAWER ─── */
     .menu-trigger {
@@ -125,6 +100,7 @@
       border: 1px solid rgba(255,255,255,0.1); color: #fff; font-size: 18px;
       display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
     }
+    .drawer-close:hover { background: rgba(255,59,48,0.2); border-color: #ff3b30; color: #ff3b30; }
     
     .drawer-nav { display: flex; flex-direction: column; gap: 16px; flex: 1; margin-top: 10px; }
     .drawer-link {
@@ -133,129 +109,174 @@
       text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
       transition: all 0.2s;
     }
+    .drawer-link:hover {
+      background: rgba(0,245,212,0.15); border-color: rgba(0,245,212,0.4);
+      transform: translateX(-5px); box-shadow: 0 4px 15px rgba(0,245,212,0.1);
+    }
+    .drawer-icon { font-size: 18px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+
+    /* Top Nav (Inline) */
+    .top-nav {
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 16px 20px 4px; pointer-events: auto;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+      margin-bottom: 2px;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
 
     /* ─── MAIN CONTENT ─── */
     .content-area {
-      position: relative; z-index: 20; flex: 1; overflow-y: auto; overflow-x: hidden;
-      padding-top: 100px; padding-bottom: 100px;
+      position: relative; z-index: 20; flex: 1; overflow-y: auto;
+      padding-top: 100px; padding-bottom: 160px;
     }
     .content-area::-webkit-scrollbar { display: none; }
 
-    .header-block { padding: 24px 20px 10px; text-align: center; }
-    .page-title {
-      font-family: 'Rajdhani', sans-serif; font-size: 30px; font-weight: 900;
-      color: #39ff14; text-shadow: 0 0 15px rgba(57,255,20,0.6); letter-spacing: 0.05em;
-      line-height: 1.1; margin-bottom: 16px; text-transform: uppercase;
+    /* HERO HEADER */
+    .hero-header {
+      display: flex; flex-direction: column; align-items: center;
+      margin-top: 20px; text-align: center;
+    }
+    .avatar-wrapper {
+      position: relative; width: 100px; height: 100px;
+      border-radius: 50%; margin-bottom: 16px;
+      box-shadow: 0 0 25px rgba(57,255,20,0.3);
+    }
+    .avatar-img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      border: 3px solid rgba(255,255,255,0.8);
+    }
+    .lvl-badge {
+      position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+      background: #39ff14; color: #000; font-family: 'Orbitron', sans-serif;
+      font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 6px;
+      border: 1.5px solid #000; box-shadow: 0 2px 10px rgba(57,255,20,0.6);
+      white-space: nowrap;
     }
     
-    /* User Context Mini Card */
-    .user-context-card {
-      background: rgba(16, 22, 34, 0.6); border: 1px solid rgba(0,245,212,0.3);
-      border-radius: 12px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,245,212,0.1);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    .xp-bar-container {
+      width: 180px; text-align: center; margin-bottom: 16px;
     }
-    .mini-radar { width: 28px; height: 28px; opacity: 0.8; }
-    .uc-info { display: flex; flex-direction: column; text-align: left; }
-    .uc-label { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
-    .uc-val { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: #00f5d4; }
+    .xp-track {
+      width: 100%; height: 4px; background: rgba(255,255,255,0.1);
+      border-radius: 10px; margin-bottom: 6px; overflow: hidden;
+    }
+    .xp-fill {
+      height: 100%; width: 30%; background: #00f5d4;
+      box-shadow: 0 0 10px #00f5d4;
+    }
+    .xp-text {
+      font-size: 10px; font-weight: 700; color: #00f5d4; letter-spacing: 0.1em;
+    }
 
-    /* Match Feed */
-    .feed-container { padding: 16px 20px; display: flex; flex-direction: column; gap: 20px; }
-    
-    .match-card {
-      background: rgba(16, 22, 34, 0.4); border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 16px; padding: 16px; position: relative; overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    .hero-class-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 800;
+      color: #39ff14; letter-spacing: 0.1em; text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(57,255,20,0.5); padding: 6px 16px;
+      background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.3);
+      border-radius: 8px; margin-bottom: 30px;
     }
-    /* Dynamic colored borders based on rating */
-    .match-card.gold  { border-color: rgba(255,149,0,0.5); box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,149,0,0.05); }
-    .match-card.green { border-color: rgba(57,255,20,0.5); box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(57,255,20,0.05); }
-    .match-card.teal  { border-color: rgba(0,245,212,0.4); box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(0,245,212,0.05); }
-    
-    .mc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .mc-squad-info { display: flex; flex-direction: column; }
-    .mc-squad-name { font-size: 16px; font-weight: 800; color: #fff; letter-spacing: 0.02em; }
-    .mc-squad-type { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; }
-    
-    /* Gauge Indicator */
-    .gauge-wrapper { position: relative; width: 50px; height: 50px; }
-    .gauge-svg { transform: rotate(-90deg); width: 50px; height: 50px; overflow: visible; }
-    .g-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
-    .g-fill { fill: none; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s ease-out; }
-    .gold .g-fill { stroke: #ff9500; filter: drop-shadow(0 0 6px rgba(255,149,0,0.6)); }
-    .green .g-fill { stroke: #39ff14; filter: drop-shadow(0 0 6px rgba(57,255,20,0.6)); }
-    .teal .g-fill { stroke: #00f5d4; filter: drop-shadow(0 0 6px rgba(0,245,212,0.6)); }
-    .gauge-val {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 800;
-    }
-    .gold .gauge-val { color: #ff9500; }
-    .green .gauge-val { color: #39ff14; }
-    .teal .gauge-val { color: #00f5d4; }
 
-    /* Insight Block */
-    .ai-insight {
-      background: rgba(255,255,255,0.03); border-left: 2px solid; padding: 10px 12px;
-      border-radius: 4px; font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 14px;
+    /* ─── RADAR CHART (SVG) ─── */
+    .radar-container {
+      position: relative; width: 100%; height: 320px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 40px;
     }
-    .gold .ai-insight { border-left-color: #ff9500; }
-    .green .ai-insight { border-left-color: #39ff14; }
-    .teal .ai-insight { border-left-color: #00f5d4; }
-    .ai-insight span { font-weight: 700; color: #fff; }
+    .radar-svg {
+      width: 300px; height: 300px; overflow: visible;
+      filter: drop-shadow(0 0 15px rgba(0,245,212,0.2));
+    }
     
-    /* Team Previews */
-    .team-preview { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .tp-avatars { display: flex; align-items: center; }
-    .tp-ava { 
-      width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #000;
-      margin-left: -8px; overflow: hidden; background: #222;
+    .radar-bg { fill: rgba(16,22,34,0.6); stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+    .radar-grid { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 1; stroke-dasharray: 4; }
+    .radar-axis { stroke: rgba(255,255,255,0.15); stroke-width: 1; stroke-dasharray: 4; }
+    
+    .radar-plot {
+      fill: rgba(0,245,212,0.25); stroke: #00f5d4; stroke-width: 2.5;
+      stroke-linejoin: round; animation: pulseRadar 3s infinite alternate ease-in-out;
     }
-    .tp-ava:first-child { margin-left: 0; }
-    .tp-ava.empty { display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 700; border-color: rgba(255,255,255,0.2); border-style: dashed; }
-    .tp-ava img { width: 100%; height: 100%; object-fit: cover; }
-    .tp-stat { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); }
-    .tp-stat span { font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; color: #fff; }
-
-    /* Match CTA */
-    .match-cta {
-      width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 13px;
-      font-weight: 800; font-family: 'Inter', sans-serif; cursor: pointer; text-transform: uppercase;
-      letter-spacing: 0.02em; transition: transform 0.1s;
+    @keyframes pulseRadar {
+      0% { filter: drop-shadow(0 0 2px #00f5d4); transform: scale(0.98); transform-origin: center; }
+      100% { filter: drop-shadow(0 0 15px #00f5d4); transform: scale(1.02); transform-origin: center; }
     }
-    .match-cta:active { transform: scale(0.96); }
-    .green .match-cta { background: #39ff14; color: #000; box-shadow: 0 0 15px rgba(57,255,20,0.3); }
-    .teal .match-cta { background: #00f5d4; color: #000; box-shadow: 0 0 15px rgba(0,245,212,0.3); }
-    .gold .match-cta { background: transparent; border: 1px solid #ff9500; color: #ff9500; }
+    .radar-node { fill: #fff; stroke: #00f5d4; stroke-width: 2; }
+    
+    .radar-label {
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; fill: #fff;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .radar-val { fill: #00f5d4; font-weight: 800; }
 
-    /* ─── FIXED BOTTOM FILTER + CTA ─── */
-    .fixed-footer-block {
+    /* ─── INFO CARDS ─── */
+    .glow-card {
+      background: rgba(16, 22, 34, 0.4); border-radius: 16px;
+      margin: 0 20px 24px; padding: 16px 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(0,245,212,0.3);
+    }
+    .card-title {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 16px; padding-bottom: 8px;
+      color: #00f5d4; border-bottom: 1px solid rgba(0,245,212,0.2);
+    }
+    
+    /* Endorsement Badges Grid */
+    .badges-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .badge-item {
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 12px 4px;
+    }
+    .badge-icon {
+      font-size: 20px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+    }
+    .badge-name { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.8); line-height: 1.2; }
+    .badge-count { font-size: 12px; font-weight: 800; color: #39ff14; }
+
+    /* Archive Details */
+    .archive-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .archive-row:last-child { margin-bottom: 0; }
+    .archive-label { font-size: 13px; font-weight: 600; color: #fff; }
+    .archive-val { font-size: 14px; font-weight: 800; color: #bf5af2; text-shadow: 0 0 10px rgba(191,90,242,0.4); }
+
+    /* Quick Squad Tool */
+    .squad-status {
+      display: flex; align-items: center; gap: 12px; margin: 0 20px 20px;
+      background: rgba(16, 22, 34, 0.4); border-radius: 12px; padding: 12px 16px;
+      border: 1px dashed rgba(255,255,255,0.2);
+    }
+    .sq-icon { font-size: 20px; }
+    .sq-text { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6); }
+    .sq-text span { color: #ff9500; font-style: italic; animation: pulse 1.5s infinite alternate; }
+
+    /* ─── FIXED CTA FOOTER ─── */
+    .fixed-footer-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
-      display: flex; flex-direction: column; 
-      background: linear-gradient(0deg, rgba(6,9,19,1) 20%, rgba(6,9,19,0.95) 75%, transparent 100%);
+      padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
+      background: linear-gradient(0deg, rgba(6,9,19,1) 0%, rgba(6,9,19,0.95) 70%, transparent 100%);
     }
-    
-    .filter-scroll {
-      width: 100%; overflow-x: auto; white-space: nowrap; padding: 10px 20px 16px;
-      display: flex; gap: 10px;
-    }
-    .filter-scroll::-webkit-scrollbar { display: none; }
-    .filter-chip {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px; padding: 8px 14px; font-size: 11px; font-weight: 600;
-      color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.2s;
-    }
-    .filter-chip.active { background: rgba(0,122,255,0.15); border-color: #007aff; color: #007aff; }
-    
-    .footer-cta-pad { padding: 0 20px 24px; }
     .primary-btn {
-      width: 100%; padding: 18px 20px; border-radius: 16px; border: none; cursor: pointer;
-      background: #007aff; color: #fff;
-      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
-      box-shadow: 0 0 25px rgba(0,122,255,0.4); transition: transform 0.15s ease;
-      text-align: center; text-transform: uppercase; text-decoration: none; display: block;
+      width: 100%; padding: 18px 24px; border-radius: 16px; border: none; cursor: pointer;
+      background: rgba(0,245,212,0.1); border: 1.5px solid #00f5d4; color: #00f5d4;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.02em;
+      box-shadow: 0 0 15px rgba(0,245,212,0.2), inset 0 0 10px rgba(0,245,212,0.1);
+      transition: all 0.2s ease; text-align: center; margin-bottom: 0px; text-transform: uppercase;
     }
     .primary-btn:active { transform: scale(0.96); }
+    .primary-btn:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 25px rgba(0,245,212,0.4); }
 
     /* Slide Animations */
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
@@ -266,24 +287,35 @@
     .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
     .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
     .phone-shell.slide-out-left { animation: slideOutLeft 0.3s ease forwards; }
+
+    /* AI Scout Pulse Animation */
+    @keyframes scoutPulse {
+      0% { box-shadow: 0 0 15px rgba(0,245,212,0.4); transform: scale(1); }
+      50% { box-shadow: 0 0 40px rgba(0,245,212,0.8); transform: scale(1.02); }
+      100% { box-shadow: 0 0 15px rgba(0,245,212,0.4); transform: scale(1); }
+    }
+    .pulse-loading {
+      animation: scoutPulse 0.4s ease-in-out infinite !important;
+      background: rgba(0,245,212,0.3) !important;
+      border-color: #fff !important;
+      color: #fff !important;
+    }
   </style>
 </head>
 <body>
 <div class="phone-shell">
 
-  <!-- BACKGROUND & SONAR -->
+  <!-- BACKGROUND -->
   <div class="bg-map"></div>
-  <div class="sonar-base"></div>
-  <div class="sonar-ring"></div>
-  <div class="sonar-ring"></div>
+  <div class="map-glow"></div>
 
   <!-- FIXED TOP UI -->
   <div class="fixed-ui-layer">
     <div class="step-indicator">
       <div class="step-flow">
+        <span class="flow-item done">Community</span><span class="flow-arrow">→</span>
         <span class="flow-item done">Profile</span><span class="flow-arrow">→</span>
-        <span class="flow-item done">Compatibility</span><span class="flow-arrow">→</span>
-        <span class="flow-item active">Squad Search</span>
+        <span class="flow-item active">Skill Matrix</span>
       </div>
       <div class="step-label-global">Screen 14 of 20</div>
       <div class="progress-track"><div class="progress-fill"></div></div>
@@ -315,19 +347,22 @@
       <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
     </div>
     <div class="drawer-nav">
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
         <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')"> <!-- Assuming Hall of Heroes shifts down -->
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
         <span class="drawer-icon">⚙️</span><span>App Settings</span>
       </div>
     </div>
@@ -336,129 +371,118 @@
   <!-- SCROLLABLE BODY -->
   <div class="content-area">
     
-    <div class="header-block">
-      <div class="page-title">AI SQUAD COMPATIBILITY</div>
-      <div class="user-context-card">
-        <svg class="mini-radar" viewBox="0 0 100 100">
-          <polygon points="50,10 93.3,35 93.3,85 50,100 6.7,85 6.7,35" fill="rgba(0,245,212,0.2)" stroke="#00f5d4" stroke-width="1.5"/>
-          <polygon points="50,25 75,45 65,75 50,85 35,75 30,50" fill="none" stroke="#39ff14" stroke-width="2"/>
-        </svg>
-        <div class="uc-info">
-          <span class="uc-label">Matching as:</span>
-          <span class="uc-val">FOOTBALL DEFENDER (LVL 1)</span>
+    <!-- HERO HEADER -->
+    <div class="hero-header">
+      <div class="avatar-wrapper">
+        <img class="avatar-img" src="https://i.pravatar.cc/100?img=11" alt="Profile Avatar">
+        <div class="lvl-badge">LVL 1</div>
+      </div>
+      <div class="xp-bar-container">
+        <div class="xp-track"><div class="xp-fill"></div></div>
+        <div class="xp-text">XP 150/500</div>
+      </div>
+      <div class="hero-class-title">Primary Class: Football (Defender Role)</div>
+    </div>
+
+    <!-- HEXAGONAL SKILL MATRIX -->
+    <!-- 
+      Center: 150, 150. Max Radius: 100
+      Top: (150, 50) | Top Right: (236.6, 100) | Bottom Right: (236.6, 200)
+      Bottom: (150, 250) | Bottom Left: (63.4, 200) | Top Left: (63.4, 100)
+      
+      User Stats Coordinates (out of 12 max):
+      1. Stamina (10/12 = 83.33) -> (150, 66.67)
+      2. Agility (9/12 = 75) -> (214.95, 112.5)
+      3. Court Vision (7/12 = 58.33) -> (200.5, 179.16)
+      4. Team Synergy (11/12 = 91.66) -> (150, 241.66)
+      5. Tactical IQ (8/12 = 66.66) -> (92.26, 183.33)
+      6. Strength (8/12 = 66.66) -> (92.26, 116.67)
+    -->
+    <div class="radar-container">
+      <svg class="radar-svg" viewBox="0 0 300 300">
+        <!-- Connecting Axis Lines -->
+        <line x1="150" y1="150" x2="150" y2="50" class="radar-axis" />
+        <line x1="150" y1="150" x2="236.6" y2="100" class="radar-axis" />
+        <line x1="150" y1="150" x2="236.6" y2="200" class="radar-axis" />
+        <line x1="150" y1="150" x2="150" y2="250" class="radar-axis" />
+        <line x1="150" y1="150" x2="63.4" y2="200" class="radar-axis" />
+        <line x1="150" y1="150" x2="63.4" y2="100" class="radar-axis" />
+        
+        <!-- Max Level Base Hexagon -->
+        <polygon points="150,50 236.6,100 236.6,200 150,250 63.4,200 63.4,100" class="radar-bg"/>
+        <!-- 66% Grid Ring -->
+        <polygon points="150,83.33 207.7,116.6 207.7,183.3 150,216.6 92.3,183.3 92.3,116.6" class="radar-grid"/>
+        <!-- 33% Grid Ring -->
+        <polygon points="150,116.6 178.8,133.3 178.8,166.6 150,183.3 121.2,166.6 121.2,133.3" class="radar-grid"/>
+        
+        <!-- User Skill Polygon -->
+        <polygon points="150,66.67 214.95,112.5 200.5,179.16 150,241.66 92.26,183.33 92.26,116.67" class="radar-plot"/>
+        
+        <!-- Active User Nodes -->
+        <circle cx="150" cy="66.67" r="4" class="radar-node"/>
+        <circle cx="214.95" cy="112.5" r="4" class="radar-node"/>
+        <circle cx="200.5" cy="179.16" r="4" class="radar-node"/>
+        <circle cx="150" cy="241.66" r="4" class="radar-node"/>
+        <circle cx="92.26" cy="183.33" r="4" class="radar-node"/>
+        <circle cx="92.26" cy="116.67" r="4" class="radar-node"/>
+
+        <!-- Text Labels -->
+        <text x="150" y="32" text-anchor="middle" class="radar-label">STAMINA <tspan class="radar-val">10/12</tspan></text>
+        <text x="235" y="95" text-anchor="start" class="radar-label">AGILITY <tspan class="radar-val">9/12</tspan></text>
+        <text x="235" y="210" text-anchor="start" class="radar-label">COURT VISION <tspan class="radar-val">7/12</tspan></text>
+        <text x="150" y="275" text-anchor="middle" class="radar-label">TEAM SYNERGY <tspan class="radar-val">11/12</tspan></text>
+        <text x="65" y="210" text-anchor="end" class="radar-label">TACTICAL IQ <tspan class="radar-val">8/12</tspan></text>
+        <text x="65" y="95" text-anchor="end" class="radar-label">STRENGTH <tspan class="radar-val">8/12</tspan></text>
+      </svg>
+    </div>
+
+    <!-- QUICK SQUAD TOOL -->
+    <div class="squad-status">
+      <div class="sq-icon">🤖</div>
+      <div class="sq-text">CURRENT SQUAD: <span>[Searching via AI Scout...]</span></div>
+    </div>
+
+    <!-- VOUCHED BADGES -->
+    <div class="glow-card">
+      <div class="card-title">Vouched Badges (Community Endorsements)</div>
+      <div class="badges-grid">
+        <div class="badge-item">
+          <div class="badge-icon">♟️</div>
+          <div class="badge-name">Tactical<br/>Master</div>
+          <div class="badge-count">3X</div>
+        </div>
+        <div class="badge-item">
+          <div class="badge-icon">🫀</div>
+          <div class="badge-name">Stamina<br/>King</div>
+          <div class="badge-count">2X</div>
+        </div>
+        <div class="badge-item">
+          <div class="badge-icon">🤝</div>
+          <div class="badge-name">Sportsman</div>
+          <div class="badge-count">1X</div>
         </div>
       </div>
     </div>
 
-    <!-- MAIN FEED -->
-    <div class="feed-container">
-      
-      <!-- CARD 1 (GREEN - HIGH MATCH) -->
-      <div class="match-card green">
-        <div class="mc-header">
-          <div class="mc-squad-info">
-            <span class="mc-squad-name">HSR ELITE STRIKERS</span>
-            <span class="mc-squad-type">Football Squad</span>
-          </div>
-          <div class="gauge-wrapper">
-            <svg class="gauge-svg" viewBox="0 0 40 40">
-              <circle cx="20" cy="20" r="16" class="g-bg" />
-              <!-- C = 2*PI*16 = 100.5. 94% of 100.5 = 94.4 offset = 100.5-94.4 = 6.1 -->
-              <circle cx="20" cy="20" r="16" class="g-fill" stroke-dasharray="100.5" stroke-dashoffset="6.1" />
-            </svg>
-            <div class="gauge-val">94<span style="font-size:7px;">%</span></div>
-          </div>
-        </div>
-        
-        <div class="ai-insight">
-          <span>Critical Need:</span> This squad is missing a high-stamina Defender. Your 10/12 Stamina rating is a perfect tactical fit.
-        </div>
-        
-        <div class="team-preview">
-          <div class="tp-avatars">
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=60" alt="p"></div>
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=33" alt="p"></div>
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=12" alt="p"></div>
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=47" alt="p"></div>
-            <div class="tp-ava empty">+1</div>
-          </div>
-          <div class="tp-stat">Current Synergy: <span>88%</span></div>
-        </div>
-        
-        <button class="match-cta" onclick="navTo('fitquest_screen15.html')">Request to Join Squad</button>
+    <!-- UNLOCK HISTORY -->
+    <div class="glow-card">
+      <div class="card-title">Unlock History</div>
+      <div class="archive-row">
+        <span class="archive-label">Nodes Unlocked</span>
+        <span class="archive-val">1 / 50</span>
       </div>
-
-      <!-- CARD 2 (TEAL - GYM) -->
-      <div class="match-card teal">
-        <div class="mc-header">
-          <div class="mc-squad-info">
-            <span class="mc-squad-name">BMSIT IRON CORE</span>
-            <span class="mc-squad-type">Gym / Fitness Squad</span>
-          </div>
-          <div class="gauge-wrapper">
-            <svg class="gauge-svg" viewBox="0 0 40 40">
-              <circle cx="20" cy="20" r="16" class="g-bg" />
-              <!-- 82% of 100.5 = 82.4 -> offset 18.1 -->
-              <circle cx="20" cy="20" r="16" class="g-fill" stroke-dasharray="100.5" stroke-dashoffset="18.1" />
-            </svg>
-            <div class="gauge-val">82<span style="font-size:7px;">%</span></div>
-          </div>
-        </div>
-        
-        <div class="ai-insight">
-          <span>Schedule Sync:</span> Perfect for your morning workout window (6 AM - 7 AM). High compatibility with BMSIT student schedules.
-        </div>
-        
-        <div class="team-preview">
-          <div class="tp-avatars">
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=55" alt="p"></div>
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=25" alt="p"></div>
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=68" alt="p"></div>
-            <div class="tp-ava empty">+2</div>
-          </div>
-          <div class="tp-stat">Pacing: <span>Intense</span></div>
-        </div>
-        
-        <button class="match-cta" onclick="navTo('fitquest_screen15.html')">Join Workout Slot</button>
+      <div class="archive-row" style="margin-top: 6px;">
+        <span class="archive-label">Quests Completed</span>
+        <span class="archive-val">1</span>
       </div>
-
-      <!-- CARD 3 (GOLD - YOGA) -->
-      <div class="match-card gold">
-        <div class="mc-header">
-          <div class="mc-squad-info">
-            <span class="mc-squad-name">ZEN MASTERS</span>
-            <span class="mc-squad-type">Yoga Squad</span>
-          </div>
-          <div class="gauge-wrapper">
-            <svg class="gauge-svg" viewBox="0 0 40 40">
-              <circle cx="20" cy="20" r="16" class="g-bg" />
-              <!-- 65% of 100.5 = 65.3 -> offset 35.2 -->
-              <circle cx="20" cy="20" r="16" class="g-fill" stroke-dasharray="100.5" stroke-dashoffset="35.2" />
-            </svg>
-            <div class="gauge-val">65<span style="font-size:7px;">%</span></div>
-          </div>
-        </div>
-        
-        <div class="ai-insight">
-          <span>Stat Improvement:</span> Good for improving your Agility stat, though your current profile is Strength-dominant.
-        </div>
-        
-        <div class="team-preview">
-          <div class="tp-avatars">
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=19" alt="p"></div>
-            <div class="tp-ava"><img src="https://i.pravatar.cc/100?img=1" alt="p"></div>
-          </div>
-          <div class="tp-stat">Level Base: <span>Beginner</span></div>
-        </div>
-        
-        <button class="match-cta" onclick="navTo('fitquest_screen15.html')">View Squad Profile</button>
-      </div>
-
     </div>
 
   </div>
 
-  <!-- REMOVED FIXED BOTTOM FOOTER & FILTERS PER REQUEST -->
+  <!-- FIXED BOTTOM CTA LAYER -->
+  <div class="fixed-footer-layer">
+    <button class="primary-btn" id="scoutBtn" onclick="startScout('fitquest_screen15.html')">Find Compatible Squads to Level Up</button>
+  </div>
 
 </div>
 
@@ -467,13 +491,24 @@ function navigateBack() {
   const shell = document.querySelector('.phone-shell');
   shell.classList.add('slide-out-right');
   sessionStorage.setItem('navDir', 'back');
-  setTimeout(() => { window.location.href = 'fitquest_screen13.html'; }, 330);
+  setTimeout(() => { window.history.back(); }, 330);
 }
 
 function navTo(url) {
   const shell = document.querySelector('.phone-shell');
   shell.classList.add('slide-out-left');
   setTimeout(() => { window.location.href = url; }, 330);
+}
+
+function startScout(url) {
+  const btn = document.getElementById('scoutBtn');
+  btn.classList.add('pulse-loading');
+  btn.innerText = "INITIALIZING AI SCOUT...";
+  
+  // Brief delay to show off the pulse before navigating
+  setTimeout(() => {
+    navTo(url);
+  }, 800);
 }
 
 function toggleNavDrawer() {

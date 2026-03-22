@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>FitQuest Bangalore – Screen 7: Optimization Complete</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <title>FitQuest Bangalore – Screen 6: Host a Flexi-Quest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -16,26 +16,38 @@
     
     .phone-shell {
       position: relative; width: 390px; max-width: 100%; height: 100%;
-      background: #080b12; /* Very dark space theme */
+      background: #0f1523; /* Dark base */
       display: flex; flex-direction: column; overflow: hidden;
       color: #fff;
     }
 
-    /* ─── BACKGROUND GRID ─── */
-    .bg-grid {
+    /* ─── BACKGROUND MAP STYLING ─── */
+    .bg-map {
       position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-color: #0d121c;
+      /* Grid representing city blocks */
       background-image: 
-        linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-      /* Subtle radial gradient to focus center */
-      background-color: #080b12;
+        linear-gradient(55deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(-35deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 104px;
+      overflow: hidden;
     }
-    .bg-glow {
-      position: absolute; width: 300px; height: 300px; top: 20%; left: 50%;
-      transform: translateX(-50%); border-radius: 50%;
-      background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, transparent 70%);
-      pointer-events: none; z-index: 1;
+    /* Diagonal neon energy lines */
+    .neon-line {
+      position: absolute; width: 150%; height: 4px;
+      filter: drop-shadow(0 0 12px currentColor); opacity: 0.6;
+    }
+    .neon-cyan {
+      top: 30%; left: -20%; transform: rotate(25deg);
+      background: #00f5d4; color: #00f5d4;
+    }
+    .neon-purple {
+      top: 50%; left: -20%; transform: rotate(-25deg);
+      background: #bf5af2; color: #bf5af2;
+    }
+    .neon-cyan-2 {
+      bottom: 20%; left: -20%; transform: rotate(35deg);
+      background: #00f5d4; color: #00f5d4;
     }
 
     /* ─── FIXED UI LAYER (Top) ─── */
@@ -45,9 +57,10 @@
     }
     .fixed-ui-layer > * { pointer-events: auto; }
 
+    /* Step Indicator */
     .step-indicator {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 12px 18px 8px; background: rgba(8,11,18,0.95);
+      padding: 12px 18px 8px; background: rgba(13,18,28,0.95);
       backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255,255,255,0.03);
     }
@@ -57,10 +70,10 @@
     .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
     .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
     .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    
     .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
-    .progress-fill { height: 100%; width: 35%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 7/20 fill */
+    .progress-fill { height: 100%; width: 30%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; }
 
+    /* Top Nav */
     .top-nav {
       display: flex; justify-content: space-between; align-items: center;
       padding: 10px 18px;
@@ -77,145 +90,182 @@
     /* ─── MAIN CONTENT ─── */
     .content-area {
       position: relative; z-index: 20; flex: 1; overflow-y: auto;
-      padding-top: 100px; padding-bottom: 140px;
+      padding-top: 100px; padding-bottom: 120px;
     }
     .content-area::-webkit-scrollbar { display: none; }
 
     /* Glass Cards */
     .glow-card {
-      background: rgba(16, 22, 34, 0.6);
-      border: 1.5px solid rgba(0, 245, 212, 0.4);
-      border-radius: 16px;
-      box-shadow: 0 0 25px rgba(0,245,212,0.1), inset 0 0 16px rgba(0,245,212,0.05);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      margin: 0 20px 20px; padding: 24px 20px;
+      background: rgba(20, 30, 48, 0.4);
+      border: 1.5px solid rgba(0, 245, 212, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,245,212,0.15), inset 0 0 16px rgba(0,245,212,0.05);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      margin: 0 20px 16px; padding: 20px;
       display: flex; flex-direction: column; align-items: center;
     }
-
-    /* CARD 1: AI RING */
-    @keyframes pulseRing {
-      0% { box-shadow: 0 0 15px rgba(57,255,20,0.4), inset 0 0 15px rgba(57,255,20,0.4); }
-      50% { box-shadow: 0 0 35px rgba(57,255,20,0.7), inset 0 0 25px rgba(57,255,20,0.6); }
-      100% { box-shadow: 0 0 15px rgba(57,255,20,0.4), inset 0 0 15px rgba(57,255,20,0.4); }
-    }
-    
-    .ai-ring-container {
-      width: 240px; height: 240px; border-radius: 50%;
-      border: 6px solid #39ff14; position: relative;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      animation: pulseRing 3s infinite ease-in-out;
-      margin-bottom: 24px; padding: 20px; text-align: center;
-      background: rgba(57,255,20,0.05);
-    }
-    
-    .q-logo {
-      font-size: 32px; font-weight: 900; font-style: italic; color: #fff;
-      text-shadow: 0 0 15px rgba(255,255,255,0.8); margin-bottom: 4px;
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .synergy-badge {
-      background: rgba(255, 69, 0, 0.15); border: 1px solid #ff4500;
-      color: #ff4500; font-size: 11px; font-weight: 800;
-      padding: 6px 12px; border-radius: 12px; margin-bottom: 12px;
-      text-shadow: 0 0 8px rgba(255,69,0,0.6); box-shadow: 0 0 12px rgba(255,69,0,0.2);
-    }
-    
-    .slot-label {
-      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7);
-      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
-    }
-    .slot-time {
-      font-size: 22px; font-weight: 800; color: #39ff14;
-      text-shadow: 0 0 12px rgba(57,255,20,0.6); line-height: 1.1;
+    .card-title {
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; margin-bottom: 16px; color: #fff;
     }
 
-    /* Avatars overlapping bottom of ring */
-    .ring-avatars {
-      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center; justify-content: center;
+    /* CARD 1: TIME WINDOW */
+    .time-range {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
     }
-    .avatar-wrapper {
-      width: 44px; height: 44px; border-radius: 50%;
-      border: 3px solid #080b12; margin-left: -12px;
-      position: relative; overflow: hidden;
-      background: #111; display: flex; align-items: center; justify-content: center;
-    }
-    .avatar-wrapper:first-child { margin-left: 0; z-index: 3; border-color: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.5); }
-    .avatar-wrapper:nth-child(2) { z-index: 2; }
-    .avatar-wrapper:nth-child(3) { z-index: 1; }
-    .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-    .coach-tag {
-      position: absolute; bottom: -28px; background: #00f5d4; color: #000;
-      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
-      left: 50%; transform: translateX(-50%); white-space: nowrap; z-index: 4;
-    }
+    .time-val { font-size: 28px; font-weight: 700; color: #fff; }
+    .time-to { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.5); }
 
-    /* CARD 2: TIMELINE */
-    .timeline-container {
-      width: 100%; position: relative; margin-top: 10px; margin-bottom: 24px;
+    .slider-container { width: 100%; position: relative; margin-bottom: 20px; padding: 16px 0; touch-action: none; }
+    .slider-track {
+      width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; position: relative; pointer-events: none;
     }
-    .timeline-track-bg {
-      width: 100%; height: 28px; border-radius: 6px;
-      background: rgba(255,255,255,0.05); position: relative;
-      border: 1px solid rgba(255,255,255,0.1); overflow: hidden;
+    .slider-fill {
+      position: absolute; left: 0%; right: 0%; height: 100%;
+      background: #39ff14; box-shadow: 0 0 12px #39ff14; border-radius: 3px;
     }
+    .slider-handle {
+      position: absolute; top: 3px; transform: translate(-50%, -50%);
+      width: 26px; height: 26px; border-radius: 50%; background: #fff;
+      box-shadow: 0 0 10px #fff, 0 0 0 6px rgba(57,255,20,0.4);
+      cursor: grab; display: flex; align-items: center; justify-content: center;
+      transition: box-shadow 0.2s, transform 0.1s; z-index: 10;
+      pointer-events: auto;
+    }
+    .slider-handle:active { cursor: grabbing; box-shadow: 0 0 15px #fff, 0 0 0 10px rgba(57,255,20,0.7); transform: translate(-50%, -50%) scale(1.1); }
+    /* Invisible hit box to make touching easier */
+    .slider-handle::after {
+      content: ''; position: absolute; inset: -15px; border-radius: 50%;
+    }
+    .slider-handle.left { left: 0%; }
+    .slider-handle.right { left: 100%; }
     
-    /* 5PM to 8PM is 3 hours. 6:30 to 7:30 is 1 hour exactly in the middle. */
-    .highlight-block {
-      position: absolute; top: 0; bottom: 0; height: 100%;
-      left: 50%; width: 33.333%; /* 1 hour out of 3 hours */
-      background: linear-gradient(90deg, rgba(57,255,20,0.2), rgba(57,255,20,0.5), rgba(57,255,20,0.2));
-      border: 1.5px solid #39ff14; box-shadow: 0 0 15px rgba(57,255,20,0.4);
-      border-radius: 6px; display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 0 4px #000;
+    .slider-ticks {
+      display: flex; justify-content: space-between; margin-top: 10px;
+      padding: 0; pointer-events: none;
     }
-    
-    .timeline-labels {
+    .slider-ticks span {
+      width: 1px; height: 6px; background: rgba(255,255,255,0.25);
+    }
+    .slider-labels {
       display: flex; justify-content: space-between; margin-top: 8px;
-      font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;
+      font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 500;
+      pointer-events: none; position: relative;
     }
 
-    .ai-infobox {
-      background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px;
-      font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.9);
-      display: flex; gap: 10px; border: 1px solid rgba(255,255,255,0.05);
+    /* CARD 2: HERO SLOTS */
+    .slots-row {
+      display: flex; gap: 12px; justify-content: center; width: 100%;
+      margin-bottom: 12px;
     }
-    .ai-infobox .icon { font-size: 16px; }
+    .slot-item { display: flex; flex-direction: column; align-items: center; }
+    
+    .avatar-circle {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .host-avatar {
+      border: 2px solid #39ff14; padding: 2px;
+    }
+    .host-avatar img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    }
+    .pro-badge {
+      position: absolute; bottom: -4px; right: -8px;
+      background: #0f1523; border: 1px solid rgba(255,255,255,0.5);
+      font-size: 8px; font-weight: 700; padding: 2px 4px; border-radius: 4px;
+      color: #fff;
+    }
+    .host-label {
+      margin-top: 8px; font-size: 12px; font-weight: 700; color: #39ff14;
+    }
+    
+    .avatar-circle.empty {
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.02);
+      font-size: 24px; font-weight: 300; color: rgba(255,255,255,0.4);
+    }
+    .slot-footer-text {
+      font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px;
+    }
+
+    /* CARD 3: SKILL PREFERENCE */
+    .skill-row {
+      display: flex; justify-content: center; gap: 10px; width: 100%;
+    }
+    .skill-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 6px; border-radius: 10px; text-align: center;
+      background: rgba(255,255,255,0.03); border: 2px solid transparent; cursor: pointer;
+    }
+    .skill-icon { font-size: 18px; margin-bottom: 6px; }
+    .skill-name { font-size: 11px; font-weight: 600; line-height: 1.2; }
+    
+    .skill-green { border-color: rgba(57,255,20,0.5); box-shadow: 0 0 15px rgba(57,255,20,0.15) inset; }
+    .skill-green .skill-name { color: #fff; }
+    
+    .skill-yellow { border-color: rgba(250,204,21,0.5); box-shadow: 0 0 15px rgba(250,204,21,0.15) inset; }
+    .skill-yellow .skill-name { color: #fff; }
+    
+    .skill-orange { border-color: rgba(249,115,22,0.5); box-shadow: 0 0 15px rgba(249,115,22,0.15) inset; }
+    .skill-orange .skill-name { color: #fff; }
+
+    /* AI Sync text */
+    .ai-sync-box {
+      margin: 6px 20px 20px; padding: 16px;
+      background: rgba(255,255,255,0.05); border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(12px);
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .ai-icon { font-size: 16px; line-height: 1; }
+    .ai-text { font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.9); }
+    .ai-text strong { color: #fff; }
 
     /* ─── FIXED CTA FOOTER ─── */
     .fixed-footer-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
-      padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
-      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.8) 70%, transparent 100%);
+      padding: 0 20px 30px;
     }
-    .primary-btn {
-      width: 100%; padding: 18px 24px; border-radius: 100px; /* Pill shaped */
-      border: none; cursor: pointer;
-      background: #39ff14; color: #000;
+    .cta-btn {
+      width: 100%; padding: 18px 24px; border-radius: 16px; border: none; cursor: pointer;
+      background: #4ade80; color: #000;
       font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800;
-      box-shadow: 0 0 25px rgba(57,255,20,0.4);
+      box-shadow: 0 0 20px rgba(74,222,128,0.4);
       transition: transform 0.15s ease;
-      text-align: center; margin-bottom: 16px;
     }
-    .primary-btn:active { transform: scale(0.96); }
-    
-    .secondary-link {
-      font-size: 14px; font-weight: 600; color: #00f5d4; cursor: pointer;
-      text-decoration: underline; text-decoration-color: rgba(0,245,212,0.4);
-      text-underline-offset: 4px; transition: color 0.2s;
-    }
-    .secondary-link:active { color: #fff; text-decoration-color: #fff; }
+    .cta-btn:active { transform: scale(0.96); }
 
-    /* Animations */
+    @keyframes syncPulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(0, 245, 212, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 245, 212, 0); }
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .cta-btn.ai-sync {
+      background: linear-gradient(90deg, #0d1627, #152238);
+      color: #00f5d4; border: 1.5px solid #00f5d4;
+      display: flex; justify-content: center; align-items: center; gap: 12px;
+      animation: syncPulse 2s infinite;
+      text-shadow: 0 0 8px rgba(0,245,212,0.4); box-shadow: none;
+    }
+    .sync-spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(0, 245, 212, 0.2);
+      border-top-color: #00f5d4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    /* Page transition animations */
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
     @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
     .phone-shell.slide-out-right { animation: slideOutRight 0.32s ease forwards; }
     .phone-shell.slide-in-right { animation: slideInRight 0.32s ease forwards; }
     .phone-shell.slide-in-left  { animation: slideInLeft 0.32s ease forwards; }
-    .phone-shell.slide-out-left { animation: slideOutLeft 0.32s ease forwards; }
   
     /* ─── GLOBAL NAV DRAWER ─── */
     .menu-trigger {
@@ -278,8 +328,11 @@
 <div class="phone-shell">
 
   <!-- BACKGROUND -->
-  <div class="bg-grid"></div>
-  <div class="bg-glow"></div>
+  <div class="bg-map">
+    <div class="neon-line neon-cyan"></div>
+    <div class="neon-line neon-purple"></div>
+    <div class="neon-line neon-cyan-2"></div>
+  </div>
 
   <!-- FIXED TOP UI -->
   <div class="fixed-ui-layer">
@@ -301,46 +354,76 @@
   <!-- SCROLLABLE BODY -->
   <div class="content-area">
     
-    <!-- CARD 1: AI Result Ring -->
+    <!-- CARD 1: TIME WINDOW -->
     <div class="glow-card">
-      <div class="ai-ring-container">
-        <div class="q-logo">Q</div>
-        <div class="synergy-badge">🔥 98% Group Synergy</div>
-        <div class="slot-label">Optimized Slot Found!</div>
-        <div class="slot-time">6:30 PM -<br>7:30 PM</div>
+      <div class="card-title">Preferred Time Window</div>
+      <div class="time-range">
+        <span class="time-val" id="timeStart">5:00 PM</span>
+        <span class="time-to">to</span>
+        <span class="time-val" id="timeEnd">8:00 PM</span>
+      </div>
+      
+      <div class="slider-container" id="timeSlider">
+        <div class="slider-track"><div class="slider-fill" id="sliderFill"></div>
+          <div class="slider-handle left" id="handleLeft"></div>
+          <div class="slider-handle right" id="handleRight"></div>
+        </div>
         
-        <div class="ring-avatars">
-          <div class="avatar-wrapper">
-            <img src="https://i.pravatar.cc/100?img=11" alt="Coach Rahul">
-          </div>
-          <div class="avatar-wrapper">
-            <img src="https://i.pravatar.cc/100?img=33" alt="Player 2">
-          </div>
-          <div class="avatar-wrapper">
-            <img src="https://i.pravatar.cc/100?img=47" alt="Player 3">
-          </div>
-          <div class="coach-tag">COACH RAHUL</div>
+        <div class="slider-ticks">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="slider-labels">
+          <span>5:00 PM</span>
+          <span style="position:absolute; left: 33.33%; transform:translateX(-50%);">6:00 PM</span>
+          <span style="position:absolute; left: 66.66%; transform:translateX(-50%);">7:00 PM</span>
+          <span>8:00 PM</span>
         </div>
       </div>
     </div>
 
-    <!-- CARD 2: Optimization Detail -->
+    <!-- CARD 2: HERO SLOTS -->
     <div class="glow-card">
-      <div class="timeline-container">
-        <div class="timeline-track-bg">
-          <div class="highlight-block">Best Match</div>
+      <div class="card-title">Hero Slots</div>
+      <div class="slots-row">
+        <div class="slot-item">
+          <div class="avatar-circle host-avatar">
+            <img src="https://i.pravatar.cc/100?img=11" alt="Host Avatar">
+            <div class="pro-badge">PRO</div>
+          </div>
+          <div class="host-label">HOST</div>
         </div>
-        <div class="timeline-labels">
-          <span>5 PM</span>
-          <span>6 PM</span>
-          <span>7 PM</span>
-          <span>8 PM</span>
+        <div class="slot-item"><div class="avatar-circle empty">+</div></div>
+        <div class="slot-item"><div class="avatar-circle empty">+</div></div>
+        <div class="slot-item"><div class="avatar-circle empty">+</div></div>
+        <div class="slot-item"><div class="avatar-circle empty">+</div></div>
+      </div>
+      <div class="slot-footer-text">Need 4 more players</div>
+    </div>
+
+    <!-- CARD 3: SKILL PREFERENCE -->
+    <div class="glow-card">
+      <div class="card-title">Skill Preference</div>
+      <div class="skill-row">
+        <div class="skill-btn skill-green">
+          <div class="skill-icon">🌿</div>
+          <div class="skill-name">Beginners<br>Only</div>
+        </div>
+        <div class="skill-btn skill-yellow">
+          <div class="skill-icon">🤝</div>
+          <div class="skill-name">Any<br>Skill</div>
+        </div>
+        <div class="skill-btn skill-orange">
+          <div class="skill-icon">🏆</div>
+          <div class="skill-name">Pro<br>Training</div>
         </div>
       </div>
-      
-      <div class="ai-infobox">
-        <span class="icon">✨</span>
-        <span>The AI identified the best 1-hour slot based on majority availability and group skill match.</span>
+    </div>
+
+    <!-- AI Sync Info -->
+    <div class="ai-sync-box">
+      <div class="ai-icon">✨</div>
+      <div class="ai-text">
+        <strong>AI Sync:</strong> The system will finalize the perfect 1-hour slot within this window once your team is ready.
       </div>
     </div>
 
@@ -348,8 +431,10 @@
 
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
-    <button class="primary-btn" onclick="navTo('fitquest_screen8.html')">Confirm & Book Optimized Slot</button>
-    <div class="secondary-link" onclick="navigateBack()">Choose Different Slot</div>
+    <div class="cta-btn ai-sync" onclick="navTo('fitquest_screen8.html')">
+      <div class="sync-spinner"></div>
+      WAITING FOR AI TO SYNC...
+    </div>
   </div>
 
 
@@ -373,19 +458,22 @@
       <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
     </div>
     <div class="drawer-nav">
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
         <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
       </div>
       <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
         <span class="drawer-icon">⚙️</span><span>App Settings</span>
       </div>
     </div>
@@ -408,17 +496,16 @@ function runNavTo(url) {
   else { window.location.href = url; }
 }
 
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.classList.add('slide-out-left');
+  setTimeout(() => window.location.href = url, 320);
+}
 function navigateBack() {
   const shell = document.querySelector('.phone-shell');
   shell.classList.add('slide-out-right');
   sessionStorage.setItem('navDir', 'back');
   setTimeout(() => { window.location.href = 'fitquest_screen6.html'; }, 330);
-}
-
-function navTo(url) {
-  const shell = document.querySelector('.phone-shell');
-  shell.classList.add('slide-out-left');
-  setTimeout(() => { window.location.href = url; }, 330);
 }
 
 // Entry transition
@@ -428,6 +515,78 @@ function navTo(url) {
   s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
   setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
   sessionStorage.removeItem('navDir');
+})();
+
+// Interactive Time Range Slider Logic
+(function() {
+  const container = document.getElementById('timeSlider');
+  const hLeft = document.getElementById('handleLeft');
+  const hRight = document.getElementById('handleRight');
+  const fill = document.getElementById('sliderFill');
+  const tStart = document.getElementById('timeStart');
+  const tEnd = document.getElementById('timeEnd');
+  
+  // Snap ranges from 0 to 6 (representing 5:00 PM to 8:00 PM in 30min increments)
+  const steps = 6;
+  let valLeft = 0; // 5:00 PM
+  let valRight = 6; // 8:00 PM
+  
+  const formatTime = (v) => {
+    let hour = 5 + Math.floor(v / 2);
+    let min = (v % 2 === 0) ? "00" : "30";
+    return hour + ":" + min + " PM";
+  };
+  
+  const updateUI = () => {
+    let pctL = (valLeft / steps) * 100;
+    let pctR = (valRight / steps) * 100;
+    hLeft.style.left = pctL + '%';
+    hRight.style.left = pctR + '%';
+    fill.style.left = pctL + '%';
+    fill.style.width = (pctR - pctL) + '%';
+    tStart.textContent = formatTime(valLeft);
+    tEnd.textContent = formatTime(valRight);
+  };
+  
+  const handleDrag = (handle, isLeft) => {
+    let isDragging = false;
+    
+    // Prevent default touch behaviors (scrolling, selecting) while dragging
+    const onTouchStart = (e) => { isDragging = true; };
+    const onTouchEnd = () => { isDragging = false; };
+    
+    const onMove = (e) => {
+      if (!isDragging) return;
+      let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      let rect = container.getBoundingClientRect();
+      let percent = (clientX - rect.left) / rect.width;
+      percent = Math.max(0, Math.min(1, percent));
+      
+      let stepVal = Math.round(percent * steps);
+      
+      if (isLeft) {
+        if (stepVal >= valRight) stepVal = valRight - 1;
+        if (stepVal < 0) stepVal = 0;
+        valLeft = stepVal;
+      } else {
+        if (stepVal <= valLeft) stepVal = valLeft + 1;
+        if (stepVal > steps) stepVal = steps;
+        valRight = stepVal;
+      }
+      updateUI();
+    };
+    
+    handle.addEventListener('mousedown', onTouchStart);
+    handle.addEventListener('touchstart', onTouchStart, {passive: true});
+    window.addEventListener('mouseup', onTouchEnd);
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onMove, {passive: true});
+  };
+  
+  handleDrag(hLeft, true);
+  handleDrag(hRight, false);
+  updateUI();
 })();
 </script>
 </body>

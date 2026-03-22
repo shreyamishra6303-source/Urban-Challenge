@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>FitQuest Bangalore – Screen 9: Your Digital Quest Pass</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+  <title>FitQuest Bangalore – Screen 8: Quest Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -16,7 +16,7 @@
     
     .phone-shell {
       position: relative; width: 390px; max-width: 100%; height: 100%;
-      background: #080b12; /* Dark cyberpunk space */
+      background: #080b12; /* Dark cyberpunk theme */
       display: flex; flex-direction: column; overflow: hidden;
       color: #fff;
     }
@@ -28,13 +28,8 @@
         linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px);
       background-size: 30px 30px;
-      /* Glowing backlights */
+      /* Subtle radial gradient */
       background-color: #080b12;
-    }
-    .backlight {
-      position: absolute; top: 10%; left: 50%; width: 200px; height: 300px;
-      background: radial-gradient(ellipse, rgba(0,245,212,0.1) 0%, transparent 60%);
-      transform: translateX(-50%); pointer-events: none;
     }
 
     /* ─── FIXED UI LAYER (Top) ─── */
@@ -61,8 +56,8 @@
     .progress-fill { height: 100%; width: 45%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 9/20 fill */
 
     .top-nav {
-      display: flex; flex-direction: column; align-items: flex-start;
-      padding: 16px 20px 4px;
+      display: flex; align-items: center;
+      padding: 10px 18px;
     }
     .back-btn {
       width: 32px; height: 32px; border-radius: 10px;
@@ -70,95 +65,49 @@
       cursor: pointer; font-size: 16px; color: #00f5d4;
       background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
       box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
-      margin-bottom: 12px;
     }
     .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
     .page-title {
-      font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 800;
-      color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.8); letter-spacing: 0.02em;
+      flex: 1; text-align: center; font-family: 'Rajdhani', sans-serif;
+      font-size: 20px; font-weight: 700; letter-spacing: 0.05em; margin-right: 32px;
+      color: #fff; text-transform: uppercase;
     }
 
     /* ─── MAIN CONTENT ─── */
     .content-area {
       position: relative; z-index: 20; flex: 1; overflow-y: auto;
-      padding-top: 135px; padding-bottom: 140px;
+      padding-top: 100px; padding-bottom: 140px;
     }
     .content-area::-webkit-scrollbar { display: none; }
 
-    /* TICKECT CARD (Neon Green Glassmorphism) */
-    .ticket-card {
-      background: linear-gradient(145deg, rgba(8,16,24,0.8) 0%, rgba(13,26,40,0.7) 100%);
-      border: 1.5px solid rgba(57,255,20,0.4);
-      border-radius: 20px;
-      margin: 0 20px 20px; padding: 0;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(57,255,20,0.05);
+    /* Glass Cards Base */
+    .glow-card {
+      background: rgba(16, 22, 34, 0.7);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      position: relative;
+      margin: 0 20px 20px; padding: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
-    
-    .ticket-header {
-      display: flex; align-items: center; justify-content: center;
-      padding: 16px 20px; border-bottom: 1px dashed rgba(57,255,20,0.3);
-      background: rgba(57,255,20,0.05); border-radius: 20px 20px 0 0;
-    }
-    .q-logo-small {
-      font-size: 24px; font-weight: 900; font-style: italic; color: #fff;
-      text-shadow: 0 0 10px #39ff14; font-family: 'Inter', sans-serif;
-      margin-right: 12px;
-    }
-    .ticket-title {
-      font-size: 16px; font-weight: 800; letter-spacing: 0.1em;
-      color: #39ff14; text-transform: uppercase;
+    .card-label {
+      font-size: 12px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 16px; color: rgba(255,255,255,0.5);
     }
 
-    /* Animated Neon-Teal QR Container */
-    .ticket-qr-zone {
-      padding: 30px 20px;
-      display: flex; align-items: center; justify-content: center;
+    /* SUMMARY CARD */
+    .summary-card {
+      border-color: #39ff14;
+      box-shadow: 0 0 15px rgba(57,255,20,0.15), inset 0 0 10px rgba(57,255,20,0.05);
     }
-    .qr-container {
-      width: 160px; height: 160px; background: rgba(0,245,212,0.05);
-      border: 2px solid rgba(0,245,212,0.3); border-radius: 12px;
-      position: relative; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 25px rgba(0,245,212,0.2), inset 0 0 15px rgba(0,245,212,0.1);
-      animation: scanGlow 3s infinite alternate;
-    }
-    @keyframes scanGlow {
-      0% { box-shadow: 0 0 15px rgba(0,245,212,0.2), inset 0 0 10px rgba(0,245,212,0.1); border-color: rgba(0,245,212,0.3); }
-      100% { box-shadow: 0 0 35px rgba(0,245,212,0.5), inset 0 0 25px rgba(0,245,212,0.2); border-color: rgba(0,245,212,0.8); }
-    }
-    .qr-svg {
-      width: 130px; height: 130px;
-      filter: drop-shadow(0 0 8px rgba(0,245,212,0.8));
-    }
-    .qr-svg rect { fill: #00f5d4; }
+    .summary-card .card-label { color: #39ff14; }
     
-    /* Ticket Cutouts */
-    .ticket-cutout {
-      position: absolute; width: 20px; height: 20px;
-      background: #080b12; border-radius: 50%;
-      top: 52px; z-index: 10;
-    }
-    .ticket-cutout.left { left: -11px; border-right: 1.5px solid rgba(57,255,20,0.4); }
-    .ticket-cutout.right { right: -11px; border-left: 1.5px solid rgba(57,255,20,0.4); }
-
-    .ticket-details {
-      padding: 0 20px 24px;
-    }
-    .venue-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .venue-info { display: flex; align-items: center; gap: 8px; }
-    .venue-icon { font-size: 20px; }
-    .venue-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
-    
-    .ready-team-badge {
-      background: rgba(57,255,20,0.15); border: 1px solid #39ff14;
-      color: #39ff14; font-size: 10px; font-weight: 800;
-      padding: 4px 8px; border-radius: 6px; box-shadow: 0 0 10px rgba(57,255,20,0.2);
-    }
+    .venue-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .venue-icon { font-size: 24px; }
+    .venue-name { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
     
     .summary-avatars { display: flex; align-items: center; margin-bottom: 16px; }
     .avatar-wrapper {
-      width: 32px; height: 32px; border-radius: 50%; border: 2px solid #0d1a28;
+      width: 36px; height: 36px; border-radius: 50%; border: 2px solid #101622;
       margin-left: -10px; position: relative; overflow: hidden; background: #000;
       display: flex; align-items: center; justify-content: center;
     }
@@ -168,48 +117,93 @@
     .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
     
     .date-time-block {
-      background: rgba(0,0,0,0.3); padding: 12px 14px; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08); font-size: 12px; font-weight: 600;
-      color: rgba(255,255,255,0.8); text-align: center;
+      background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.05); font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 10px;
     }
 
-    /* STATUS & OBJECTIVE CARD */
-    .status-card {
-      background: rgba(16, 22, 34, 0.5);
-      border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 16px; backdrop-filter: blur(20px); margin: 0 20px 20px; padding: 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    /* ORDER TOTAL CARD */
+    .order-card {
+      border-color: #00b4d8;
+      box-shadow: 0 0 15px rgba(0,180,216,0.15), inset 0 0 10px rgba(0,180,216,0.05);
     }
-    .obj-row {
-      display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px;
-      font-size: 13px; color: rgba(255,255,255,0.6);
-    }
-    .obj-row strong { color: #fff; font-size: 14px; font-weight: 700; }
+    .order-card .card-label { color: #00b4d8; }
     
-    .status-row {
-      display: flex; align-items: center; gap: 12px; margin-top: 16px; margin-bottom: 16px;
-      font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6);
+    .order-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7);
+      margin-bottom: 12px;
     }
-    .status-pill {
-      background: rgba(57,255,20,0.15); border: 2px solid #39ff14;
-      color: #39ff14; font-size: 12px; font-weight: 800; letter-spacing: 0.1em;
-      padding: 6px 16px; border-radius: 20px; box-shadow: 0 0 15px rgba(57,255,20,0.4);
-      display: inline-flex; align-items: center; justify-content: center;
+    .order-row.green-text { color: #39ff14; font-weight: 600; }
+    
+    .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 16px 0; }
+    
+    .order-total {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .total-label { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.05em; }
+    .total-val { font-size: 26px; font-weight: 800; color: #fff; }
+
+    /* PAYMENT METHOD CARD */
+    .payment-card { border-color: rgba(255,255,255,0.15); }
+    
+    .pay-option {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1);
+      margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
+      background: rgba(0,0,0,0.3);
+    }
+    .pay-option:last-child { margin-bottom: 0; }
+    
+    .pay-info { display: flex; align-items: center; gap: 12px; }
+    .pay-icon { font-size: 20px; }
+    .pay-name { font-size: 14px; font-weight: 600; color: #fff; }
+    .pay-logos { display: flex; gap: 4px; margin-left: 8px; }
+    .gpay-badge { background: #fff; color: #000; font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; }
+    
+    .pay-radio {
+      width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
     }
     
-    .xp-banner {
-      background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.02) 100%);
-      border-left: 3px solid #FFD700; padding: 10px 14px; border-radius: 6px;
-      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.9);
-      display: flex; align-items: center; gap: 8px;
+    .pay-option.selected {
+      border-color: #00f5d4; background: rgba(0,245,212,0.1);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2);
     }
-    .xp-banner span.gift-icon { font-size: 16px; }
+    .pay-option.selected .pay-radio { border-color: #00f5d4; }
+    .pay-option.selected .pay-radio::after {
+      content: ''; width: 10px; height: 10px; border-radius: 50%; background: #00f5d4;
+      box-shadow: 0 0 8px #00f5d4;
+    }
+
+    /* SPLIT PAY TOGGLE */
+    .split-pay-container {
+      margin: 20px 20px; padding: 16px 20px;
+      background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 16px; display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .split-text-box { flex: 1; margin-right: 16px; }
+    .split-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .split-desc { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.4; }
+    
+    .toggle-switch {
+      width: 48px; height: 26px; background: rgba(255,255,255,0.2);
+      border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .toggle-switch.active { background: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.4); }
+    .toggle-knob {
+      width: 22px; height: 22px; background: #fff; border-radius: 50%;
+      position: absolute; top: 2px; left: 2px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle-switch.active .toggle-knob { transform: translateX(22px); }
 
     /* ─── FIXED CTA FOOTER ─── */
     .fixed-footer-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
       padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
-      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.9) 70%, transparent 100%);
+      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.9) 60%, transparent 100%);
     }
     .primary-btn {
       width: 100%; padding: 18px 24px; border-radius: 16px;
@@ -222,22 +216,12 @@
     }
     .primary-btn:active { transform: scale(0.96); }
     
-    .footer-links {
-      display: flex; align-items: center; justify-content: space-between; width: 100%;
-      padding: 0 10px;
-    }
-    .tertiary-link {
-      font-size: 13px; font-weight: 600; color: #00f5d4; cursor: pointer;
+    .secondary-link {
+      font-size: 14px; font-weight: 600; color: #00f5d4; cursor: pointer;
       text-decoration: underline; text-decoration-color: rgba(0,245,212,0.4);
       text-underline-offset: 4px; transition: color 0.2s;
     }
-    .tertiary-link:hover { color: #fff; text-decoration-color: #fff; }
-    
-    .cancel-link {
-      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.4); cursor: pointer;
-      transition: color 0.2s;
-    }
-    .cancel-link:hover { color: rgba(255,100,100,0.8); }
+    .secondary-link:active { color: #fff; text-decoration-color: #fff; }
 
     /* Animations */
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
@@ -311,7 +295,6 @@
 
   <!-- BACKGROUND -->
   <div class="bg-grid"></div>
-  <div class="backlight"></div>
 
   <!-- FIXED TOP UI -->
   <div class="fixed-ui-layer">
@@ -327,65 +310,97 @@
     
     <div class="top-nav">
       <div class="back-btn" onclick="navigateBack()">←</div>
-      <div class="page-title">Your Digital Quest Pass</div>
+      <div class="page-title">Checkout</div>
     </div>
   </div>
 
   <!-- SCROLLABLE BODY -->
   <div class="content-area">
     
-    <!-- DIGITAL TICKET -->
-    <div class="ticket-card">
-      <div class="ticket-cutout left"></div>
-      <div class="ticket-cutout right"></div>
-      
-      <div class="ticket-header">
-        <div class="q-logo-small">Q</div>
-        <div class="ticket-title">Digital Quest Pass</div>
+    <!-- SUMMARY CARD -->
+    <div class="glow-card summary-card">
+      <div class="card-label">Summary</div>
+      <div class="venue-header">
+        <div class="venue-icon" id="dynamicSportIcon">⚽</div>
+        <div class="venue-name" id="dynamicVenueName">Koramangala Arena</div>
       </div>
       
-      <div class="ticket-qr-zone">
-        <div class="qr-container">
-          <svg class="qr-svg" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#00f5d4" fill-rule="evenodd" d="M0,0h7v7h-7z M1,1h5v5h-5z M2,2h3v3h-3z M14,0h7v7h-7z M15,1h5v5h-5z M16,2h3v3h-3z M0,14h7v7h-7z M1,15h5v5h-5z M2,16h3v3h-3z M8,6h1v1h-1z M10,6h1v1h-1z M12,6h1v1h-1z M6,8h1v1h-1z M6,10h1v1h-1z M6,12h1v1h-1z M8,1h2v2h-2z M11,1h2v1h-2z M10,3h3v2h-3z M8,8h3v3h-3z M12,8h2v2h-2z M15,8h4v1h-4z M17,10h2v2h-2z M15,13h4v2h-4z M13,11h2v4h-2z M8,12h2v2h-2z M11,14h2v2h-2z M14,16h2v2h-2z M17,16h4v1h-4z M18,18h2v2h-2z M14,19h3v2h-3z M8,16h2v1h-2z M8,18h3v1h-3z M10,20h2v1h-2z M8,14h1v1h-1z M3,8h2v1h-2z M2,10h3v2h-3z M0,12h4v1h-4z M4,8h1v4h-1z M19,8h1v1h-1z M9,18h1v1h-1z M2,8h1v1h-1z M14,14h1v1h-1z"/>
-          </svg>
-        </div>
+      <div class="summary-avatars">
+        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=11" alt="Host"></div>
+        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=33" alt="Player"></div>
+        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=47" alt="Player"></div>
       </div>
       
-      <div class="ticket-details">
-        <div class="venue-row">
-          <div class="venue-info">
-            <span class="venue-icon">⚽</span>
-            <span class="venue-name">Koramangala Arena</span>
-          </div>
-          <div class="ready-team-badge">READY TEAM</div>
-        </div>
-        
-        <div class="summary-avatars">
-          <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=11" alt="Host"></div>
-          <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=33" alt="Player"></div>
-          <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=47" alt="Player"></div>
-        </div>
-        
-        <div class="date-time-block">
-          Tue, Mar 24 | 6:30 PM - 7:30 PM | Court 3
-        </div>
+      <div class="date-time-block">
+        Tue, Mar 24 | 6:30 PM - 7:30 PM | Court 3
       </div>
     </div>
 
-    <!-- STATUS CARD -->
-    <div class="status-card">
-      <div class="obj-row"><span>QUEST OBJECTIVE:</span> <strong>Ball Control & Passing Scrimmage</strong></div>
-      <div class="obj-row"><span>HOST:</span> <strong>You</strong></div>
+    <!-- ORDER TOTAL CARD -->
+    <div class="glow-card order-card">
+      <div class="card-label">Order Details</div>
       
-      <div class="status-row">
-        <span>STATUS:</span>
-        <div class="status-pill">CONFIRMED</div>
+      <div class="order-row">
+        <span>Slot Fee (1 hr)</span>
+        <span>₹1200.00</span>
+      </div>
+      <div class="order-row">
+        <span>Service Fee</span>
+        <span>₹2.00</span>
+      </div>
+      <div class="order-row green-text">
+        <span>Newbie Shield (20% OFF)</span>
+        <span>-₹240.00</span>
       </div>
       
-      <div class="xp-banner">
-        <span class="gift-icon">🎁</span> 
-        <span>Newbie Gift: +50 XP on First Session Locked</span>
+      <div class="divider"></div>
+      
+      <div class="order-total">
+        <span class="total-label">YOUR TOTAL</span>
+        <span class="total-val">₹962.00</span>
+      </div>
+    </div>
+
+    <!-- PAYMENT METHOD CARD -->
+    <div class="glow-card payment-card">
+      <div class="card-label">Payment Method</div>
+      
+      <div class="pay-option selected" onclick="selectPay(this)">
+        <div class="pay-info">
+          <span class="pay-icon">📱</span>
+          <span class="pay-name">UPI</span>
+          <div class="pay-logos">
+            <span class="gpay-badge">GPay</span>
+          </div>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+      
+      <div class="pay-option" onclick="selectPay(this)">
+        <div class="pay-info">
+          <span class="pay-icon">💳</span>
+          <span class="pay-name">Credit/Debit Card</span>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+      
+      <div class="pay-option" onclick="selectPay(this)">
+        <div class="pay-info">
+          <span class="pay-icon">⚡</span>
+          <span class="pay-name">FitQuest Credits</span>
+        </div>
+        <div class="pay-radio"></div>
+      </div>
+    </div>
+
+    <!-- SPLIT PAY TOGGLE -->
+    <div class="split-pay-container">
+      <div class="split-text-box">
+        <div class="split-title">SPLIT-PAY with Group</div>
+        <div class="split-desc">You may split with complete team once guest mot ricks.</div>
+      </div>
+      <div class="toggle-switch" id="splitToggle" onclick="toggleSplit()">
+        <div class="toggle-knob"></div>
       </div>
     </div>
 
@@ -393,11 +408,8 @@
 
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
-    <button class="primary-btn" onclick="navTo('fitquest_screen10.html')">Check-In to Arena</button>
-    <div class="footer-links">
-      <div class="tertiary-link">Invite More Friends</div>
-      <div class="cancel-link" onclick="navigateBack()">Cancel Booking</div>
-    </div>
+    <button class="primary-btn" onclick="navTo('fitquest_screen10.html')">Confirm Payment & Complete Booking</button>
+    <div class="secondary-link" onclick="navTo('fitquest_screen7.html')">Choose Different Time</div>
   </div>
 
 
@@ -421,19 +433,22 @@
       <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
     </div>
     <div class="drawer-nav">
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
         <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
       </div>
       <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
         <span class="drawer-icon">⚙️</span><span>App Settings</span>
       </div>
     </div>
@@ -465,7 +480,15 @@ function navigateBack() {
 
 function navTo(url) {
   const shell = document.querySelector('.phone-shell');
-  shell.classList.add('slide-out-left');
+  
+  // Decide animation based on target (back to 6 is a 'back' flow, to 9 is a 'forward' flow)
+  if (url === 'fitquest_screen7.html') {
+    shell.classList.add('slide-out-right');
+    sessionStorage.setItem('navDir', 'back');
+  } else {
+    shell.classList.add('slide-out-left');
+  }
+  
   setTimeout(() => { window.location.href = url; }, 330);
 }
 
@@ -476,7 +499,33 @@ function navTo(url) {
   s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
   setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
   sessionStorage.removeItem('navDir');
+
+  // Dynamic Sport/Venue Setup
+  const rawSport = localStorage.getItem('selectedSport') || 'Football';
+  const sport = rawSport.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  const venue = localStorage.getItem('selectedVenue') || 'Koramangala';
+  
+  const sportMeta = {
+    'Football': '⚽', 'Cricket': '🏏', 'Badminton': '🏸', 'Basketball': '🏀',
+    'Tennis': '🎾', 'Swimming': '🏊', 'Table Tennis': '🏓'
+  };
+  
+  const vName = document.getElementById('dynamicVenueName');
+  if(vName) vName.innerText = `${venue} Arena`;
+  
+  const sIcon = document.getElementById('dynamicSportIcon');
+  if(sIcon) sIcon.innerText = sportMeta[sport] || '⚽';
 })();
+
+// Simple UI Logic
+function selectPay(el) {
+  document.querySelectorAll('.pay-option').forEach(opt => opt.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleSplit() {
+  document.getElementById('splitToggle').classList.toggle('active');
+}
 </script>
 </body>
 </html>

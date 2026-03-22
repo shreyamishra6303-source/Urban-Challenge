@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>FitQuest Bangalore – Screen 8: Quest Checkout</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet"/>
+  <title>FitQuest Bangalore – Screen 7: Optimization Complete</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     
@@ -16,7 +16,7 @@
     
     .phone-shell {
       position: relative; width: 390px; max-width: 100%; height: 100%;
-      background: #080b12; /* Dark cyberpunk theme */
+      background: #080b12; /* Very dark space theme */
       display: flex; flex-direction: column; overflow: hidden;
       color: #fff;
     }
@@ -27,9 +27,15 @@
       background-image: 
         linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px);
-      background-size: 30px 30px;
-      /* Subtle radial gradient */
+      background-size: 40px 40px;
+      /* Subtle radial gradient to focus center */
       background-color: #080b12;
+    }
+    .bg-glow {
+      position: absolute; width: 300px; height: 300px; top: 20%; left: 50%;
+      transform: translateX(-50%); border-radius: 50%;
+      background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, transparent 70%);
+      pointer-events: none; z-index: 1;
     }
 
     /* ─── FIXED UI LAYER (Top) ─── */
@@ -53,10 +59,10 @@
     .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
     
     .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
-    .progress-fill { height: 100%; width: 40%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 8/20 fill */
+    .progress-fill { height: 100%; width: 35%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 7/20 fill */
 
     .top-nav {
-      display: flex; align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       padding: 10px 18px;
     }
     .back-btn {
@@ -67,11 +73,6 @@
       box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
     }
     .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
-    .page-title {
-      flex: 1; text-align: center; font-family: 'Rajdhani', sans-serif;
-      font-size: 20px; font-weight: 700; letter-spacing: 0.05em; margin-right: 32px;
-      color: #fff; text-transform: uppercase;
-    }
 
     /* ─── MAIN CONTENT ─── */
     .content-area {
@@ -80,137 +81,120 @@
     }
     .content-area::-webkit-scrollbar { display: none; }
 
-    /* Glass Cards Base */
+    /* Glass Cards */
     .glow-card {
-      background: rgba(16, 22, 34, 0.7);
-      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(16, 22, 34, 0.6);
+      border: 1.5px solid rgba(0, 245, 212, 0.4);
       border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0,245,212,0.1), inset 0 0 16px rgba(0,245,212,0.05);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      margin: 0 20px 20px; padding: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    }
-    .card-label {
-      font-size: 12px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.1em; margin-bottom: 16px; color: rgba(255,255,255,0.5);
+      margin: 0 20px 20px; padding: 24px 20px;
+      display: flex; flex-direction: column; align-items: center;
     }
 
-    /* SUMMARY CARD */
-    .summary-card {
-      border-color: #39ff14;
-      box-shadow: 0 0 15px rgba(57,255,20,0.15), inset 0 0 10px rgba(57,255,20,0.05);
+    /* CARD 1: AI RING */
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 15px rgba(57,255,20,0.4), inset 0 0 15px rgba(57,255,20,0.4); }
+      50% { box-shadow: 0 0 35px rgba(57,255,20,0.7), inset 0 0 25px rgba(57,255,20,0.6); }
+      100% { box-shadow: 0 0 15px rgba(57,255,20,0.4), inset 0 0 15px rgba(57,255,20,0.4); }
     }
-    .summary-card .card-label { color: #39ff14; }
     
-    .venue-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .venue-icon { font-size: 24px; }
-    .venue-name { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
+    .ai-ring-container {
+      width: 240px; height: 240px; border-radius: 50%;
+      border: 6px solid #39ff14; position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      animation: pulseRing 3s infinite ease-in-out;
+      margin-bottom: 24px; padding: 20px; text-align: center;
+      background: rgba(57,255,20,0.05);
+    }
     
-    .summary-avatars { display: flex; align-items: center; margin-bottom: 16px; }
-    .avatar-wrapper {
-      width: 36px; height: 36px; border-radius: 50%; border: 2px solid #101622;
-      margin-left: -10px; position: relative; overflow: hidden; background: #000;
+    .q-logo {
+      font-size: 32px; font-weight: 900; font-style: italic; color: #fff;
+      text-shadow: 0 0 15px rgba(255,255,255,0.8); margin-bottom: 4px;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .synergy-badge {
+      background: rgba(255, 69, 0, 0.15); border: 1px solid #ff4500;
+      color: #ff4500; font-size: 11px; font-weight: 800;
+      padding: 6px 12px; border-radius: 12px; margin-bottom: 12px;
+      text-shadow: 0 0 8px rgba(255,69,0,0.6); box-shadow: 0 0 12px rgba(255,69,0,0.2);
+    }
+    
+    .slot-label {
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
+    }
+    .slot-time {
+      font-size: 22px; font-weight: 800; color: #39ff14;
+      text-shadow: 0 0 12px rgba(57,255,20,0.6); line-height: 1.1;
+    }
+
+    /* Avatars overlapping bottom of ring */
+    .ring-avatars {
+      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
       display: flex; align-items: center; justify-content: center;
     }
-    .avatar-wrapper:first-child { margin-left: 0; z-index: 3; border-color: #39ff14; }
+    .avatar-wrapper {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 3px solid #080b12; margin-left: -12px;
+      position: relative; overflow: hidden;
+      background: #111; display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-wrapper:first-child { margin-left: 0; z-index: 3; border-color: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.5); }
     .avatar-wrapper:nth-child(2) { z-index: 2; }
     .avatar-wrapper:nth-child(3) { z-index: 1; }
     .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-    
-    .date-time-block {
-      background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.05); font-size: 13px; font-weight: 500;
-      color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 10px;
+    .coach-tag {
+      position: absolute; bottom: -28px; background: #00f5d4; color: #000;
+      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+      left: 50%; transform: translateX(-50%); white-space: nowrap; z-index: 4;
     }
 
-    /* ORDER TOTAL CARD */
-    .order-card {
-      border-color: #00b4d8;
-      box-shadow: 0 0 15px rgba(0,180,216,0.15), inset 0 0 10px rgba(0,180,216,0.05);
+    /* CARD 2: TIMELINE */
+    .timeline-container {
+      width: 100%; position: relative; margin-top: 10px; margin-bottom: 24px;
     }
-    .order-card .card-label { color: #00b4d8; }
-    
-    .order-row {
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7);
-      margin-bottom: 12px;
-    }
-    .order-row.green-text { color: #39ff14; font-weight: 600; }
-    
-    .divider { height: 1px; background: rgba(255,255,255,0.1); margin: 16px 0; }
-    
-    .order-total {
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .total-label { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 0.05em; }
-    .total-val { font-size: 26px; font-weight: 800; color: #fff; }
-
-    /* PAYMENT METHOD CARD */
-    .payment-card { border-color: rgba(255,255,255,0.15); }
-    
-    .pay-option {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1);
-      margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
-      background: rgba(0,0,0,0.3);
-    }
-    .pay-option:last-child { margin-bottom: 0; }
-    
-    .pay-info { display: flex; align-items: center; gap: 12px; }
-    .pay-icon { font-size: 20px; }
-    .pay-name { font-size: 14px; font-weight: 600; color: #fff; }
-    .pay-logos { display: flex; gap: 4px; margin-left: 8px; }
-    .gpay-badge { background: #fff; color: #000; font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; }
-    
-    .pay-radio {
-      width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3);
-      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    .timeline-track-bg {
+      width: 100%; height: 28px; border-radius: 6px;
+      background: rgba(255,255,255,0.05); position: relative;
+      border: 1px solid rgba(255,255,255,0.1); overflow: hidden;
     }
     
-    .pay-option.selected {
-      border-color: #00f5d4; background: rgba(0,245,212,0.1);
-      box-shadow: 0 0 15px rgba(0,245,212,0.2);
+    /* 5PM to 8PM is 3 hours. 6:30 to 7:30 is 1 hour exactly in the middle. */
+    .highlight-block {
+      position: absolute; top: 0; bottom: 0; height: 100%;
+      left: 50%; width: 33.333%; /* 1 hour out of 3 hours */
+      background: linear-gradient(90deg, rgba(57,255,20,0.2), rgba(57,255,20,0.5), rgba(57,255,20,0.2));
+      border: 1.5px solid #39ff14; box-shadow: 0 0 15px rgba(57,255,20,0.4);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 0 4px #000;
     }
-    .pay-option.selected .pay-radio { border-color: #00f5d4; }
-    .pay-option.selected .pay-radio::after {
-      content: ''; width: 10px; height: 10px; border-radius: 50%; background: #00f5d4;
-      box-shadow: 0 0 8px #00f5d4;
+    
+    .timeline-labels {
+      display: flex; justify-content: space-between; margin-top: 8px;
+      font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;
     }
 
-    /* SPLIT PAY TOGGLE */
-    .split-pay-container {
-      margin: 20px 20px; padding: 16px 20px;
-      background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15);
-      border-radius: 16px; display: flex; justify-content: space-between; align-items: flex-start;
+    .ai-infobox {
+      background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px;
+      font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.9);
+      display: flex; gap: 10px; border: 1px solid rgba(255,255,255,0.05);
     }
-    .split-text-box { flex: 1; margin-right: 16px; }
-    .split-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-    .split-desc { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.4; }
-    
-    .toggle-switch {
-      width: 48px; height: 26px; background: rgba(255,255,255,0.2);
-      border-radius: 13px; position: relative; cursor: pointer; transition: background 0.3s;
-      flex-shrink: 0; margin-top: 2px;
-    }
-    .toggle-switch.active { background: #39ff14; box-shadow: 0 0 10px rgba(57,255,20,0.4); }
-    .toggle-knob {
-      width: 22px; height: 22px; background: #fff; border-radius: 50%;
-      position: absolute; top: 2px; left: 2px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-    .toggle-switch.active .toggle-knob { transform: translateX(22px); }
+    .ai-infobox .icon { font-size: 16px; }
 
     /* ─── FIXED CTA FOOTER ─── */
     .fixed-footer-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
       padding: 0 20px 24px; display: flex; flex-direction: column; align-items: center;
-      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.9) 60%, transparent 100%);
+      background: linear-gradient(0deg, rgba(8,11,18,1) 0%, rgba(8,11,18,0.8) 70%, transparent 100%);
     }
     .primary-btn {
-      width: 100%; padding: 18px 24px; border-radius: 16px;
+      width: 100%; padding: 18px 24px; border-radius: 100px; /* Pill shaped */
       border: none; cursor: pointer;
       background: #39ff14; color: #000;
-      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 0.02em;
-      box-shadow: 0 0 20px rgba(57,255,20,0.4);
+      font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800;
+      box-shadow: 0 0 25px rgba(57,255,20,0.4);
       transition: transform 0.15s ease;
       text-align: center; margin-bottom: 16px;
     }
@@ -295,6 +279,7 @@
 
   <!-- BACKGROUND -->
   <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
 
   <!-- FIXED TOP UI -->
   <div class="fixed-ui-layer">
@@ -310,97 +295,52 @@
     
     <div class="top-nav">
       <div class="back-btn" onclick="navigateBack()">←</div>
-      <div class="page-title">Checkout</div>
     </div>
   </div>
 
   <!-- SCROLLABLE BODY -->
   <div class="content-area">
     
-    <!-- SUMMARY CARD -->
-    <div class="glow-card summary-card">
-      <div class="card-label">Summary</div>
-      <div class="venue-header">
-        <div class="venue-icon">⚽</div>
-        <div class="venue-name">Koramangala Arena</div>
-      </div>
-      
-      <div class="summary-avatars">
-        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=11" alt="Host"></div>
-        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=33" alt="Player"></div>
-        <div class="avatar-wrapper"><img src="https://i.pravatar.cc/100?img=47" alt="Player"></div>
-      </div>
-      
-      <div class="date-time-block">
-        Tue, Mar 24 | 6:30 PM - 7:30 PM | Court 3
-      </div>
-    </div>
-
-    <!-- ORDER TOTAL CARD -->
-    <div class="glow-card order-card">
-      <div class="card-label">Order Details</div>
-      
-      <div class="order-row">
-        <span>Slot Fee (1 hr)</span>
-        <span>₹1200.00</span>
-      </div>
-      <div class="order-row">
-        <span>Service Fee</span>
-        <span>₹2.00</span>
-      </div>
-      <div class="order-row green-text">
-        <span>Newbie Shield (20% OFF)</span>
-        <span>-₹240.00</span>
-      </div>
-      
-      <div class="divider"></div>
-      
-      <div class="order-total">
-        <span class="total-label">YOUR TOTAL</span>
-        <span class="total-val">₹962.00</span>
-      </div>
-    </div>
-
-    <!-- PAYMENT METHOD CARD -->
-    <div class="glow-card payment-card">
-      <div class="card-label">Payment Method</div>
-      
-      <div class="pay-option selected" onclick="selectPay(this)">
-        <div class="pay-info">
-          <span class="pay-icon">📱</span>
-          <span class="pay-name">UPI</span>
-          <div class="pay-logos">
-            <span class="gpay-badge">GPay</span>
+    <!-- CARD 1: AI Result Ring -->
+    <div class="glow-card">
+      <div class="ai-ring-container">
+        <div class="q-logo">Q</div>
+        <div class="synergy-badge">🔥 98% Group Synergy</div>
+        <div class="slot-label">Optimized Slot Found!</div>
+        <div class="slot-time">6:30 PM -<br>7:30 PM</div>
+        
+        <div class="ring-avatars">
+          <div class="avatar-wrapper">
+            <img src="https://i.pravatar.cc/100?img=11" alt="Coach Rahul">
           </div>
+          <div class="avatar-wrapper">
+            <img src="https://i.pravatar.cc/100?img=33" alt="Player 2">
+          </div>
+          <div class="avatar-wrapper">
+            <img src="https://i.pravatar.cc/100?img=47" alt="Player 3">
+          </div>
+          <div class="coach-tag">COACH RAHUL</div>
         </div>
-        <div class="pay-radio"></div>
-      </div>
-      
-      <div class="pay-option" onclick="selectPay(this)">
-        <div class="pay-info">
-          <span class="pay-icon">💳</span>
-          <span class="pay-name">Credit/Debit Card</span>
-        </div>
-        <div class="pay-radio"></div>
-      </div>
-      
-      <div class="pay-option" onclick="selectPay(this)">
-        <div class="pay-info">
-          <span class="pay-icon">⚡</span>
-          <span class="pay-name">FitQuest Credits</span>
-        </div>
-        <div class="pay-radio"></div>
       </div>
     </div>
 
-    <!-- SPLIT PAY TOGGLE -->
-    <div class="split-pay-container">
-      <div class="split-text-box">
-        <div class="split-title">SPLIT-PAY with Group</div>
-        <div class="split-desc">You may split with complete team once guest mot ricks.</div>
+    <!-- CARD 2: Optimization Detail -->
+    <div class="glow-card">
+      <div class="timeline-container">
+        <div class="timeline-track-bg">
+          <div class="highlight-block">Best Match</div>
+        </div>
+        <div class="timeline-labels">
+          <span>5 PM</span>
+          <span>6 PM</span>
+          <span>7 PM</span>
+          <span>8 PM</span>
+        </div>
       </div>
-      <div class="toggle-switch" id="splitToggle" onclick="toggleSplit()">
-        <div class="toggle-knob"></div>
+      
+      <div class="ai-infobox">
+        <span class="icon">✨</span>
+        <span>The AI identified the best 1-hour slot based on majority availability and group skill match.</span>
       </div>
     </div>
 
@@ -408,8 +348,8 @@
 
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
-    <button class="primary-btn" onclick="navTo('fitquest_screen9.html')">Confirm Payment & Complete Booking</button>
-    <div class="secondary-link" onclick="navTo('fitquest_screen6.html')">Choose Different Time</div>
+    <button class="primary-btn" onclick="navTo('fitquest_screen9.html')">Confirm & Book Optimized Slot</button>
+    <div class="secondary-link" onclick="navigateBack()">Choose Different Slot</div>
   </div>
 
 
@@ -433,19 +373,22 @@
       <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
     </div>
     <div class="drawer-nav">
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
         <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
       </div>
       <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
         <span class="drawer-icon">⚙️</span><span>App Settings</span>
       </div>
     </div>
@@ -477,15 +420,7 @@ function navigateBack() {
 
 function navTo(url) {
   const shell = document.querySelector('.phone-shell');
-  
-  // Decide animation based on target (back to 6 is a 'back' flow, to 9 is a 'forward' flow)
-  if (url === 'fitquest_screen6.html') {
-    shell.classList.add('slide-out-right');
-    sessionStorage.setItem('navDir', 'back');
-  } else {
-    shell.classList.add('slide-out-left');
-  }
-  
+  shell.classList.add('slide-out-left');
   setTimeout(() => { window.location.href = url; }, 330);
 }
 
@@ -497,16 +432,6 @@ function navTo(url) {
   setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
   sessionStorage.removeItem('navDir');
 })();
-
-// Simple UI Logic
-function selectPay(el) {
-  document.querySelectorAll('.pay-option').forEach(opt => opt.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function toggleSplit() {
-  document.getElementById('splitToggle').classList.toggle('active');
-}
 </script>
 </body>
 </html>

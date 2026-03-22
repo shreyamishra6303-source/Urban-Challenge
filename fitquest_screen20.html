@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>FitQuest Bangalore – Screen 19: The Pro Coach Directory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Inter', sans-serif;
+      display: flex; align-items: flex-start; justify-content: center;
+    }
+    
+    .phone-shell {
+      position: relative; width: 390px; max-width: 100%; height: 100%;
+      background: #060913; overflow: hidden; color: #fff;
+      display: flex; flex-direction: column;
+    }
+
+    /* ─── BACKGROUND ─── */
+    .bg-main {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(circle at 50% 10%, rgba(0,245,212,0.1) 0%, #060913 70%);
+    }
+    .grid-overlay {
+      position: absolute; inset: 0; opacity: 0.05; pointer-events: none;
+      background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* ─── FIXED UI LAYER (Top) ─── */
+    .fixed-ui-layer {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 200; pointer-events: none;
+    }
+    .fixed-ui-layer > * { pointer-events: auto; }
+
+    .step-indicator {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 12px 18px 8px; background: rgba(6,9,19,0.95);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .step-flow { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .flow-item { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .flow-item.done { color: rgba(0,245,212,0.5); }
+    .flow-item.active { color: #00f5d4; text-shadow: 0 0 8px #00f5d4; }
+    .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
+    .step-label-global { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
+    .progress-fill { height: 100%; width: 95%; background: #00f5d4; border-radius: 10px; box-shadow: 0 0 10px #00f5d4; } /* 19/20 */
+
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 4px; pointer-events: auto;
+    }
+    .back-btn {
+      width: 32px; height: 32px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: #00f5d4;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+
+    /* Category Scroll */
+    .category-scroll {
+      display: flex; overflow-x: auto; gap: 10px; padding: 12px 20px;
+      padding-top: 110px; position: sticky; top: 0; z-index: 100;
+      background: rgba(6,10,20,0.8); backdrop-filter: blur(10px);
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .category-scroll::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      white-space: nowrap; padding: 8px 16px; border-radius: 20px;
+      background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.05);
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cat-chip.active {
+      background: rgba(0,245,212,0.15); border-color: #00f5d4; color: #00f5d4;
+      box-shadow: 0 0 15px rgba(0,245,212,0.3); opacity: 1;
+    }
+    .cat-chip:not(.active) { opacity: 0.6; }
+    .cat-chip:hover:not(.active) { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); opacity: 0.8; }
+
+    /* ─── GLOBAL NAV DRAWER ─── */
+    .menu-trigger {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: rgba(0,245,212,0.1); border: 1px solid rgba(0,245,212,0.3);
+      box-shadow: 0 0 15px rgba(0,245,212,0.2); cursor: pointer; transition: all 0.2s;
+    }
+    .menu-trigger:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 20px rgba(0,245,212,0.4); }
+    .menu-trig-line { width: 22px; height: 2px; background: #00f5d4; border-radius: 2px; box-shadow: 0 0 5px #00f5d4; }
+    
+    .nav-drawer {
+      position: absolute; top: 0; right: -100%; width: 280px; height: 100%;
+      background: rgba(6, 9, 19, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-left: 1.5px solid rgba(0,245,212,0.3); z-index: 1000;
+      display: flex; flex-direction: column; padding: 24px 20px;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.8); pointer-events: auto;
+    }
+    .nav-drawer.open { right: 0; }
+    .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 950; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+    .drawer-user { display: flex; align-items: center; gap: 12px; }
+    .drawer-ava-side { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #39ff14; overflow: hidden; }
+    .drawer-ava-side img { width: 100%; height: 100%; object-fit: cover; }
+    .drawer-uname { font-size: 16px; font-weight: 800; color: #fff; }
+    .drawer-ulvl { font-size: 12px; font-weight: 700; color: #39ff14; text-transform: uppercase; }
+    .drawer-close { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05); color: #fff; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .drawer-nav { display: flex; flex-direction: column; gap: 16px; }
+    .drawer-link { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; background: rgba(0,245,212,0.05); text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* ─── MAIN CONTENT (Coach Listing) ─── */
+    .content-area {
+      position: relative; z-index: 20; flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding-bottom: 40px; scroll-behavior: smooth;
+    }
+    .content-area::-webkit-scrollbar { display: none; }
+
+    .feed-container { padding: 0 20px; display: flex; flex-direction: column; gap: 16px; transition: all 0.5s ease; }
+    
+    /* Coach Card Base */
+    .coach-card {
+      background: rgba(16, 22, 34, 0.4); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .coach-card.fade-out { opacity: 0; transform: scale(0.95); }
+    .coach-card.fade-in { opacity: 1; transform: scale(1); }
+    .coach-card.pulse-active { animation: glowPulse 0.4s ease-out; }
+    
+    @keyframes glowPulse {
+      0% { box-shadow: 0 8px 32px rgba(0,0,0,0.5); transform: scale(1); }
+      50% { box-shadow: 0 0 25px rgba(57, 255, 20, 0.6); transform: scale(1.02); }
+      100% { box-shadow: 0 8px 32px rgba(0,0,0,0.5); transform: scale(1); }
+    }
+
+    /* Card Layout */
+    .coach-top { display: flex; align-items: center; gap: 14px; }
+    .c-ava { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #00f5d4; overflow: hidden; box-shadow: 0 0 10px rgba(0,245,212,0.3); flex-shrink: 0; }
+    .c-ava img { width: 100%; height: 100%; object-fit: cover; }
+    .c-info { display: flex; flex-direction: column; flex: 1; }
+    
+    .c-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 800; color: #00f5d4; text-shadow: 0 0 10px rgba(0,245,212,0.5); margin-bottom: 2px; }
+    .c-spec { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em; }
+    .c-rating { font-size: 11px; font-weight: 800; color: #ff9500; text-shadow: 0 0 10px rgba(255,149,0,0.5); margin-top: 4px; }
+
+    .c-desc { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
+
+    .book-btn {
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(57,255,20,0.4);
+      background: rgba(57,255,20,0.1); color: #39ff14; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 800;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s; text-shadow: 0 0 5px rgba(57,255,20,0.3);
+      box-shadow: 0 0 10px rgba(57,255,20,0.1);
+    }
+    .book-btn:hover { background: rgba(57,255,20,0.25); box-shadow: 0 0 20px rgba(57,255,20,0.4); transform: translateY(-2px); color: #fff; border-color: #39ff14; }
+
+    /* Animation */
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft  { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .phone-shell.slide-in-right { animation: slideInRight 0.3s ease forwards; }
+    .phone-shell.slide-in-left  { animation: slideInLeft 0.3s ease forwards; }
+  </style>
+</head>
+<body>
+<div class="phone-shell">
+
+  <!-- BACKGROUND -->
+  <div class="bg-main"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- FIXED TOP UI -->
+  <div class="fixed-ui-layer">
+    <div class="step-indicator">
+      <div class="step-flow">
+        <span class="flow-item done">Community</span><span class="flow-arrow">→</span>
+        <span class="flow-item done">Elite Training</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Coaches</span>
+      </div>
+      <div class="step-label-global">Screen 20 of 20</div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+    
+    <div class="top-nav">
+      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="menu-trigger" onclick="toggleNavDrawer()">
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+        <div class="menu-trig-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAWER OVERLAYS -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="toggleNavDrawer()"></div>
+  <div class="nav-drawer" id="navDrawer">
+    <div class="drawer-header">
+      <div class="drawer-user">
+        <div class="drawer-ava-side"><img src="https://i.pravatar.cc/100?img=11" alt="Me"></div>
+        <div class="drawer-uinfo">
+          <span class="drawer-uname">My Profile</span>
+          <span class="drawer-ulvl">Hero Level 1</span>
+        </div>
+      </div>
+      <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
+        <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
+        <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+        <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+        <span class="drawer-icon">📰</span><span>The Arena Feed</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
+        <span class="drawer-icon">⚙️</span><span>App Settings</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY CHIPS -->
+  <div class="category-scroll">
+    <div class="cat-chip active" data-cat="all">All Pros</div>
+    <div class="cat-chip" data-cat="football">Football</div>
+    <div class="cat-chip" data-cat="gym">Gym/Weights</div>
+    <div class="cat-chip" data-cat="yoga">Yoga/Zen</div>
+  </div>
+
+  <!-- SCROLLABLE DIRECTORY -->
+  <div class="content-area">
+    <div class="feed-container" id="coachContainer">
+      
+      <!-- FOOTBALL COACHES -->
+      <div class="coach-card" data-category="football" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=33" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Coach Rahul</div>
+            <div class="c-spec">Tactical Defense</div>
+            <div class="c-rating">⭐️ 4.9 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(120+ Vouched Sessions)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Ex-Professional player. Specializing in Defense and Midfield Synergy. Helping you clear high-level Bangalore Nodes.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <div class="coach-card" data-category="football" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Coach Priya</div>
+            <div class="c-spec">Attack & Scoring</div>
+            <div class="c-rating">⭐️ 5.0 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(150+ Goals Scored)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">BMSIT Alumni. Focused on aggressive attacking patterns and finishing your chances.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <div class="coach-card" data-category="football" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=11" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Coach Aman</div>
+            <div class="c-spec">Goalkeeping & Reaction</div>
+            <div class="c-rating">⭐️ 4.7 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(200+ Saves)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Agility and reaction specialist. Master your diving techniques and shot-stopping reflexes.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <!-- GYM COACHES -->
+      <div class="coach-card" data-category="gym" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=60" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Trainer Vikram</div>
+            <div class="c-spec">Strength & Power</div>
+            <div class="c-rating">⭐️ 4.8 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(200+ PR Gains)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">BMSIT Innovation Lab member. Specializing in weightlifting and explosive power to max your Strength stat.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <div class="coach-card" data-category="gym" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=59" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Trainer Suresh</div>
+            <div class="c-spec">Bodybuilding & Aesthetics</div>
+            <div class="c-rating">⭐️ 4.9 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(100+ Visual Transformations)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Expert in hypertrophic training and strict diet regiments. Transform your physique.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <div class="coach-card" data-category="gym" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=20" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Trainer Lakshmi</div>
+            <div class="c-spec">Conditioning & HIIT</div>
+            <div class="c-rating">⭐️ 4.8 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(80+ Fat-Loss Quests)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">High-Intensity interval training to push your limits. Melt fat and build lean stamina.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <!-- YOGA COACHES -->
+      <div class="coach-card" data-category="yoga" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=42" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Dr. Ananya</div>
+            <div class="c-spec">Recovery & Mobility</div>
+            <div class="c-rating">⭐️ 5.0 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(85+ Zen Sessions)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Expert in high-intensity recovery and yoga for athletes. Improving your Flexibility and Core Stability stats.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <div class="coach-card" data-category="yoga" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=52" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Yogi Ravi</div>
+            <div class="c-spec">Meditation & Breathwork</div>
+            <div class="c-rating">⭐️ 4.7 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(100+ Stress-Free Quests)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Master your breathing. Control adrenaline spikes and ensure focus under extreme quest pressure.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+      <div class="coach-card" data-category="yoga" onclick="pulseCard(this)">
+        <div class="coach-top">
+          <div class="c-ava"><img src="https://i.pravatar.cc/100?img=40" alt="Avatar"/></div>
+          <div class="c-info">
+            <div class="c-name">Yogi Sarah</div>
+            <div class="c-spec">Flow & Balance</div>
+            <div class="c-rating">⭐️ 4.9 <span style="color:rgba(255,255,255,0.4);font-weight:600;">(60+ Alignment Quests)</span></div>
+          </div>
+        </div>
+        <div class="c-desc">Vinyasa flow sequences customized for cyber-athletes. Build raw core balance and resilience.</div>
+        <button class="book-btn">Book Consultation</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function navigateBack() {
+  const shell = document.querySelector('.phone-shell');
+  shell.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+  shell.style.transform = 'translateX(100%)';
+  shell.style.opacity = '0';
+  sessionStorage.setItem('navDir', 'back');
+  setTimeout(() => { window.history.back(); }, 300);
+}
+
+function navTo(url) {
+  const shell = document.querySelector('.phone-shell');
+  shell.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+  shell.style.transform = 'translateX(-100%)';
+  shell.style.opacity = '0';
+  setTimeout(() => { window.location.href = url; }, 300);
+}
+
+function toggleNavDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if(drawer && overlay) {
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+  }
+}
+function runNavTo(url) { navTo(url); }
+
+function pulseCard(card) {
+  card.classList.remove('pulse-active');
+  void card.offsetWidth; // trigger reflow
+  card.classList.add('pulse-active');
+}
+
+// Filtering Logic
+const chips = document.querySelectorAll('.cat-chip');
+const container = document.getElementById('coachContainer');
+const originalCards = Array.from(container.querySelectorAll('.coach-card'));
+
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    // UI Update
+    chips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    
+    const category = chip.getAttribute('data-cat');
+    
+    // Smooth Transition Out
+    originalCards.forEach(card => card.classList.add('fade-out'));
+    
+    setTimeout(() => {
+      // Reorder Logic
+      let matched = [];
+      let others = [];
+      
+      originalCards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          matched.push(card);
+        } else {
+          others.push(card);
+        }
+      });
+      
+      // Re-append to container
+      container.innerHTML = '';
+      matched.forEach(card => {
+        container.appendChild(card);
+        card.style.display = 'flex';
+        card.classList.remove('fade-out');
+        card.classList.add('fade-in');
+      });
+      others.forEach(card => {
+        container.appendChild(card);
+        card.style.display = 'none';
+      });
+      
+      // Clear fade-in after animation
+      setTimeout(() => {
+        originalCards.forEach(card => card.classList.remove('fade-in'));
+      }, 300);
+      
+      // Scroll to top of list
+      document.querySelector('.content-area').scrollTop = 0;
+    }, 200);
+  });
+});
+
+// Entry transition
+(function() {
+  try {
+    const d = sessionStorage.getItem('navDir');
+    const s = document.querySelector('.phone-shell');
+    if (!s) return;
+    s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
+    setTimeout(() => {
+        s.classList.remove('slide-in-left', 'slide-in-right');
+        s.style.opacity = '1';
+        s.style.transform = 'none';
+    }, 400);
+    sessionStorage.removeItem('navDir');
+  } catch(e) { console.error("Nav error:", e); }
+})();
+</script>
+</body>
+</html>

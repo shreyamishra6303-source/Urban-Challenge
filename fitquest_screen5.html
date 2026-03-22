@@ -3,29 +3,26 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>FitQuest Bangalore – Screen 5: Venue Selection</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet"/>
+  <title>FitQuest Bangalore – Screen 4: Quest Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
       --teal: #00f5d4; --purple: #bf5af2; --green: #39ff14;
-      --blue: #00b4d8; --orange: #ff6b35; --dark: #04060b;
+      --blue: #00b4d8; --orange: #ff6b35; --dark: #070911;
     }
+
     html, body {
       width: 100%; height: 100%; overflow: hidden;
-      background: #000; font-family: 'Inter', sans-serif;
+      background: #030408; font-family: 'Inter', sans-serif;
       display: flex; align-items: flex-start; justify-content: center;
     }
+
     .phone-shell {
       position: relative; width: 390px; max-width: 100%; height: 100%;
       background: var(--dark);
       display: flex; flex-direction: column; overflow: hidden;
-      /* Clean Dark Grid Background */
-      background-image: 
-        linear-gradient(rgba(0,245,212,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,245,212,0.03) 1px, transparent 1px);
-      background-size: 30px 30px;
-      background-position: center top;
     }
 
     /* ─── FIXED UI LAYER (Top) ─── */
@@ -38,149 +35,163 @@
     /* Step Indicator */
     .step-indicator {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 12px 18px 8px; background: rgba(4,6,11,0.9);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 10px 18px 8px;
+      background: rgba(4,6,12,0.85);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
     }
-    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .step-flow { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
     .flow-item { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.25); }
     .flow-item.done { color: rgba(0,245,212,0.5); }
     .flow-item.active { color: var(--teal); text-shadow: 0 0 8px var(--teal); }
     .flow-arrow { color: rgba(255,255,255,0.15); font-size: 10px; }
-    
-    .step-label { font-size: 9px; color: rgba(255,255,255,0.5); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    
-    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; }
-    .progress-fill { height: 100%; width: 25%; background: var(--teal); border-radius: 10px; box-shadow: 0 0 10px var(--teal); }
+    .progress-track { width: 100%; height: 3px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: visible; }
+    .progress-fill { height: 100%; width: 20%; background: var(--teal); border-radius: 10px; box-shadow: 0 0 10px var(--teal); }
 
-    /* Top Nav (Replaces Meta Header) */
-    .top-nav {
+    /* Meta Header */
+    .meta-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 18px;
-      background: linear-gradient(180deg, rgba(4,6,11,0.9) 0%, rgba(4,6,11,0) 100%);
+      padding: 12px 18px;
+      background: linear-gradient(180deg, rgba(4,6,12,0.95) 0%, rgba(4,6,12,0.8) 50%, rgba(4,6,12,0) 100%);
+      backdrop-filter: blur(8px);
     }
+    .mh-left-group { display: flex; align-items: center; gap: 10px; }
+    
     .back-btn {
-      width: 32px; height: 32px; border-radius: 10px;
+      width: 28px; height: 28px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; font-size: 16px; color: var(--teal);
-      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.3);
-      box-shadow: 0 0 10px rgba(0,245,212,0.15); transition: all 0.2s;
+      background: rgba(0,245,212,0.08); border: 1px solid rgba(0,245,212,0.4);
+      box-shadow: 0 0 12px rgba(0,245,212,0.2);
+      transition: all 0.2s; flex-shrink: 0;
     }
-    .back-btn:hover { background: rgba(0,245,212,0.15); transform: scale(1.05); }
+    .back-btn:hover { background: rgba(0,245,212,0.2); box-shadow: 0 0 18px rgba(0,245,212,0.5); }
+    
+    .mh-screen { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .newbie-badge {
+      background: var(--blue); color: #000;
+      font-family: 'Orbitron', sans-serif; font-size: 8px; font-weight: 900;
+      padding: 3px 7px; border-radius: 4px; letter-spacing: 0.1em;
+      box-shadow: 0 0 12px var(--blue);
+    }
 
-    .hero-ring { width: 34px; height: 34px; position: relative; }
-    .hero-ring svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(0,245,212,0.6)); }
+    .hero-ring { width: 38px; height: 38px; position: relative; margin-right: 5px; }
+    .hero-ring svg { width: 100%; height: 100%; filter: drop-shadow(0 0 8px rgba(0,245,212,0.5)); animation: spin 10s linear infinite; }
     .hero-ring::after {
       content: '⚡'; position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px; color: var(--teal); text-shadow: 0 0 10px var(--teal);
+      font-size: 16px; color: var(--teal); text-shadow: 0 0 10px var(--teal);
     }
-    
-    .filter-btn {
-      width: 32px; height: 32px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 14px; color: #fff;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.2s;
-    }
-    .filter-btn:hover { background: rgba(255,255,255,0.1); }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    /* ─── SCROLLBODY ─── */
+    /* ─── SCROLLABLE MAP AREA ─── */
     .scroll-body {
       position: absolute; inset: 0; z-index: 10;
       overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth;
     }
     .scroll-content {
-      position: relative; width: 100%; min-height: 100%; padding-bottom: 110px;
-      /* Offset to match header approx height */
-      padding-top: 100px; 
+      position: relative; width: 100%; min-height: 850px; padding-bottom: 120px;
     }
 
-    /* Hero Image */
-    .hero-section {
-      position: relative; width: 100%; height: 260px; margin-bottom: 24px;
-      border-bottom: 1px solid rgba(0,245,212,0.2);
+    /* Background clean up */
+
+    #cityCanvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
     }
-    .hero-img {
-      width: 100%; height: 100%; object-fit: cover;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+
+    /* ─── HERO PITCH VISUAL ─── */
+    .hero-pitch-container {
+      position: relative; width: 100%; display: flex; justify-content: center;
+      margin-top: 155px; margin-bottom: 35px; z-index: 20;
     }
-    .title-overlay {
-      position: absolute; bottom: -20px; left: 0; right: 0;
-      text-align: center; padding: 0 20px;
+    .hero-pitch-container svg {
+      transform: scale(1.45);
+      transform-origin: center center;
     }
-    .venue-title {
+    .hero-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 250px; height: 120px; border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0,245,212,0.4) 0%, transparent 70%);
+      filter: blur(20px); z-index: -1;
+    }
+
+    /* ─── CONTENT BLOCKS ─── */
+    .quest-header {
+      padding: 0 20px; position: relative; z-index: 25; margin-bottom: 24px;
+    }
+    .quest-label {
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700;
+      color: var(--teal); letter-spacing: 0.15em; text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0,245,212,0.4); margin-bottom: 6px;
+    }
+    .quest-title {
       font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800;
-      color: #fff; line-height: 1.1; letter-spacing: -0.01em;
-      text-shadow: 0 4px 12px rgba(0,0,0,0.8), 0 0 20px rgba(0,245,212,0.4);
-      margin-bottom: 8px;
+      color: #fff; line-height: 1.1; letter-spacing: -0.02em;
     }
-    .venue-meta {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(0,0,0,0.6); padding: 6px 12px; border-radius: 100px;
-      border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px);
-      font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.8);
-    }
-    .rating { color: #facc15; font-weight: 700; text-shadow: 0 0 6px rgba(250,204,21,0.5); }
-    .pin { color: var(--blue); }
 
-    /* Glassmorphic Details */
-    .glass-card {
-      margin: 0 20px 20px;
-      background: rgba(16,20,32,0.6); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px; padding: 18px;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    /* Glassmorphism Feature List */
+    .feature-card {
+      margin: 0 20px 24px; position: relative; z-index: 25;
+      background: rgba(10,14,28,0.65); border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 20px;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
     }
-    .glass-card p {
-      font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.7);
-      line-height: 1.6; letter-spacing: 0.01em;
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px;
     }
-    .highlight-text { color: var(--teal); font-weight: 600; text-shadow: 0 0 8px rgba(0,245,212,0.3); }
-
-    /* Amenities Row */
-    .amenities-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 20px;
-    }
-    .am-item {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-    }
-    .am-icon {
-      width: 44px; height: 44px; border-radius: 12px;
+    .feature-item:last-child { margin-bottom: 0; }
+    
+    .feat-icon-wrap {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 20px;
       background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .am-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em; }
-    
-    /* Icon Colors */
-    .ic-car { color: var(--blue); text-shadow: 0 0 10px var(--blue); }
-    .ic-water { color: var(--teal); text-shadow: 0 0 10px var(--teal); }
-    .ic-plus { color: var(--green); text-shadow: 0 0 10px var(--green); }
-    .ic-cup { color: var(--orange); text-shadow: 0 0 10px var(--orange); }
+    /* Specific Icon Colors */
+    .ic-turf { color: var(--green); text-shadow: 0 0 12px var(--green); border-color: rgba(57,255,20,0.3); background: rgba(57,255,20,0.05); }
+    .ic-water { color: var(--blue); text-shadow: 0 0 12px var(--blue); border-color: rgba(0,180,216,0.3); background: rgba(0,180,216,0.05); }
+    .ic-light { color: #facc15; text-shadow: 0 0 12px #facc15; border-color: rgba(250,204,21,0.3); background: rgba(250,204,21,0.05); }
+    .ic-gift { color: var(--purple); text-shadow: 0 0 12px var(--purple); border-color: rgba(191,90,242,0.3); background: rgba(191,90,242,0.05); }
 
-    /* Pricing Row */
-    .pricing-row {
-      margin: 10px 20px 20px; display: flex; align-items: center; justify-content: space-between;
-      padding: 16px; background: rgba(0,245,212,0.05); border-radius: 14px;
-      border: 1px solid rgba(0,245,212,0.2);
+    .feat-text { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+    .feat-title { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.03em; }
+    .feat-desc { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.55); line-height: 1.4; }
+
+    /* Promo Highlight */
+    .promo-highlight .feat-title { color: var(--teal); text-shadow: 0 0 10px rgba(0,245,212,0.4); }
+
+    /* Team Status Bar */
+    .team-status {
+      margin: 0 20px; position: relative; z-index: 25;
+      background: linear-gradient(90deg, rgba(10,14,28,0.8), rgba(0,245,212,0.05));
+      border: 1px solid rgba(0,245,212,0.2); border-radius: 100px;
+      padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
     }
-    .price-block { display: flex; align-items: baseline; gap: 4px; }
-    .price-val { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #fff; }
-    .price-unit { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
-    .shield-badge {
-      background: rgba(57,255,20,0.1); border: 1px solid rgba(57,255,20,0.4);
-      color: var(--green); font-size: 10px; font-weight: 700; padding: 6px 10px;
-      border-radius: 6px; letter-spacing: 0.05em; box-shadow: 0 0 12px rgba(57,255,20,0.2);
+    .ts-avatars { display: flex; align-items: center; }
+    .avatar { 
+      width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #060c1b; margin-left: -8px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      display: flex; align-items: center; justify-content: center; font-size: 12px;
     }
+    .avatar:first-child { margin-left: 0; }
+    .ava-1 { background: radial-gradient(circle at top right, #3b82f6, #1e3a8a); }
+    .ava-2 { background: radial-gradient(circle at top right, #ec4899, #831843); }
+    .ava-3 { background: radial-gradient(circle at top right, #10b981, #064e3b); }
+    .ava-4 { background: radial-gradient(circle at top right, #f59e0b, #064e3b); }
+    .ts-text {
+      font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; color: #fff;
+      letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;
+    }
+    .ts-count { color: var(--teal); font-weight: 800; text-shadow: 0 0 8px var(--teal); }
 
     /* ─── FIXED CTA FOOTER ─── */
     .fixed-footer-layer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
       padding: 0 20px 24px; pointer-events: none;
-      background: linear-gradient(0deg, rgba(4,6,11,1) 0%, rgba(4,6,11,0.9) 60%, transparent 100%);
+      background: linear-gradient(0deg, rgba(4,6,12,0.95) 0%, rgba(4,6,12,0.8) 50%, transparent 100%);
+      backdrop-filter: blur(8px);
     }
     .fixed-footer-layer > * { pointer-events: auto; }
     .cta-btn {
@@ -189,10 +200,11 @@
       font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: -0.01em;
       box-shadow: 0 0 20px rgba(57,255,20,0.35), inset 0 2px 4px rgba(255,255,255,0.5);
       transition: transform 0.15s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .cta-btn:active { transform: scale(0.96); }
 
-    /* Animations */
+    /* Page transition animations */
     @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
     @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
@@ -264,85 +276,259 @@
 
   <!-- FIXED TOP UI -->
   <div class="fixed-ui-layer">
-    <!-- Progressive Step Indicator -->
     <div class="step-indicator">
       <div class="step-flow">
         <span class="flow-item done">Discovery</span><span class="flow-arrow">→</span>
-        <span class="flow-item active">Booking</span><span class="flow-arrow">→</span>
-        <span class="flow-item">Community</span>
+        <span class="flow-item done">Booking</span><span class="flow-arrow">→</span>
+        <span class="flow-item active">Community</span>
       </div>
-      <div class="step-label">Screen 5 of 20</div>
       <div class="progress-track"><div class="progress-fill"></div></div>
     </div>
     
-    <!-- Top Nav -->
-    <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+    <div class="meta-header">
+      <div class="mh-left-group">
+        <div class="back-btn" onclick="navigateBack()">←</div>
+        <div class="newbie-badge">NEWBIE</div>
+        <div class="mh-screen">Screen 5 of 20</div>
+      </div>
       <div class="hero-ring">
-        <svg viewBox="0 0 100 100" fill="none" class="ring-svg">
-          <circle cx="50" cy="50" r="40" stroke="rgba(0,245,212,0.3)" stroke-width="4"/>
-          <path d="M 50 10 A 40 40 0 0 1 90 50" stroke="#00f5d4" stroke-width="4" stroke-linecap="round"/>
+        <svg viewBox="0 0 100 100" fill="none" stroke="url(#qGrad)" stroke-width="8" stroke-linecap="round">
+          <defs>
+            <linearGradient id="qGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00b4d8"/><stop offset="100%" stop-color="#bf5af2"/></linearGradient>
+          </defs>
+          <path d="M 50 15 A 35 35 0 1 1 20 75" />
+          <line x1="70" y1="70" x2="85" y2="85" stroke="#bf5af2" />
         </svg>
       </div>
-      <div class="filter-btn">⚲</div>
     </div>
   </div>
 
-  <!-- SCROLLABLE BODY -->
+  <!-- SCROLLABLE MAP BODY -->
   <div class="scroll-body">
     <div class="scroll-content">
-      
-      <!-- High-Quality Hero Image Section -->
-      <div class="hero-section">
-        <img src="pro_football_turf.png" class="hero-img" alt="Pro Football Turf" />
-        <div class="title-overlay">
-          <h1 class="venue-title">Koramangala Football Arena <span style="display:block; font-size:0.6em; color:var(--teal); margin-top:2px;">(Level 1)</span></h1>
-          <div class="venue-meta">
-            <span class="rating">⭐ 4.5 Stars</span> <span style="opacity:0.3">|</span> 
-            <span><span class="pin">📍</span> Koramangala, Bangalore</span>
+      <!-- 3D Isometric Map Background -->
+      <canvas id="cityCanvas"></canvas>
+
+      <!-- Hero Pitch Visual -->
+      <div class="hero-pitch-container">
+        <div class="hero-glow"></div>
+        <!-- Football -->
+        <svg id="svg-Football" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 45) scale(1, 0.5) rotate(45)">
+            <!-- Base footprint -->
+            <rect x="-80" y="-100" width="160" height="200" fill="#1da944" stroke="#00f5d4" stroke-width="2.5"/>
+            <!-- Inner white bounds -->
+            <rect x="-72" y="-92" width="144" height="184" fill="none" stroke="#fff" stroke-width="2"/>
+            <!-- Center line & circle -->
+            <line x1="-72" y1="0" x2="72" y2="0" stroke="#fff" stroke-width="2"/>
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#fff" stroke-width="2"/>
+            <!-- Goal Areas -->
+            <rect x="-30" y="-100" width="60" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+            <rect x="-30" y="80" width="60" height="20" fill="none" stroke="#fff" stroke-width="2"/>
+          </g>
+          <!-- 3D Elements standing up -->
+          <g transform="translate(140, 45)">
+             <ellipse cx="-15" cy="50" rx="5" ry="3" fill="rgba(0,0,0,0.5)"/>
+             <path d="M-15,50 L-10,20 L-20,20 Z" fill="#ff4444"/>
+             <circle cx="-15" cy="15" r="4.5" fill="#f0c0a0"/>
+             
+             <ellipse cx="20" cy="10" rx="5" ry="3" fill="rgba(0,0,0,0.5)"/>
+             <path d="M20,10 L25,-20 L15,-20 Z" fill="#2a2aff"/>
+             <circle cx="20" cy="-25" r="4.5" fill="#f0c0a0"/>
+
+             <ellipse cx="2" cy="38" rx="6" ry="4" fill="rgba(0,0,0,0.5)"/>
+             <circle cx="2" cy="34" r="4" fill="#00f5d4" stroke="#fff" stroke-width="0.5"/>
+          </g>
+        </svg>
+
+        <!-- Cricket -->
+        <svg id="svg-Cricket" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 50) scale(1, 0.5) rotate(45)">
+            <ellipse cx="0" cy="0" rx="100" ry="100" fill="#1da944" stroke="#00f5d4" stroke-width="2"/>
+            <circle cx="0" cy="0" r="80" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="4 4"/>
+            <rect x="-15" y="-50" width="30" height="100" fill="#ccb08f" stroke="#fff" stroke-width="1"/>
+            <line x1="-15" y1="-35" x2="15" y2="-35" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-15" y1="35" x2="15" y2="35" stroke="#fff" stroke-width="1.5"/>
+          </g>
+          <g transform="translate(140, 50)">
+            <line x1="-25" y1="15" x2="-25" y2="35" stroke="#fff" stroke-width="2"/>
+            <line x1="25" y1="-15" x2="25" y2="5" stroke="#fff" stroke-width="2"/>
+            <path d="M25,5 L30,-15 L20,-15 Z" fill="#2a2aff"/>
+            <circle cx="25" cy="-20" r="4" fill="#f0c0a0"/>
+            <path d="M-25,35 L-20,15 L-30,15 Z" fill="#ff4444"/>
+            <circle cx="-25" cy="10" r="4" fill="#f0c0a0"/>
+            <circle cx="5" cy="5" r="3" fill="#ff2a2a"/>
+          </g>
+        </svg>
+
+        <!-- Badminton -->
+        <svg id="svg-Badminton" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 50) scale(1, 0.5) rotate(45)">
+            <rect x="-40" y="-80" width="80" height="160" fill="#0b486b" stroke="#00f5d4" stroke-width="2"/>
+            <rect x="-35" y="-75" width="70" height="150" fill="none" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-40" y1="0" x2="40" y2="0" stroke="#fff" stroke-width="3"/>
+            <line x1="-35" y1="-25" x2="35" y2="-25" stroke="#fff" stroke-width="1"/>
+            <line x1="-35" y1="25" x2="35" y2="25" stroke="#fff" stroke-width="1"/>
+          </g>
+          <g transform="translate(140, 50)">
+             <rect x="-40" y="20" width="80" height="15" fill="rgba(255,255,255,0.3)" stroke="#fff" stroke-width="1" transform="skewX(-45)"/>
+             <path d="M-15,40 L-10,15 L-20,15 Z" fill="#ff4444"/>
+             <circle cx="-15" cy="10" r="4" fill="#f0c0a0"/>
+             <path d="M15,5 L20,-20 L10,-20 Z" fill="#2a2aff"/>
+             <circle cx="15" cy="-25" r="4" fill="#f0c0a0"/>
+             <polygon points="5,10 0,0 10,0" fill="#fff"/>
+          </g>
+        </svg>
+
+        <!-- Basketball -->
+        <svg id="svg-Basketball" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 50) scale(1, 0.5) rotate(45)">
+            <rect x="-60" y="-100" width="120" height="200" fill="#a0522d" stroke="#00f5d4" stroke-width="2"/>
+            <rect x="-55" y="-95" width="110" height="190" fill="none" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-60" y1="0" x2="60" y2="0" stroke="#fff" stroke-width="2"/>
+            <circle cx="0" cy="0" r="15" fill="none" stroke="#fff" stroke-width="2"/>
+            <rect x="-20" y="-100" width="40" height="30" fill="#8b4513" stroke="#fff" stroke-width="1.5"/>
+            <path d="M-30,-70 A 30 30 0 0 1 30 -70" fill="none" stroke="#fff" stroke-width="1.5"/>
+            <rect x="-20" y="70" width="40" height="30" fill="#8b4513" stroke="#fff" stroke-width="1.5"/>
+            <path d="M 30 70 A 30 30 0 0 1 -30 70" fill="none" stroke="#fff" stroke-width="1.5"/>
+          </g>
+          <g transform="translate(140, 50)">
+             <line x1="-40" y1="20" x2="-40" y2="0" stroke="#fff" stroke-width="2"/>
+             <circle cx="-35" cy="0" r="3" fill="none" stroke="#ff4500" stroke-width="2"/>
+             <line x1="40" y1="-20" x2="40" y2="-40" stroke="#fff" stroke-width="2"/>
+             <circle cx="35" cy="-40" r="3" fill="none" stroke="#ff4500" stroke-width="2"/>
+             <path d="M0,35 L5,10 L-5,10 Z" fill="#2a2aff"/>
+             <circle cx="0" cy="5" r="4.5" fill="#f0c0a0"/>
+             <circle cx="-10" cy="0" r="4" fill="#ff7f50"/>
+          </g>
+        </svg>
+
+        <!-- Tennis -->
+        <svg id="svg-Tennis" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 50) scale(1, 0.5) rotate(45)">
+            <rect x="-80" y="-110" width="160" height="220" fill="#2eb82e" stroke="#00f5d4" stroke-width="2"/>
+            <rect x="-60" y="-90" width="120" height="180" fill="#0066cc" stroke="#fff" stroke-width="1.5"/>
+            <rect x="-45" y="-90" width="90" height="180" fill="none" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-60" y1="0" x2="60" y2="0" stroke="#fff" stroke-width="2"/>
+            <line x1="0" y1="-45" x2="0" y2="45" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-45" y1="-45" x2="45" y2="-45" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-45" y1="45" x2="45" y2="45" stroke="#fff" stroke-width="1.5"/>
+          </g>
+          <g transform="translate(140, 50)">
+             <rect x="-55" y="20" width="110" height="12" fill="rgba(255,255,255,0.4)" stroke="#fff" stroke-width="1" transform="skewX(-45)"/>
+             <path d="M-20,40 L-15,15 L-25,15 Z" fill="#fff"/>
+             <circle cx="-20" cy="10" r="4" fill="#f0c0a0"/>
+             <path d="M20,-5 L25,-30 L15,-30 Z" fill="#ffcc00"/>
+             <circle cx="20" cy="-35" r="4" fill="#f0c0a0"/>
+             <circle cx="-5" cy="5" r="3" fill="#ccff00"/>
+          </g>
+        </svg>
+
+        <!-- Swimming -->
+        <svg id="svg-Swimming" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 50) scale(1, 0.5) rotate(45)">
+            <rect x="-60" y="-100" width="120" height="200" fill="#0099ff" stroke="#00f5d4" stroke-width="2"/>
+            <rect x="-55" y="-95" width="110" height="190" fill="rgba(255,255,255,0.1)" stroke="#fff" stroke-width="1.5"/>
+            <line x1="-30" y1="-95" x2="-30" y2="95" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+            <line x1="0" y1="-95" x2="0" y2="95" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+            <line x1="30" y1="-95" x2="30" y2="95" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+          </g>
+          <g transform="translate(140, 50)">
+            <circle cx="-25" cy="-10" r="4" fill="#f0c0a0"/>
+            <path d="M-30,-5 Q-25,-15 -20,-5" stroke="#fff" fill="none" stroke-width="2"/>
+            <circle cx="5" cy="10" r="4" fill="#f0c0a0"/>
+            <path d="M0,15 Q5,5 10,15" stroke="#fff" fill="none" stroke-width="2"/>
+            <circle cx="35" cy="-25" r="4" fill="#f0c0a0"/>
+            <path d="M30,-20 Q35,-30 40,-20" stroke="#fff" fill="none" stroke-width="2"/>
+          </g>
+        </svg>
+
+        <!-- Table Tennis -->
+        <svg id="svg-Table-Tennis" width="280" height="200" viewBox="0 0 280 200" style="filter: drop-shadow(0 20px 30px rgba(0,0,0,0.9)); display:none;">
+          <g transform="translate(140, 60)">
+             <line x1="-40" y1="20" x2="-40" y2="60" stroke="#555" stroke-width="3"/>
+             <line x1="40" y1="20" x2="40" y2="60" stroke="#555" stroke-width="3"/>
+             <line x1="0" y1="10" x2="0" y2="50" stroke="#333" stroke-width="3"/>
+          </g>
+          <g transform="translate(140, 50) scale(1, 0.4) rotate(45)">
+            <rect x="-50" y="-80" width="100" height="160" fill="#0055a4" stroke="#fff" stroke-width="3"/>
+            <line x1="0" y1="-80" x2="0" y2="80" stroke="#fff" stroke-width="2"/>
+            <line x1="-50" y1="0" x2="50" y2="0" stroke="#fff" stroke-width="2"/>
+          </g>
+          <g transform="translate(140, 50)">
+             <rect x="-65" y="10" width="130" height="10" fill="rgba(255,255,255,0.6)" stroke="#fff" stroke-width="1"/>
+             <path d="M-40,70 L-35,40 L-45,40 Z" fill="#ff4444"/>
+             <circle cx="-40" cy="35" r="4.5" fill="#f0c0a0"/>
+             <path d="M30,-5 L35,-30 L25,-30 Z" fill="#2a2aff"/>
+             <circle cx="30" cy="-35" r="4.5" fill="#f0c0a0"/>
+             <circle cx="-10" cy="20" r="3" fill="#ffdf00"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Quest Info -->
+      <div class="quest-header">
+        <div class="quest-label">Quest Objective:</div>
+        <div class="quest-title" id="dynamicTitle">Koramangala Football Arena <span style="color:var(--teal)">(Level 1)</span></div>
+      </div>
+
+      <!-- Feature List -->
+      <div class="feature-card">
+        
+        <div class="feature-item">
+          <div class="feat-icon-wrap ic-turf" id="dynIcon">⚽</div>
+          <div class="feat-text">
+            <div class="feat-title" id="dynFeatTitle">Flawless Pitch</div>
+            <div class="feat-desc" id="dynFeatDesc">High-Grip Pro Turf for maximum control.</div>
           </div>
         </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap ic-water">💧</div>
+          <div class="feat-text">
+            <div class="feat-title">Stamina Zone</div>
+            <div class="feat-desc">Complimentary Hydration Station equipped.</div>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feat-icon-wrap ic-light">🔦</div>
+          <div class="feat-text">
+            <div class="feat-title">Night Vision</div>
+            <div class="feat-desc">Pro Floodlights activated for evening matches.</div>
+          </div>
+        </div>
+
+        <div class="feature-item promo-highlight" style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(255,255,255,0.1);">
+          <div class="feat-icon-wrap ic-gift">🎁</div>
+          <div class="feat-text">
+            <div class="feat-title">Newbie Shield Active</div>
+            <div class="feat-desc">20% Discount applied automatically at checkout!</div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- About Venue -->
-      <div class="glass-card about-card" style="margin-top: 30px;">
-        <p>Unleash your skills on our FIFA-certified pro turf. Perfect for 5v5 or 7v7 matches. <span class="highlight-text">Level 1 Quest rewards available here.</span></p>
-      </div>
-
-      <!-- Amenities Row -->
-      <div class="glass-card amenities-row">
-        <div class="am-item">
-          <div class="am-icon ic-car">🚗</div>
-          <div class="am-label">Parking</div>
+      <!-- Team Status -->
+      <div class="team-status">
+        <div class="ts-avatars">
+          <div class="avatar ava-1">🙎‍♂️</div>
+          <div class="avatar ava-2">🙍‍♀️</div>
+          <div class="avatar ava-3">🙎‍♂️</div>
+          <div class="avatar ava-4">🙍‍♀️</div>
         </div>
-        <div class="am-item">
-          <div class="am-icon ic-water">🚿</div>
-          <div class="am-label">Shower</div>
-        </div>
-        <div class="am-item">
-          <div class="am-icon ic-plus">✚</div>
-          <div class="am-label">First Aid</div>
-        </div>
-        <div class="am-item">
-          <div class="am-icon ic-cup">☕</div>
-          <div class="am-label">Cafe</div>
-        </div>
-      </div>
-
-      <!-- Pricing Row -->
-      <div class="pricing-row">
-        <div class="price-block">
-          <span class="price-val">₹1200</span><span class="price-unit">/ hr</span>
-        </div>
-        <div class="shield-badge">20% OFF (Newbie Shield)</div>
+        <div class="ts-text">READY TEAMS: <span class="ts-count">4/5</span> HSR Ninjas</div>
       </div>
 
     </div>
+
   </div>
 
   <!-- FIXED BOTTOM CTA LAYER -->
   <div class="fixed-footer-layer">
-    <button class="cta-btn" onclick="navTo('fitquest_screen6.html')">Select Time Slot</button>
+    <button class="cta-btn" onclick="navTo('fitquest_screen6.html')">
+      INITIATE QUEST BOOKING
+    </button>
   </div>
 
 
@@ -366,19 +552,22 @@
       <div class="drawer-close" onclick="toggleNavDrawer()">✕</div>
     </div>
     <div class="drawer-nav">
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen13.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen14.html')">
         <span class="drawer-icon">🛡️</span><span>My Hero Profile</span>
       </div>
       <div class="drawer-link" onclick="runNavTo('fitquest_screen15.html')">
         <span class="drawer-icon">⚡</span><span>Squad Compatibility</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen16.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
         <span class="drawer-icon">🏛️</span><span>Hall of Heroes</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen17.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
         <span class="drawer-icon">📰</span><span>The Arena Feed</span>
       </div>
-      <div class="drawer-link" onclick="runNavTo('fitquest_screen18.html')">
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen20.html')">
+        <span class="drawer-icon">👨‍🏫</span><span>Pro Coach Directory</span>
+      </div>
+      <div class="drawer-link" onclick="runNavTo('fitquest_screen19.html')">
         <span class="drawer-icon">⚙️</span><span>App Settings</span>
       </div>
     </div>
@@ -401,6 +590,65 @@ function runNavTo(url) {
   else { window.location.href = url; }
 }
 
+/* ── Isometric 3D City Map Generator ── */
+(function() {
+  const canvas = document.getElementById('cityCanvas');
+  const W = Math.min(390, window.innerWidth);
+  const H = 900;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  function drawMap(t) {
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#020306';
+    ctx.fillRect(0,0,W,H);
+    
+    ctx.save();
+    ctx.globalAlpha = 0.25; // DIM the background to make 3D asset pop
+
+    // Grid offset
+    const gx = W/2, gy = H/4 - 100;
+    const cw = 45, ch = 22.5;
+
+    // Draw isometric building blocks
+    let seed = 9999;
+    function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    
+    const blocks = [];
+    for(let r=0; r<18; r++){
+      for(let c=0; c<18; c++){
+        if (rand() < 0.4 && !(c > 6 && c < 12 && r > 4 && r < 12)) { 
+          blocks.push({c, r, h: 20 + rand() * 60});
+        }
+      }
+    }
+    blocks.sort((a,b) => (a.c+a.r) - (b.c+b.r));
+
+    blocks.forEach(b => {
+      let x0 = gx + (b.c - b.r)*cw;
+      let y0 = gy + (b.c + b.r)*ch;
+      
+      // Top face
+      ctx.beginPath(); ctx.moveTo(x0, y0 - b.h); ctx.lineTo(x0+cw, y0+ch - b.h); ctx.lineTo(x0, y0+2*ch - b.h); ctx.lineTo(x0-cw, y0+ch - b.h);
+      ctx.fillStyle = '#0a0f1d'; ctx.fill();
+      ctx.strokeStyle = `rgba(0,180,216,0.3)`; ctx.lineWidth = 0.5; ctx.stroke();
+      
+      // Left face
+      ctx.beginPath(); ctx.moveTo(x0-cw, y0+ch - b.h); ctx.lineTo(x0, y0+2*ch - b.h); ctx.lineTo(x0, y0+2*ch); ctx.lineTo(x0-cw, y0+ch);
+      ctx.fillStyle = '#0b1226'; ctx.fill();
+      ctx.strokeStyle = `rgba(191,90,242,0.3)`; ctx.stroke();
+
+      // Right face
+      ctx.beginPath(); ctx.moveTo(x0, y0+2*ch - b.h); ctx.lineTo(x0+cw, y0+ch - b.h); ctx.lineTo(x0+cw, y0+ch); ctx.lineTo(x0, y0+2*ch);
+      ctx.fillStyle = '#060a16'; ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  // Draw static map for Screen 4 since focus is on the content
+  drawMap(1.5);
+})();
+
 function navTo(url) {
   document.querySelector('.phone-shell').classList.add('slide-out-left');
   setTimeout(() => window.location.href = url, 320);
@@ -420,6 +668,45 @@ function navigateBack() {
   s.classList.add(d==='back'?'slide-in-left':'slide-in-right');
   setTimeout(() => s.classList.remove(d==='back'?'slide-in-left':'slide-in-right'), 350);
   sessionStorage.removeItem('navDir');
+
+  // Dynamic Sport / Venue injection
+  let rawSport = localStorage.getItem('selectedSport') || 'Football';
+  // Robust Title Casing to catch CSS uppercase errors
+  const sport = rawSport.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+  const venue = localStorage.getItem('selectedVenue') || 'Koramangala';
+  
+  const titleEl = document.getElementById('dynamicTitle');
+  if(titleEl) {
+    titleEl.innerHTML = `${venue} ${sport} Arena <span style="color:var(--teal)">(Level 1)</span>`;
+  }
+
+  // Update Detail Icon
+  const sportData = {
+    'Football': { icon: '⚽', title: 'Flawless Pitch', desc: 'High-Grip Pro Turf for maximum control.' },
+    'Cricket': { icon: '🏏', title: 'Pro Cricket Pitch', desc: 'Professional grade pitch with live bounce.' },
+    'Badminton': { icon: '🏸', title: 'Indoor Court', desc: 'Wooden flooring with perfect grip.' },
+    'Basketball': { icon: '🏀', title: 'Hardwood Court', desc: 'Standard FIBA dimensions and glass backboards.' },
+    'Tennis': { icon: '🎾', title: 'Clay Court', desc: 'Medium-fast pace with consistent bounce.' },
+    'Swimming': { icon: '💧', title: 'Olympic Pool', desc: 'Temperature controlled 50m racing pool.' },
+    'Table Tennis': { icon: '🏓', title: 'Pro Tables', desc: 'ITTF approved tables with non-glare surface.' }
+  };
+  const sData = sportData[sport] || sportData['Football'];
+  const dynIcon = document.getElementById('dynIcon');
+  const dynFeatTitle = document.getElementById('dynFeatTitle');
+  const dynFeatDesc = document.getElementById('dynFeatDesc');
+  if(dynIcon) dynIcon.innerText = sData.icon;
+  if(dynFeatTitle) dynFeatTitle.innerText = sData.title;
+  if(dynFeatDesc) dynFeatDesc.innerText = sData.desc;
+  
+  // Clean sport ID and display
+  const cleanSport = sport.replace(/ /g, '-');
+  const activeSvg = document.getElementById('svg-' + cleanSport);
+  if(activeSvg) { activeSvg.style.display = 'block'; }
+  else {
+    // fallback to football
+    const fallback = document.getElementById('svg-Football');
+    if(fallback) fallback.style.display = 'block';
+  }
 })();
 </script>
 </body>
