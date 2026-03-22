@@ -327,12 +327,16 @@
     @keyframes syncPulse { from { opacity: 0.5; transform: scale(0.98); } to { opacity: 1; transform: scale(1.05); } }
   </style>
 
+
+
 <script>
 function goBack() {
-  if (window.history.length > 1) {
+  // Check if there is a history to go back to
+  if (document.referrer.indexOf(window.location.host) !== -1 && window.history.length > 1) {
     window.history.back();
   } else {
-    window.location.href = 'index.html'; // Fallback to home if no history
+    // Fallback if the user landed directly on the page or history is empty
+    window.location.href = 'fitquest_screen2.html'; 
   }
 }
 </script>
@@ -365,7 +369,7 @@ function goBack() {
     </div>
     
     <div class="top-nav">
-      <div class="back-btn" onclick="navigateBack()">←</div>
+      <div class="back-btn" style="cursor: pointer; pointer-events: auto;" onclick="goBack()">←</div>
       <div class="page-title">QUEST SUMMARY</div>
       <div class="page-subtitle">Level 1 Progress</div>
     </div>

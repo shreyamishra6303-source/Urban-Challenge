@@ -344,12 +344,16 @@
 
   </style>
 
+
+
 <script>
 function goBack() {
-  if (window.history.length > 1) {
+  // Check if there is a history to go back to
+  if (document.referrer.indexOf(window.location.host) !== -1 && window.history.length > 1) {
     window.history.back();
   } else {
-    window.location.href = 'index.html'; // Fallback to home if no history
+    // Fallback if the user landed directly on the page or history is empty
+    window.location.href = 'fitquest_screen2.html'; 
   }
 }
 </script>
@@ -385,7 +389,7 @@ function goBack() {
     
     <div class="top-nav">
       <div style="display:flex; align-items:center; gap:12px;">
-        <div class="back-btn" onclick="navigateBack()">←</div>
+        <div class="back-btn" style="cursor: pointer; pointer-events: auto;" onclick="navigateBack()">←</div>
         <div class="profile-avatar"><img src="https://i.pravatar.cc/100?img=11" alt="Profile"></div>
       </div>
       <div class="page-title">Active Quest</div>
